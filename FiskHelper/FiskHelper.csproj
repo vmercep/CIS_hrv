@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4D482E5F-A03F-4201-BD40-8C90D0A086D3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FiskHelper</RootNamespace>
+    <AssemblyName>FiskHelper</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schema\AdresaType.cs" />
+    <Compile Include="Schema\AdresniPodatakType.cs" />
+    <Compile Include="Schema\BrojRacunaType.cs" />
+    <Compile Include="Schema\CanonicalizationMethodType.cs" />
+    <Compile Include="Schema\DigestMethodType.cs" />
+    <Compile Include="Schema\DSAKeyValueType.cs" />
+    <Compile Include="Schema\EntityBase.cs" />
+    <Compile Include="Schema\GreskaType.cs" />
+    <Compile Include="Schema\ItemsChoiceType.cs" />
+    <Compile Include="Schema\ItemsChoiceType1.cs" />
+    <Compile Include="Schema\ItemsChoiceType2.cs" />
+    <Compile Include="Schema\KeyInfoType.cs" />
+    <Compile Include="Schema\KeyValueType.cs" />
+    <Compile Include="Schema\NacinPlacanjaType.cs" />
+    <Compile Include="Schema\NaknadaType.cs" />
+    <Compile Include="Schema\ObjectType.cs" />
+    <Compile Include="Schema\OznakaSlijednostiType.cs" />
+    <Compile Include="Schema\OznakaZatvaranjaType.cs" />
+    <Compile Include="Schema\PGPDataType.cs" />
+    <Compile Include="Schema\PorezOstaloType.cs" />
+    <Compile Include="Schema\PorezType.cs" />
+    <Compile Include="Schema\PoslovniProstorOdgovor.cs" />
+    <Compile Include="Schema\PoslovniProstorType.cs" />
+    <Compile Include="Schema\PoslovniProstorZahtjev.cs" />
+    <Compile Include="Schema\ProvjeraOdgovor.cs" />
+    <Compile Include="Schema\ProvjeraZahtjev.cs" />
+    <Compile Include="Schema\RacunOdgovor.cs" />
+    <Compile Include="Schema\RacunType.cs" />
+    <Compile Include="Schema\RacunZahtjev.cs" />
+    <Compile Include="Schema\ReferenceType.cs" />
+    <Compile Include="Schema\RetrievalMethodType.cs" />
+    <Compile Include="Schema\RSAKeyValueType.cs" />
+    <Compile Include="Schema\SignatureMethodType.cs" />
+    <Compile Include="Schema\SignatureType.cs" />
+    <Compile Include="Schema\SignatureValueType.cs" />
+    <Compile Include="Schema\SignedInfoType.cs" />
+    <Compile Include="Schema\SPKIDataType.cs" />
+    <Compile Include="Schema\TransformType.cs" />
+    <Compile Include="Schema\X509DataType.cs" />
+    <Compile Include="Schema\X509IssuerSerialType.cs" />
+    <Compile Include="Schema\ZaglavljeOdgovorType.cs" />
+    <Compile Include="Schema\ZaglavljeType.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

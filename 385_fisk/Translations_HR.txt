@@ -1,0 +1,126 @@
+﻿CIS status usluge////CIS status usluge 
+Informacije////Informacije
+Vrijeme izvršenja////Vrijeme izvršenja
+OIB poslovnog prostora je prazan////OIB poslovnog prostora je prazan
+OIB poslovnog prostora sadrži previše znakova! (max. 11)////OIB poslovnog prostora sadrži previše znakova! (max. 11)
+Oznaka poslovnog prostora je prazna////CIS status usluge////Oznaka poslovnog prostora je prazna////CIS status usluge
+Oznaka poslovnog prostora sadrži previše znakova! (max. 20)////Oznaka poslovnog prostora sadrži previše znakova! (max. 20)
+Ulica poslovnog prostora je prazna!////Ulica poslovnog prostora je prazna!
+Ulica poslovnog prostora sadrži previše znakova! (max. 100)////Ulica poslovnog prostora sadrži previše znakova! (max. 100)
+Kućni broj poslovnog prostora je prazan!////Kućni broj poslovnog prostora je prazan!
+Kućni broj poslovnog prostora sadrži previše znakova! (max. 4)////Kućni broj poslovnog prostora sadrži previše znakova! (max. 4)
+Dodatak kućnom broju poslovnog prostora je prazan!////Dodatak kućnom broju poslovnog prostora je prazan!
+Dodatak kućnom broju poslovnog prostora sadrži previše znakova! (max. 4)////Dodatak kućnom broju poslovnog prostora sadrži previše znakova! (max. 4)
+Poštanski broj poslovnog prostora je prazan!////Poštanski broj poslovnog prostora je prazan!
+Poštanski broj poslovnog prostora sadrži previše znakova! (max. 12)////Poštanski broj poslovnog prostora sadrži previše znakova! (max. 12)
+Grad poslovnog prostora je prazno!////Grad poslovnog prostora je prazno!
+Grad poslovnog prostora sadrži previše znakova! (max. 35)////Grad poslovnog prostora sadrži previše znakova! (max. 35)
+Općina poslovnog prostora je prazna!////Općina poslovnog prostora je prazna!
+Općina poslovnog prostora sadrži previše znakova! (max. 35)////Općina poslovnog prostora sadrži previše znakova! (max. 35)
+Radno vrijeme poslovnog prostora je prazno!////Radno vrijeme poslovnog prostora je prazno!
+Radno vrijeme poslovnog prostora sadrži previše znakova! (max. 100)////Radno vrijeme poslovnog prostora sadrži previše znakova! (max. 100)
+Datum početka primjene je prazno!////Datum početka primjene je prazno!
+URL do CIS servisa je prazan!////URL do CIS servisa je prazan!
+Oznaka poslovnog prostora je prazna!////Oznaka poslovnog prostora je prazna!
+Oznaka naplatnog uređaja je prazna!////Oznaka naplatnog uređaja je prazna!
+OIB proizvođača software-a je prazan!////OIB proizvođača software-a je prazan!
+Oznaka da li je poslovni prostor u sustavu PDV-a je prazna!////Oznaka da li je poslovni prostor u sustavu PDV-a je prazna!
+Oznaka da li je poslovni prostor u sustavu PDV-a je neispravna!////Oznaka da li je poslovni prostor u sustavu PDV-a je neispravna!
+Postavka za konekciju sa SQL serverom je prazna! Kontaktirajte tehničku podršku!////Postavka za konekciju sa SQL serverom je prazna! Kontaktirajte tehničku podršku!
+Naziv certifikata je prazan! Kontaktirajte tehničku podršku!////Naziv certifikata je prazan! Kontaktirajte tehničku podršku!
+Nedostaje konfiguracijska datoteka!////Nedostaje konfiguracijska datoteka!
+Učitavanje podataka o poslovnom prostoru...////Učitavanje podataka o poslovnom prostoru...
+Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!////Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!
+Vaš certifikat ističe za {{%days_expire%}} dana. Podsjetite se obnoviti ga!////Vaš certifikat ističe za {{%days_expire%}} dana. Podsjetite se obnoviti ga!
+Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!////Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!
+Pronađen je osobni certifikat s nazivom {{%certificate_title%}}!////Pronađen je osobni certifikat s nazivom {{%certificate_title%}}!
+Pronađeno je više osobnih certifikata s nazivom {{%certificate_title%}}!////Pronađeno je više osobnih certifikata s nazivom {{%certificate_title%}}!
+Obrada računa (korak 1)...////Obrada računa (korak 1)...
+Problem tijekom obrade računa (korak 1).////Problem tijekom obrade računa (korak 1).
+Prekid obrade!////Prekid obrade!
+Kontaktirajte tehničku podršku!////Kontaktirajte tehničku podršku!
+Nedostaje OIB zaposlenika!////Nedostaje OIB zaposlenika!
+Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK.////Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK.
+Povezivanje s uslugom CIS, molimo pričekajte...////Povezivanje s uslugom CIS, molimo pričekajte...
+Zatvaranje aplikacije////Zatvaranje aplikacije
+Nedostaju postavke////Nedostaju postavke
+Postavke su u redu////Postavke su u redu
+Povezivanje s CIS servisom nije uspijelo////Povezivanje s CIS servisom nije uspijelo
+Uspiješno povezivanje s CIS servisom////Uspiješno povezivanje s CIS servisom
+Problem prilikom obrade računa (korak 1)////Problem prilikom obrade računa (korak 1)
+Uspiješna obrada računa (korak 1)////Uspiješna obrada računa (korak 1)
+Ne postoji račun za obradu. ZATVRANJE APLIKACIJE////Ne postoji račun za obradu. ZATVRANJE APLIKACIJE
+Započinje obrada računa (korak 2)////Započinje obrada računa (korak 2)
+Problem prilikom obrade računa (korak 2)////Problem prilikom obrade računa (korak 2)
+Šaljem račun////Šaljem račun
+Uspiješno slanje////Uspiješno slanje
+XML odgovor je prazan////XML odgovor je prazan
+Na odgovoru nije pronađen JIR////Na odgovoru nije pronađen JIR
+Čvor JIR na odgovoru nema sadržaja////Čvor JIR na odgovoru nema sadržaja
+Element JIR na odgovoru nema sadržaja////Element JIR na odgovoru nema sadržaja
+Slijedeći račun////Slijedeći račun
+Započinje traženje JIR-a////Započinje traženje JIR-a
+Započinje traženje greške////Započinje traženje greške
+Račun s brojem {{%receipt_number%}} uspiješno nadopunjen s {{%jir_number%}}////Račun s brojem {{%receipt_number%}} uspiješno nadopunjen s {{%jir_number%}}
+Greška tokom slanja podataka o poslovnom prostoru////Greška tokom slanja podataka o poslovnom prostoru
+Slanje podataka o poslovnom prostoru////Slanje podataka o poslovnom prostoru
+Nedostaje konfiguracijska datoteka////Nedostaje konfiguracijska datoteka
+Unesite tehničku šifru////Unesite tehničku šifru
+Neispravna šifra!////Neispravna šifra!
+Datum isteka opcije spremanja XML poruka:////Datum isteka opcije spremanja XML poruka:
+Spremi izmjenu////Spremi izmjenu
+CIS postavke////CIS postavke
+Neke postavke su prazne ili neispravne////Neke postavke su prazne ili neispravne
+Osnovno :////Osnovno :
+Spremanje XML poruka i odgovora :////Spremanje XML poruka i odgovora :
+Putanja spremanja XML poruka////Putanja spremanja XML poruka
+Datum početka primjene :////Date active :
+Postavke salona :////Postavke salona :
+U sustavu PDV-a :////U sustavu PDV-a :
+Oznaka poslovnog prostora :////Oznaka poslovnog prostora :
+Ulica :////Ulica :
+Kućni broj :////Kućni broj :
+Dodatak kućnom broju :////Dodatak kućnom broju :
+Broj pošte :////Broj pošte :
+Grad :////Grad :
+Općina :////Općina :
+Log datoteka :////Log datoteka :
+Aktivan jezik :////Aktivan jezik :
+Radno vrijeme :////Radno vrijeme :
+Oznaka prostora :////Oznaka prostora :
+Oznaka naplatnog uređaja :////Oznaka naplatnog uređaja :
+OIB proizvođača programa :////OIB proizvođača programa :
+Zatvaranje poslovnog prostora :////Zatvaranje poslovnog prostora :
+Solo postavke :////Solo postavke :
+OIB operatera :////OIB operatera :
+Šifra operatera :////Šifra operatera :
+Zaštićene postavke :////Zaštićene postavke :
+Pošalji u poreznu upravu :////Pošalji u poreznu upravu :
+Spremi / Izađi////Spremi / Izađi
+Izađi bez spremanja////Izađi bez spremanja
+Uspiješno slanje podataka o poslovnom prostoru!////Uspiješno slanje podataka o poslovnom prostoru!
+Neuspiješno slanje podataka o poslovnom prostoru!////Neuspiješno slanje podataka o poslovnom prostoru!
+Odaberite mapu u koju će se spremati XML zahtjevi i odgovori.////Odaberite mapu u koju će se spremati XML zahtjevi i odgovori.
+Greška kod slanja SOAP poruke////Greška kod slanja SOAP poruke
+Greška kod kreiranja certifikata////Greška kod kreiranja certifikata
+Greška kod potpisivanja XML dokumenta////Greška kod potpisivanja XML dokumenta
+Greška kod potpisivanja teksta////Greška kod potpisivanja teksta
+Verifikacija nije uspjela: U primljenom dokumentu nije pronadjen digitalni potpis.////Verifikacija nije uspjela: U primljenom dokumentu nije pronadjen digitalni potpis.
+U primljenom XMLu nema certifikata.////U primljenom XMLu nema certifikata.
+Greška kod kreiranja mape////Greška kod kreiranja mape
+Greška kod dohvata statusa////Greška kod dohvata statusa
+Greška kod serijalizacije zahtjeva za račun////Greška kod serijalizacije zahtjeva za račun
+Greška kod snimanja XML dokumenta u datoteku////Greška kod snimanja XML dokumenta u datoteku
+Greška kod serijalizacije zahtjeva za poslovni prostor////Greška kod serijalizacije zahtjeva za poslovni prostor
+Greška kod serijalizacije poslovnog prostora////Greška kod serijalizacije poslovnog prostora
+Greška kod učitavanja XML dokumenta////Greška kod učitavanja XML dokumenta
+Greška kod serijalizacije računa////Greška kod serijalizacije računa
+Greška kod dodavanja SOAP envelop-a////Greška kod dodavanja SOAP envelop-a
+Poruka nije u skladu s XML shemom: #element ili lista elemenata koji nisu ispravni po shemi////Poruka nije u skladu s XML shemom: #element ili lista elemenata koji nisu ispravni po shemi
+Certifikat nije izdan od strane FINA-e.////Certifikat nije izdan od strane FINA-e.
+Certifikat ne sadrži naziv 'FISKAL'.////Certifikat ne sadrži naziv 'FISKAL'.
+Neispravan digitalni potpis.////Neispravan digitalni potpis.
+OIB iz poruke nije jednak OIB-u iz certifikata.////OIB iz poruke nije jednak OIB-u iz certifikata.
+Sistemska pogreška prilikom obrade zahtjeva.////Sistemska pogreška prilikom obrade zahtjeva.
+Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!////Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!
+Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%////Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%

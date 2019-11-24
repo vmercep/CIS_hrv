@@ -1,0 +1,188 @@
+﻿CIS status usluge////CIS service status
+Informacije////Info
+Vrijeme izvršenja :////Time of execution :
+OIB poslovnog prostora je prazan////VAT number (OIB) of business premise is empty
+OIB poslovnog prostora sadrži previše znakova! (max. 11)////VAT number (OIB) of business premise contains too many characters (max 11)
+Oznaka poslovnog prostora je prazna////Business premise mark is empty
+Oznaka poslovnog prostora sadrži previše znakova! (max. 20)////Business premise mark contains too many characters (max 20)
+Ulica poslovnog prostora je prazna!////Business premise street is empty!
+Ulica poslovnog prostora sadrži previše znakova! (max. 100)////Business premise street contains too many characters (max 100)
+Kućni broj poslovnog prostora je prazan!////Business premise house number is empty!
+Kućni broj poslovnog prostora sadrži previše znakova! (max. 4)////Business premise house number contains too many characters (max 4)
+Dodatak kućnom broju poslovnog prostora je prazan!////Business premise house number addition is empty!
+Dodatak kućnom broju poslovnog prostora sadrži previše znakova! (max. 4)////Business premise house number addition contains too many characters (max 4)
+Poštanski broj poslovnog prostora je prazan!////Business premise  post code is empty!
+Poštanski broj poslovnog prostora sadrži previše znakova! (max. 12)////Business premise post code contains too many characters (max 12)
+Grad poslovnog prostora je prazno!////Business premise city is empty!
+Grad poslovnog prostora sadrži previše znakova! (max. 35)////Business premise city contains too many characters (max 35)
+Općina poslovnog prostora je prazna!////Business premise  municipality/district is empty!
+Općina poslovnog prostora sadrži previše znakova! (max. 35)////Business premise municipality/district contains too many characters (max 35)
+Radno vrijeme poslovnog prostora je prazno!////Working hours of business premise is empty!
+Radno vrijeme poslovnog prostora sadrži previše znakova! (max. 100)////Business premise working hours contains too many characters (max 100)
+Datum početka primjene je prazno!////Activation date is empty!
+URL do CIS servisa je prazan!////URL to CIS service is empty!
+Oznaka poslovnog prostora je prazna!////Business premise mark is empty!
+Oznaka naplatnog uređaja je prazna!////Billing device mark is empty!
+OIB proizvođača software-a je prazan!////VAT number (OIB) of software producer is empty!
+Oznaka da li je poslovni prostor u sustavu PDV-a je prazna!////Mark whether the business premise is withih VAT system is empty!
+Oznaka da li je poslovni prostor u sustavu PDV-a je neispravna!////Mark whether the business premise is withih VAT system is invalid!
+Postavka za konekciju sa SQL serverom je prazna! Kontaktirajte tehničku podršku!////SQL server connection setting is empty! Please contact technical assistance!
+Naziv certifikata je prazan! Kontaktirajte tehničku podršku!////Certificate title is empty! Please contact technical assistance!
+Nedostaje konfiguracijska datoteka!////Configuration files are missing!
+Učitavanje podataka o poslovnom prostoru...////Reading data on business premise...
+Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!////Personal certificate with title {{%certificate_title%}} does not exist!
+Vaš certifikat ističe za {{%days_expire%}} dana. Podsjetite se obnoviti ga!////Your certificate expires in {{%days_expire%}} days. Be reminded to renew it!
+Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!////Personal certificate with title {{%certificate_title%}} does not exist!
+Pronađen je osobni certifikat s nazivom {{%certificate_title%}}!////Personal certificate with title {{%certificate_title%}} is found!
+Pronađeno je više osobnih certifikata s nazivom {{%certificate_title%}}!////Several personal certificates with title {{%certificate_title%}} are found!
+Obrada računa (korak 1)...////Receipt processing (step 1)...
+Problem tijekom obrade računa (korak 1).////Problem during receipt processing (step 1)
+Prekid obrade!////Processing interruption!
+Kontaktirajte tehničku podršku!////Please contact technical support!
+Nedostaje OIB zaposlenika!////Employee VAT number (OIB) is missing!
+Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK.////Connection to CIS impossible at the moment. Continue issuing receipts by clicking OK.
+Povezivanje s uslugom CIS, molimo pričekajte...////Connectiong to CIS service, please wait....
+Zatvaranje aplikacije////Application closing down
+Nedostaju postavke////Settings are missing
+Postavke su u redu////Settings are OK.
+Povezivanje s CIS servisom nije uspijelo////Connection to CIS service failed.
+Uspiješno povezivanje s CIS servisom////Connection to CIS service successful
+Problem prilikom obrade računa (korak 1)////Problem in receipt processing (step 1)
+Uspiješna obrada računa (korak 1)////Successful receipt processing (step 1)
+Ne postoji račun za obradu. ZATVRANJE APLIKACIJE////There is no receipt for processing. APPLICATION SHUTTING DOWN
+Započinje obrada računa (korak 2)////Receipt processing is starting (step 2)
+Problem prilikom obrade računa (korak 2)////Problem in receipt processing (step 2)
+Šaljem račun////Sending the receipt
+Uspiješno slanje////Sending successful
+XML odgovor je prazan////XML reply is empty
+Na odgovoru nije pronađen JIR////There is no JIR in the reply
+Čvor JIR na odgovoru nema sadržaja////JIR node in the reply does not have content
+Element JIR na odgovoru nema sadržaja////JIR element in the reply does not have content
+Slijedeći račun////Next receipt
+Započinje traženje JIR-a////JIR search is starting
+Započinje traženje greške////Error finding is starting
+Račun s brojem {{%receipt_number%}} uspiješno nadopunjen s {{%jir_number%}}////Receipt No. {{%receipt_number%}} successfully updated with {{%jir_number%}}
+Greška tokom slanja podataka o poslovnom prostoru////Error while sending data about the business premise
+Slanje podataka o poslovnom prostoru////Sending data about the business premise
+Nedostaje konfiguracijska datoteka////Configuaration files missing
+Unesite tehničku šifru////Enter the technical code
+Neispravna šifra!////Code incorrect!
+Datum isteka opcije spremanja XML poruka:////Expiry date of saving XML messages:
+Spremi izmjenu////Save changes
+CIS Postavke////CIS Settings
+Neke postavke su prazne ili neispravne!////Some settings are empty or incorrect!
+Osnovno :////Basic :
+Spremanje XML poruka i odgovora :////Saving XML messages and replies :
+Putanja spremanja XML datoteka :////Path of saving XML messages :
+Datum početka primjene :////Activation date :
+Postavke salona :////Salon settings :
+OIB :////VAT number (OIB) :
+U sustavu PDV :////In VAT system :
+Oznaka poslovnog prostora :////Business premise mark :
+Ulica :////Street :
+Kućni broj :////House No. :
+Dodatak kućnom broju :////House No. Addition :
+Broj pošte :////ZIP code :
+Grad :////City :
+Općina :////Municipality/District :
+Log datoteka :////Log file :
+Aktivan jezik :////Active langauge :
+Radno vrijeme :////Working hours :
+Oznaka prostora :////Premise mark :
+Oznaka naplatnog uređaja :////Billing device mark :
+OIB proizvođača programa :////VAT number (OIB) of software producer :
+Zatvaranje poslovnog prostora :////Permanently ceased operation :
+Solo postavke :////Solo settings :
+OIB operatera :////Operator OIB/ID :
+Šifra operatera :////Operator code :
+Zaštićene postavke////Protected settings
+Pošalji u poreznu upravu////Send to TA
+Spremi / Izađi////Save/close
+Izađi bez spremanja////Close without saving
+Uspiješno slanje podataka o poslovnom prostoru!////Successful sending of business premise data!
+Neuspiješno slanje podataka o poslovnom prostoru!////Unsuccessful sending of business premise data!
+Odaberite mapu u koju će se spremati XML zahtjevi i odgovori.////Choose the map for saving XML requests and replies.
+Greška kod slanja SOAP poruke////Error while sending SOAP message
+Greška kod kreiranja certifikata////Error in certificate creation
+Greška kod potpisivanja XML dokumenta////Error in XML document signing
+Greška kod potpisivanja teksta////Error in text signing
+Verifikacija nije uspjela: U primljenom dokumentu nije pronadjen digitalni potpis.////Verification unsuccessful: Received document does not contain the digital signature.
+U primljenom XMLu nema certifikata.////The received XML does not contain the certificate.
+Greška kod kreiranja mape////Error in file creation
+Greška kod dohvata statusa////Error in status fetch
+Greška kod serijalizacije zahtjeva za račun////Error in receipt request serialization
+Greška kod snimanja XML dokumenta u datoteku////Error in saving XML doc in the file
+Greška kod serijalizacije zahtjeva za poslovni prostor////Error in request for business premise serialization
+Greška kod serijalizacije poslovnog prostora////Error in business premise serialization
+Greška kod učitavanja XML dokumenta////Error in XML document loading
+Greška kod serijalizacije računa////Error in receipt serialization
+Greška kod dodavanja SOAP envelop-a////Error in adding SOAP envelope
+Poruka nije u skladu s XML shemom: #element ili lista elemenata koji nisu ispravni po shemi.////The message is not in accordance with XML scheme: #element or element list that are con toccect acording to the scheme.
+Certifikat nije izdan od strane FINA-e.////Certificate not issued by FINA.
+Certifikat ne sadrži naziv 'FISKAL'.////Certificate does not contain "FISKAL".
+Neispravan digitalni potpis.////Incorrect digital signature.
+OIB iz poruke nije jednak OIB-u iz certifikata.////Message OIB does not match the certificate OIB
+Sistemska pogreška prilikom obrade zahtjeva.////System error in request processing.
+Odabir////Choose
+Certifikat :////Certificate :
+Naziv certifikata :////Name of certificate :
+Pogrešna šifra!////Wrong technical code!
+Greška////Error
+Tehnička šifra////Technical code
+Slanje testnih računa :////Send test receipts :
+Testni certifikat :////Test certificate :
+Naziv testnog certifikata :////Name of test certificate :
+Greška prilikom stvaranja konfiguracijske datoteke!////Error while creating configuration file!
+Validacija////Validation
+Fiskalizacija////Fiscalisation
+CIS status usluge :////CIS service status :
+POČETAK APLIKACIJE////STARTING APPLICATION
+Greška prilikom slanja računa////Error while sending receipt
+na računu////on receipt
+Slanje zahtjeva za provjerom racuna, molimo pričekajte...////Sending test receipt request, please wait...
+Nije primljen odgovor od CIS-a tokom slanja testnog računa////Didn't receive a response while sending test receipt
+"Poruka je ispravna"////"Message is valid"
+"Datum i vrijeme slanja" je za više od 6 sati manje ili veće od "Datum i vrijeme obrade".////"Datum i vrijeme slanja" is more than 6 hours greater or less than "Datum i vrijeme obrade".
+"Datum i vrijeme izdavanja" računa je za više od 78 sati manje od "Datum i vrijeme obrade".////"Datum i vrijeme izdavanja" is more than 78 hours less than "Datum i vrijeme obrade".
+"Datum i vrijeme izdavanja" računa je za više od 6 sati veće od "Datum i vrijeme obrade".////"Datum i vrijeme izdavanja" is more than 6 hours greater than "Datum i vrijeme obrade".
+"Datum i vrijeme izdavanja" računa je veće od "Datum i vrijeme slanja".////"Datum i vrijeme izdavanja" is greater than "Datum i vrijeme obrade".
+"Brojčana oznaka računa" ima vrijednost "0".////"Brojčana oznaka računa" has a value of "0".
+"Brojčana oznaka računa" ima više od 6 znamenki.////"Brojčana oznaka računa" has more than 6 digits.
+"Porezna stopa PDV-a" nije iz dozvoljenog skupa poreznih stopa.////"Porezna stopa PDV-a" is not in the allowed set of VAT rates.
+"Osnovica PDV-a" je veća od podatka "Ukupni iznos" kada je "Ukupni iznos" pozitivnog predznaka ili je jednak 0.////"Osnovica PDV-a" is greater than value of "Ukupni iznos" when "Ukupni iznos" is greater or equal to 0.
+"Osnovica PDV-a" je manja od podatka "Ukupni iznos" kada je "Ukupni iznos" negativnog predznaka ili je jednak 0.////"Osnovica PDV-a" is less than value of "Ukupni iznos" when "Ukupni iznos" is less or equal to 0.
+"Osnovica PDV-a" nije istog predznaka kao i "Ukupni iznos".////Value of "Osnovica PDV-a" is not the same sign as "Ukupni iznos".
+"Iznos poreza PDV-a" je za više od 1 kn manji od izračuna iznosa PDV-a.////"Iznos poreza PDV-a" is more than 1 kn less than the calculated VAT amount.
+"Iznos poreza PDV-a" je za više od 1 kn veći od izračuna iznosa poreza PDV-a.////"Iznos poreza PDV-a" is more than 1 kn greater than the calculated VAT amount.
+"Porezna stopa PNP-a" ja manja od 0,00.////"Porezna stopa PNP-a" is less than 0,00.
+"Porezna stopa PNP-a" ja veća od 3,00.////"Porezna stopa PNP-a" is greater than 3,00.
+"Osnovica PNP-a" je veća od podatka "Ukupni iznos" kada je "Ukupni iznos" pozitivnog predznaka ili je jednak 0.////"Osnovica PNP-a" is greater than value of "Ukupni iznos" when "Ukupni iznos" is greater or equal to 0.
+"Osnovica PNP-a" je manja od podatka "Ukupni iznos" kada je "Ukupni iznos" negativnog predznaka ili je jednak 0.////"Osnovica PNP-a" is less than value of "Ukupni iznos" when "Ukupni iznos" is less or equal to 0.
+"Osnovica PNP-a" nije istog predznaka kao i "Ukupni iznos".////Value of "Osnovica PNP-a" is not the same sign as "Ukupni iznos".
+"Iznos poreza PNP-a" je za više od 1 kn manji od izračuna iznosa poreza PNP-a.////"Iznos poreza PNP-a" is more than 1 kn less than the calculated consumption VAT amount.
+"Iznos poreza PNP -a" je za više od 1 kn veći od izračuna iznosa poreza PNP-a.////"Iznos poreza PNP-a" is more than 1 kn greater than the calculated consumption VAT amount.
+"Na računu postoji podatak "Ostali porezi" različit od "0,00".////"Ostali porezi" field exists on the receipt that is not equal to "0,00".
+"Iznos oslobođenja" je veći od podatka "Ukupni iznos" kada je "Ukupni iznos" pozitivnog predznaka ili je jednak 0.////"Iznos oslobođenja" is greater than value of "Ukupni iznos" when "Ukupni iznos" is greater or equal to 0.
+"Iznos oslobođenja" je manji od podatka "Ukupni iznos" kada je "Ukupni iznos" negativnog predznaka ili je jednak 0.////"Iznos oslobođenja" is less than value of "Ukupni iznos" when "Ukupni iznos" is less or equal to 0.
+"Iznos oslobođenja" nije istog predznaka kao i "Ukupni iznos".////Value of "Iznos oslobođenja" is not the same sign as "Ukupni iznos".
+"Iznos marže" je veći od podatka "Ukupni iznos" kada je "Ukupni iznos" pozitivnog predznaka ili je jednak 0.////"Iznos marže" is greater than value of "Ukupni iznos" when "Ukupni iznos" is greater or equal to 0.
+"Iznos marže" je manji od podatka "Ukupni iznos" kada je "Ukupni iznos" negativnog predznaka ili je jednak 0.////"Iznos marže" is less than value of "Ukupni iznos" when "Ukupni iznos" is less or equal to 0.
+"Iznos marže" nije istog predznaka kao i "Ukupni iznos".////Value of "Iznos marže" is not the same sign as "Ukupni iznos".
+"Iznos koji ne podliježe oporezivanju" je veći od podatka "Ukupni iznos" kada je "Ukupni iznos" pozitivnog predznaka ili je jednak 0.////"Iznos koji ne podliježe oporezivanju" is greater than value of "Ukupni iznos" when "Ukupni iznos" is greater or equal to 0.
+"Iznos koji ne podliježe oporezivanju" je manji od podatka "Ukupni iznos" kada je "Ukupni iznos" negativnog predznaka ili je jednak 0.////"Iznos koji ne podliježe oporezivanju" is less than value of "Ukupni iznos" when "Ukupni iznos" is less or equal to 0.
+"Iznos koji ne podliježe oporezivanju" nije istog predznaka kao i "Ukupni iznos".////Value of "Iznos koji ne podliježe oporezivanju" is not the same sign as "Ukupni iznos".
+"Iznos naknade" je veći od 1.000,00 kn.////"Iznos naknade" is greater than 1.000,00 kn.
+"Iznos naknade" je manji od -1.000,00 kn.////"Iznos naknade" is less than -1.000,00 kn.
+"Ukupan iznos na računu" nije ispravan prema formuli.////"Ukupan iznos na računu" is not valid according to the calculation formula.
+Maksimalni ukupni iznos za vrstu plaćanja "Gotovina", "Kartica" ili "Ček" je veći ili manji od +/- 105.000,00 kn kada je Ukupni iznos pozitivnog/negativnog predznaka.////Maximal total amount for payment types "Gotovina", "Kartica" or "Ček" is greater or less than +/- 105.000,00 kn when "Ukupni iznos" is greater or less than 0. 
+Maksimalni ukupni iznos za vrstu plaćanja "Transakcijski račun" i "Ostalo" je veći ili manji od 1 mil kn kada je Ukupni iznos pozitivnog/negativnog predznaka.////Maximum total amount for payment type "Transakcijski račun" and "Ostalo" is greater or less than 1 mil kn when "Ukupni iznos" is greater or less than 0.
+Polje "Specifična namjena" nije prazno.////Field "Specifična namjena" is not empty.
+Na računu postoji podatak "PDV" različit od "0,00".////Field "PDV" with value not equal to "0,00" exist on the receipt.
+Na računu postoji podatak "Iznos oslobođenja" različit od 0,00 kn.////Field "Iznos oslobođenja" with value not equal to 0,00 kn exist on the receipt.
+Na računu postoji podatak "Iznos marže" različit od 0,00 kn.////Field "Iznos marže" with value not equal to 0,00 kn exist on the receipt.
+Na računu postoji podatak "Iznos koji ne podliježe oporezivanju" različit od 0,00 kn.////Field "Iznos koji ne podliježe oporezivanju" with value not equal to 0,00 kn exist on the receipt.
+Slanje testnog računa s brojem: ////Sending test receipt with number :
+Slanje testnog računa vratilo je grešku s brojem: ////Sending of test receipt returned an error code: 
+Slanje testnog računa je bilo uspiješno////Sending of test receipt was successful
+Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!////Value of field "In VAT System" is set to false, but tax rates different than 0% exist. Please modify the tax rates before fiscalisating the receipt!
+Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%////Value of field "In VAT System" is set to false, but tax rates different than 0% exist

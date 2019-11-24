@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "385_fisk_dll", "385_fisk_dll\385_fisk_dll.csproj", "{2F6BD99D-1B53-4F85-89E3-F1B6667E2BCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "385_fisk", "385_fisk\385_fisk.csproj", "{FAB54F59-1543-493F-B3D8-BFA4224613F1}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CIS-HRV", "Setup1\Setup1.vdproj", "{1FE8C66C-6786-4C11-BD23-94D9B943FB65}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CIS-HRV-Updater", "CIS-HRV-Updater\CIS-HRV-Updater.vdproj", "{1314E2DE-D5CF-4E88-97B5-81F4CA035932}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CisHelper", "Helper\CisHelper.csproj", "{295B286D-62FA-4FA6-9303-E933182A1A1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataObjects", "DataObjects\DataObjects.csproj", "{825D97DA-C557-457E-A831-27EFCA7730E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CisDal", "CisDal\CisDal.csproj", "{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiskHelper", "FiskHelper\FiskHelper.csproj", "{4D482E5F-A03F-4201-BD40-8C90D0A086D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F6BD99D-1B53-4F85-89E3-F1B6667E2BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F6BD99D-1B53-4F85-89E3-F1B6667E2BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F6BD99D-1B53-4F85-89E3-F1B6667E2BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F6BD99D-1B53-4F85-89E3-F1B6667E2BCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAB54F59-1543-493F-B3D8-BFA4224613F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAB54F59-1543-493F-B3D8-BFA4224613F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAB54F59-1543-493F-B3D8-BFA4224613F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAB54F59-1543-493F-B3D8-BFA4224613F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE8C66C-6786-4C11-BD23-94D9B943FB65}.Debug|Any CPU.ActiveCfg = Debug
+		{1FE8C66C-6786-4C11-BD23-94D9B943FB65}.Release|Any CPU.ActiveCfg = Release
+		{1314E2DE-D5CF-4E88-97B5-81F4CA035932}.Debug|Any CPU.ActiveCfg = Debug
+		{1314E2DE-D5CF-4E88-97B5-81F4CA035932}.Release|Any CPU.ActiveCfg = Release
+		{295B286D-62FA-4FA6-9303-E933182A1A1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{295B286D-62FA-4FA6-9303-E933182A1A1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{295B286D-62FA-4FA6-9303-E933182A1A1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{295B286D-62FA-4FA6-9303-E933182A1A1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{825D97DA-C557-457E-A831-27EFCA7730E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{825D97DA-C557-457E-A831-27EFCA7730E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{825D97DA-C557-457E-A831-27EFCA7730E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{825D97DA-C557-457E-A831-27EFCA7730E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D482E5F-A03F-4201-BD40-8C90D0A086D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D482E5F-A03F-4201-BD40-8C90D0A086D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D482E5F-A03F-4201-BD40-8C90D0A086D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D482E5F-A03F-4201-BD40-8C90D0A086D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1026592-3717-4B3D-B99A-17FD730D4B5C}
+	EndGlobalSection
+EndGlobal
