@@ -65,6 +65,7 @@ namespace Helper
             configFile.CertificatePassword = "Demo02";
             configFile.IgnoreSSLCertificates = "True";
             configFile.SendTestReceipts = "True";
+            configFile.SendPonudaToFisk = "False";
 
             FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
             string directoryName = fileInfo.DirectoryName;
@@ -107,6 +108,7 @@ namespace Helper
                 streamWriter.WriteLine(configFile.SendTestReceipts);
                 streamWriter.WriteLine(configFile.TestServerUrl);
                 streamWriter.WriteLine(configFile.IgnoreSSLCertificates);
+                streamWriter.WriteLine(configFile.SendPonudaToFisk);
                 streamWriter.Close();
 
                 DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
@@ -170,6 +172,7 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.SendTestReceipts);
                     streamWriter.WriteLine(fConfig.TestServerUrl);
                     streamWriter.WriteLine(fConfig.IgnoreSSLCertificates);
+                    streamWriter.WriteLine(fConfig.SendPonudaToFisk);
                     streamWriter.Close();
 
                     

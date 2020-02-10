@@ -116,6 +116,7 @@ public class Config : Form {
     private CheckBox cbCheckSSL;
     private Button btUpdate;
     private Label lbVerzija;
+    private CheckBox cbFiskPonude;
     private TextBox txtCertificatePassword;
 
   public Config () {
@@ -364,9 +365,27 @@ public class Config : Form {
         {
             cbCheckSSL.CheckState = CheckState.Unchecked;
         }
+
+        string sendPonudaToFisk = AppLink.SendPonudaToFisk;
+        if (!(sendPonudaToFisk == "0"))
+        {
+            if (sendPonudaToFisk == "1")
+            {
+                cbFiskPonude.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                cbFiskPonude.CheckState = CheckState.Unchecked;
+            }
+        }
+        else
+        {
+            cbFiskPonude.CheckState = CheckState.Unchecked;
+        }
+
     }
 
-  public static string inputBox (string prompt, string title, string defaultValue) {
+    public static string inputBox (string prompt, string title, string defaultValue) {
     InputBoxDialog inputBoxDialog = new InputBoxDialog();
     inputBoxDialog.FormPrompt = prompt;
     inputBoxDialog.FormCaption = title;
@@ -417,6 +436,7 @@ public class Config : Form {
       txtBillingDeviceMark.BackColor = Color.White;
       txtOibSoftware.BackColor = Color.White;
       txtCertificate.BackColor = Color.White;
+            cbFiskPonude.Enabled = true;
     } else if (text.Length > 0) {
       MessageBox.Show(Translations.Translate("Pogrešna šifra!"), Translations.Translate("Greška"), MessageBoxButtons.OK, MessageBoxIcon.Hand);
     }
@@ -506,6 +526,7 @@ public class Config : Form {
     configFile.UseCertificateFile = Convert.ToString(chkUseCertificateFile.Checked);
     configFile.CertificatePassword = txtCertificatePassword.Text;
     configFile.IgnoreSSLCertificates= Convert.ToString(cbCheckSSL.Checked);
+        configFile.SendPonudaToFisk= Convert.ToString(cbFiskPonude.Checked);
         verifyData();
     if (state) {
       return false;
@@ -622,6 +643,7 @@ public class Config : Form {
             this.chkUseCertificateFile = new System.Windows.Forms.CheckBox();
             this.btUpdate = new System.Windows.Forms.Button();
             this.lbVerzija = new System.Windows.Forms.Label();
+            this.cbFiskPonude = new System.Windows.Forms.CheckBox();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
@@ -1087,14 +1109,15 @@ public class Config : Form {
             // grpTestCertificate
             // 
             this.grpTestCertificate.BackColor = System.Drawing.Color.Transparent;
+            this.grpTestCertificate.Controls.Add(this.cbFiskPonude);
             this.grpTestCertificate.Controls.Add(this.chkSendTest);
             this.grpTestCertificate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpTestCertificate.Location = new System.Drawing.Point(12, 732);
             this.grpTestCertificate.Name = "grpTestCertificate";
-            this.grpTestCertificate.Size = new System.Drawing.Size(588, 60);
+            this.grpTestCertificate.Size = new System.Drawing.Size(588, 86);
             this.grpTestCertificate.TabIndex = 205;
             this.grpTestCertificate.TabStop = false;
-            this.grpTestCertificate.Text = "Testni certifikat :";
+            this.grpTestCertificate.Text = "Dodatne opcije :";
             // 
             // chkSendTest
             // 
@@ -1106,7 +1129,7 @@ public class Config : Form {
             this.chkSendTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkSendTest.Location = new System.Drawing.Point(12, 21);
             this.chkSendTest.Name = "chkSendTest";
-            this.chkSendTest.Size = new System.Drawing.Size(249, 27);
+            this.chkSendTest.Size = new System.Drawing.Size(249, 25);
             this.chkSendTest.TabIndex = 30;
             this.chkSendTest.Text = "Slanje testnih računa :";
             this.chkSendTest.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1239,11 +1262,27 @@ public class Config : Form {
             this.lbVerzija.BackColor = System.Drawing.Color.Transparent;
             this.lbVerzija.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold);
             this.lbVerzija.ForeColor = System.Drawing.Color.Black;
-            this.lbVerzija.Location = new System.Drawing.Point(12, 801);
+            this.lbVerzija.Location = new System.Drawing.Point(12, 821);
             this.lbVerzija.Name = "lbVerzija";
             this.lbVerzija.Size = new System.Drawing.Size(56, 16);
             this.lbVerzija.TabIndex = 209;
             this.lbVerzija.Text = "Verzija";
+            // 
+            // cbFiskPonude
+            // 
+            this.cbFiskPonude.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbFiskPonude.BackColor = System.Drawing.Color.Transparent;
+            this.cbFiskPonude.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbFiskPonude.Enabled = false;
+            this.cbFiskPonude.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbFiskPonude.Location = new System.Drawing.Point(12, 52);
+            this.cbFiskPonude.Name = "cbFiskPonude";
+            this.cbFiskPonude.Size = new System.Drawing.Size(249, 25);
+            this.cbFiskPonude.TabIndex = 31;
+            this.cbFiskPonude.Text = "Fiskaliziraj ponude :";
+            this.cbFiskPonude.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbFiskPonude.UseVisualStyleBackColor = false;
             // 
             // Config
             // 
@@ -1252,7 +1291,7 @@ public class Config : Form {
             this.AutoScroll = true;
             this.BackgroundImage = global::_385_fisk.Properties.Resources.background2;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(613, 823);
+            this.ClientSize = new System.Drawing.Size(613, 845);
             this.Controls.Add(this.lbVerzija);
             this.Controls.Add(this.btUpdate);
             this.Controls.Add(this.grpCertificateFile);

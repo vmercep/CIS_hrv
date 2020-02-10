@@ -62,6 +62,8 @@
 
         private string _TestServerUrl;
 
+        private string _SendPonudaToFisk;
+
         private string _IgnoreSSLCertificates;
 
         public string ConnectionString
@@ -355,6 +357,25 @@
             set
             {
                 _TestServerUrl = "TestServerUrl=" + value;
+            }
+        }
+
+        public string SendPonudaToFisk
+        {
+            get
+            {
+                return _SendPonudaToFisk;
+            }
+            set
+            {
+                if (value == "True")
+                {
+                    _SendPonudaToFisk = "SendPonudaToFisk=1";
+                }
+                else
+                {
+                    _SendPonudaToFisk = "SendPonudaToFisk=0";
+                }
             }
         }
 

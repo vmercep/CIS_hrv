@@ -50,6 +50,8 @@ public static class AppLink {
 
   public static string IgnoreSSLCertificates => GetParams("IgnoreSSLCertificates", "0");
 
+  public static string SendPonudaToFisk => GetParams("SendPonudaToFisk", "0");
+
     private static string GetParams (string name, string defaultValue) {
     FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
     string directoryName = fileInfo.DirectoryName;
