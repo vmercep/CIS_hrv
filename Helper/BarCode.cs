@@ -57,6 +57,11 @@ namespace Helper
 
                                 var resized = ResizeImage(bitmap, Convert.ToInt32(AppLink.QrCodeSize));
 
+                                var directoryInfo = new DirectoryInfo(AppLink.QrCodeLocation+"\\");
+                                if (!directoryInfo.Exists)
+                                {
+                                    directoryInfo.Create();
+                                }
                                 //bitmap.Save(directoryName+"\\Dat\\MerlinSLV_Files\\Images\\QRCode\\" + idTicket.ToString() + ".jpg", actualFormat);
                                 resized.Save(AppLink.QrCodeLocation + "\\" + idTicket.ToString() + ".jpg", actualFormat);
                             }
