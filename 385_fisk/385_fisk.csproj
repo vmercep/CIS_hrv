@@ -99,7 +99,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Certificates\demo.p12" />
-    <None Include="CisConfig.cfg" />
+    <None Include="CisConfig.cfg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="CisConfigTest.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

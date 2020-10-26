@@ -67,6 +67,13 @@ namespace Helper
             configFile.SendTestReceipts = "True";
             configFile.SendPonudaToFisk = "False";
 
+            configFile.QrCodeMessage = @"https://porezna.gov.hr/rn?zki={0}&datv={1}&izn={2}";
+
+            configFile.QrCodeLocation = @"C:\\Ikosoft\\MerlinX2\\MerlinSLV_Files\\Images\\QRCode";
+
+            configFile.QrCodeSize = "150";
+
+
             FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
             string directoryName = fileInfo.DirectoryName;
 
@@ -109,6 +116,10 @@ namespace Helper
                 streamWriter.WriteLine(configFile.TestServerUrl);
                 streamWriter.WriteLine(configFile.IgnoreSSLCertificates);
                 streamWriter.WriteLine(configFile.SendPonudaToFisk);
+                streamWriter.WriteLine(configFile.QrCode);
+                streamWriter.WriteLine(configFile.QrCodeMessage);
+                streamWriter.WriteLine(configFile.QrCodeLocation);
+                streamWriter.WriteLine(configFile.QrCodeSize);
                 streamWriter.Close();
 
                 DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
@@ -173,6 +184,9 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.TestServerUrl);
                     streamWriter.WriteLine(fConfig.IgnoreSSLCertificates);
                     streamWriter.WriteLine(fConfig.SendPonudaToFisk);
+                    streamWriter.WriteLine(fConfig.QrCodeMessage);
+                    streamWriter.WriteLine(fConfig.QrCodeLocation);
+                    streamWriter.WriteLine(fConfig.QrCodeSize);
                     streamWriter.Close();
 
                     

@@ -66,6 +66,14 @@
 
         private string _IgnoreSSLCertificates;
 
+        private string _QrCodeMessage;
+
+        private string _QrCodeLocation;
+
+        private string _QrCodeSize;
+
+        public string QrCode;
+
         public string ConnectionString
         {
             get
@@ -379,6 +387,42 @@
             }
         }
 
+        public string QrCodeMessage
+        {
+            get
+            {
+                return _QrCodeMessage;
+            }
+            set
+            {
+                _QrCodeMessage = "QrCodeMessage=" + value;
+            }
+        }
+
+        public string QrCodeLocation
+        {
+            get
+            {
+                return _QrCodeLocation;
+            }
+            set
+            {
+                _QrCodeLocation = "QrCodeLocation=" + value;
+            }
+        }
+
+        public string QrCodeSize
+        {
+            get
+            {
+                return _QrCodeSize;
+            }
+            set
+            {
+                _QrCodeSize = "QrCodeSize=" + value;
+            }
+        }
+
         /// <summary>
         /// _IgnoreSSLCertificates
         /// </summary>
@@ -409,6 +453,7 @@
             SecCertificate = "[Certificate]";
             SecCertificateFile = "[CertificateFile]";
             SecTestCertificate = "[TestCertificate]";
+            QrCode = "[QRCode]";
             TestServerUrl = "https://cistest.apis-it.hr:8449/FiskalizacijaServiceTest";
         }
     }

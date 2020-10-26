@@ -14,6 +14,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Web.Management;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using System.Xml;
@@ -112,90 +113,126 @@ public class MainForm : Form {
     }
 
   private XmlDocument sendBill (DataBill DataBillToSend) {
-    CultureInfo cultureInfo = new CultureInfo("hr-HR");
-    RacunType racunType = new RacunType {
-      Oib = DataBillToSend.VATNumber_Salon_Bill,
-      USustPdv = DataBillToSend.TaxPayer_Bill,
-      DatVrijeme = DataBillToSend.DateTimeIssue_Bill(DataBillToSend.BillDate_Bill),
-      OznSlijed = DataBillToSend.SequenceMark_Bill
-    };
-    BrojRacunaType brojRacunaType2 = racunType.BrRac = new BrojRacunaType {
-      BrOznRac = DataBillToSend.BillNumberMark_Bill,
-      OznPosPr = DataBillToSend.PremiseMark_Bill,
-      OznNapUr = DataBillToSend.BillingDeviceMark_Bill
-    };
-    racunType.IznosUkupno = ProperNumber(DataBillToSend.TotalAmount_Bill);
-    racunType.NacinPlac = DataBillToSend.PaymentMethod_Bill;
-    racunType.OibOper = DataBillToSend.CashierVATNumber_Bill;
-    string notes = DataBillToSend.Notes;
-    if (AppLink.InVATsystem == "1") {
-      if (Convert.ToDecimal(DataBillToSend.TotalAmount_Bill) != decimal.Zero) {
-        if (MerlinData.checkIfNewTaxes()) {
-          List<DataNewTax> newTaxes = MerlinData.GetNewTaxes(DataBillToSend.IdTicket);
-          foreach (DataNewTax item2 in newTaxes) {
-                        decimal num = 0;
-                        if (newTaxes.Count > 1)
+
+
+        try
+        {
+            CultureInfo cultureInfo = new CultureInfo("hr-HR");
+            RacunType racunType = new RacunType
+            {
+                Oib = DataBillToSend.VATNumber_Salon_Bill,
+                USustPdv = DataBillToSend.TaxPayer_Bill,
+                DatVrijeme = DataBillToSend.DateTimeIssue_Bill(DataBillToSend.BillDate_Bill),
+                OznSlijed = DataBillToSend.SequenceMark_Bill
+            };
+            BrojRacunaType brojRacunaType2 = racunType.BrRac = new BrojRacunaType
+            {
+                BrOznRac = DataBillToSend.BillNumberMark_Bill,
+                OznPosPr = DataBillToSend.PremiseMark_Bill,
+                OznNapUr = DataBillToSend.BillingDeviceMark_Bill
+            };
+            racunType.IznosUkupno = ProperNumber(DataBillToSend.TotalAmount_Bill);
+            racunType.NacinPlac = DataBillToSend.PaymentMethod_Bill;
+            racunType.OibOper = DataBillToSend.CashierVATNumber_Bill;
+            string notes = DataBillToSend.Notes;
+            if (AppLink.InVATsystem == "1")
+            {
+                if (Convert.ToDecimal(DataBillToSend.TotalAmount_Bill) != decimal.Zero)
+                {
+                    if (MerlinData.checkIfNewTaxes())
+                    {
+                        List<DataNewTax> newTaxes = MerlinData.GetNewTaxes(DataBillToSend.IdTicket);
+                        foreach (DataNewTax item2 in newTaxes)
                         {
-                            num = Convert.ToDecimal(item2.TaxableAmount);
+                            decimal num = 0;
+                            if (newTaxes.Count > 1)
+                            {
+                                num = Convert.ToDecimal(item2.TaxableAmount);
+                            }
+                            else num = calculateTax(DataBillToSend.TotalAmount_Bill, item2.TaxAmount);  //Convert.ToDecimal(item2.TaxableAmount);
+                            decimal num2 = Convert.ToDecimal(item2.TaxAmount);
+                            decimal num3 = Convert.ToDecimal(item2.TaxRate);
+                            racunType.Pdv.Add(new PorezType
+                            {
+                                Osnovica = ProperNumber(num.ToString("0.00")),
+                                Iznos = ProperNumber(num2.ToString("0.00")),
+                                Stopa = ProperNumber(num3.ToString("0.00"))
+                            });
                         }
-                        else num = calculateTax(DataBillToSend.TotalAmount_Bill, item2.TaxAmount);  //Convert.ToDecimal(item2.TaxableAmount);
-                        decimal num2 = Convert.ToDecimal(item2.TaxAmount);
-                        decimal num3 = Convert.ToDecimal(item2.TaxRate);
-            racunType.Pdv.Add(new PorezType {
-              Osnovica = ProperNumber(num.ToString("0.00")),
-              Iznos = ProperNumber(num2.ToString("0.00")),
-              Stopa = ProperNumber(num3.ToString("0.00"))
-            });
-          }
-        } else {
-          PorezType item = new PorezType {
-            Stopa = ProperNumber(DataBillToSend.VATTaxRate_Bill),
-            Osnovica = ProperNumber(DataBillToSend.VATBase_Bill),
-            Iznos = ProperNumber(DataBillToSend.VATAmount_Bill)
-          };
-          racunType.Pdv.Add(item);
+                    }
+                    else
+                    {
+                        PorezType item = new PorezType
+                        {
+                            Stopa = ProperNumber(DataBillToSend.VATTaxRate_Bill),
+                            Osnovica = ProperNumber(DataBillToSend.VATBase_Bill),
+                            Iznos = ProperNumber(DataBillToSend.VATAmount_Bill)
+                        };
+                        racunType.Pdv.Add(item);
+                    }
+                }
+            }
+            else
+            {
+                /*
+          racunType.Pdv.Add(new PorezType {
+            Osnovica = ProperNumber("0.00"),
+            Iznos = ProperNumber("0.00"),
+            Stopa = ProperNumber("0.00")
+          });*/
+            }
+            if (notes.Length > 0)
+            {
+                int count = Regex.Matches(notes, "/", RegexOptions.IgnoreCase).Count;
+                if (count > 1 && notes.Contains(";"))
+                {
+                    string[] array = notes.Split(';', '\r', '\n');
+                    racunType.ParagonBrRac = array.GetValue(0).ToString();
+                }
+            }
+            string text = (!(AppLink.UseCertificateFile == "1")) ? Razno.ZastitniKodIzracun(CertificateName, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString()) : Razno.ZastitniKodIzracun(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString());
+
+            //Barcode generiranje
+            BarCode.GenerateQrCode(text, DataBillToSend.BillDate_Bill, racunType.IznosUkupno.ToString(), DataBillToSend.IdTicket);
+            string text2 = DataBillToSend.Notes;
+            bool flag = false;
+            if (text2.Length == 0)
+            {
+                text2 = "ZKI: " + text;
+                flag = true;
+            }
+            else if (!text2.Contains("ZKI:"))
+            {
+                text2 = text2 + "\r\nZKI: " + text;
+                flag = true;
+            }
+            if (flag)
+            {
+                MerlinData.SaveNotes(DataBillToSend.IdTicket, text2);
+            }
+            racunType.ZastKod = text;
+            racunType.NakDost = DataBillToSend.MarkSubseqBillDelivery_Bill;
+            CentralniInformacijskiSustav centralniInformacijskiSustav = new CentralniInformacijskiSustav();
+            centralniInformacijskiSustav.SoapMessageSending += cis_SoapMessageSending;
+            centralniInformacijskiSustav.SoapMessageSent += cis_SoapMessageSent;
+            XmlDocument xmlDocument = centralniInformacijskiSustav.PosaljiRacun(racunType, CertificateName);
+            if (xmlDocument != null)
+            {
+                bool flag2 = Potpisivanje.ProvjeriPotpis(xmlDocument);
+            }
+            else
+            {
+                stopWatch.Stop();
+            }
+            return xmlDocument;
+
         }
-      }
-    } else {
-            /*
-      racunType.Pdv.Add(new PorezType {
-        Osnovica = ProperNumber("0.00"),
-        Iznos = ProperNumber("0.00"),
-        Stopa = ProperNumber("0.00")
-      });*/
-    }
-    if (notes.Length > 0) {
-      int count = Regex.Matches(notes, "/", RegexOptions.IgnoreCase).Count;
-      if (count > 1 && notes.Contains(";")) {
-        string[] array = notes.Split(';', '\r', '\n');
-        racunType.ParagonBrRac = array.GetValue(0).ToString();
-      }
-    }
-    string text = (!(AppLink.UseCertificateFile == "1")) ? Razno.ZastitniKodIzracun(CertificateName, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString()) : Razno.ZastitniKodIzracun(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString());
-    string text2 = DataBillToSend.Notes;
-    bool flag = false;
-    if (text2.Length == 0) {
-      text2 = "ZKI: " + text;
-      flag = true;
-    } else if (!text2.Contains("ZKI:")) {
-      text2 = text2 + "\r\nZKI: " + text;
-      flag = true;
-    }
-    if (flag) {
-      MerlinData.SaveNotes(DataBillToSend.IdTicket, text2);
-    }
-    racunType.ZastKod = text;
-    racunType.NakDost = DataBillToSend.MarkSubseqBillDelivery_Bill;
-    CentralniInformacijskiSustav centralniInformacijskiSustav = new CentralniInformacijskiSustav();
-    centralniInformacijskiSustav.SoapMessageSending += cis_SoapMessageSending;
-    centralniInformacijskiSustav.SoapMessageSent += cis_SoapMessageSent;
-    XmlDocument xmlDocument = centralniInformacijskiSustav.PosaljiRacun(racunType, CertificateName);
-    if (xmlDocument != null) {
-      bool flag2 = Potpisivanje.ProvjeriPotpis(xmlDocument);
-    } else {
-      stopWatch.Stop();
-    }
-    return xmlDocument;
+        catch(Exception e)
+        {
+            LogFile.LogToFile("Greška se desila u fiskalizaciji računa "+e.Message);
+            throw new Exception(e.Message);
+        }
+    
   }
 
   public XmlDocument sendBillCheck (DataBill dataBillToSend) {
@@ -521,35 +558,65 @@ public class MainForm : Form {
               }
               goto IL_0b42;
               IL_0b42:
-              try {
+              try 
+                        {
+
                                 Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
-                lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
-                XmlDocument xmlDocument2 = sendBill(listBill);
-                if (xmlDocument2 != null) {
-                  Tuple<string, string> tuple2 = XmlDokumenti.DohvatiStatusGreške(xmlDocument2);
-                  if (tuple2 != null && !tuple2.Item1.Equals("v100")) {
-                    ErrorCode = tuple2.Item1;
-                    ErrorMessage = Translations.Translate(tuple2.Item2);
-                    MessageAlert(ErrorCode + " - " + ErrorMessage, Translations.Translate("Greška"));
-                    SimpleLog.Warning("Za račun: *" + listBill.IdTicket + "* " + ErrorCode + " - " + ErrorMessage);
-                                        Log.WriteLog(NumLog.TestFailed, 0, "", placeholders, ErrorCode, ErrorMessage);
-                    continue;
-                  }
-                  txtResponse.Text = xmlDocument2.OuterXml;
-                  progressBar1.Value += num;
-                                    Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
-                }
-              } catch (Exception ex3) {
-                SimpleLog.Log(ex3);
-                if (ex3.Message.ToLowerInvariant().Contains("network password")) {
-                  MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
-                } else {
-                  MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-                }
-                                Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
-                                SaveErrorOnBill(listBill.IdTicket, "ERROR_JIR:Nije fiskalizirano");
-                                continue;
-              }
+                                lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
+                                XmlDocument xmlDocument2 = sendBill(listBill);
+                                if (xmlDocument2 != null) {
+                                    
+                                Tuple<string, string> tuple2 = XmlDokumenti.DohvatiStatusGreške(xmlDocument2);
+                  
+                                if (tuple2 != null && !tuple2.Item1.Equals("v100")) {
+                    
+                                    ErrorCode = tuple2.Item1;
+                    
+                                    ErrorMessage = Translations.Translate(tuple2.Item2);
+                    
+                                    MessageAlert(ErrorCode + " - " + ErrorMessage, Translations.Translate("Greška"));
+                    
+                                    SimpleLog.Warning("Za račun: *" + listBill.IdTicket + "* " + ErrorCode + " - " + ErrorMessage);
+                                       
+                                    Log.WriteLog(NumLog.TestFailed, 0, "", placeholders, ErrorCode, ErrorMessage);
+                    
+                                    continue;
+                  
+                                }
+                  
+                                txtResponse.Text = xmlDocument2.OuterXml;
+                  
+                                progressBar1.Value += num;
+                                    
+                                Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
+                
+                            }
+              
+                        } 
+                        catch (Exception ex3) {
+                
+                            SimpleLog.Log(ex3);
+                
+                            if (ex3.Message.ToLowerInvariant().Contains("network password")) 
+                            {
+                  
+                                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
+                
+                            } 
+                            else
+                            {
+                  
+                                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
+                
+                            }
+                                
+                            Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
+                               
+                            SaveErrorOnBill(listBill.IdTicket, "ERROR_JIR:Nije fiskalizirano");
+                               
+                            continue;
+              
+                        }
               if (string.IsNullOrEmpty(txtResponse.Text)) {
                                 Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
                                 SaveErrorOnBill(listBill.IdTicket, "ERROR_JIR:Nije fiskalizirano");
