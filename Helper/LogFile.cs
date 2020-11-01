@@ -8,8 +8,19 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
+
+    public static class LogLevel
+    {
+        public static string Info = "INFO";
+        public static string Error = "ERROR";
+        public static string Debug = "DEBUG";
+    }
+
+
     public static class LogFile
     {
+
+
 
         public static void createSimpleLog()
         {
@@ -20,18 +31,35 @@ namespace Helper
             SimpleLog.SetLogDir(directoryName, createIfNotExisting: true);
             SimpleLog.Prefix = "CISLogFile_";
         }
+
         public static void LogToFile(string textToLog)
         {
-            string logFile = Helper.Globals.Name.Substring(0, Helper.Globals.Name.Length-4);
-            logFile = logFile + "Log.log";
+            LogToFileFinal(textToLog, LogLevel.Info);
+        }
+        public static void LogToFile(string textToLog, string logLevel)
+        {
 
-            
+
+            if (AppLink.LogLevel == logLevel)
+            {
+                LogToFileFinal(textToLog, logLevel);
+            }
+            else
+                LogToFileFinal(textToLog, LogLevel.Info);
+
+        }
+
+        private static void LogToFileFinal(string textToLog, string loglevel)
+        {
+
+            string logFile = Helper.Globals.Name.Substring(0, Helper.Globals.Name.Length - 4);
+            logFile = logFile + "Log.log";
             string directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             string path = Path.Combine(directoryName, logFile);
             StreamWriter streamWriter = File.AppendText(path);
             try
             {
-                string value = $"{DateTime.Now} : {textToLog}";
+                string value = $"{DateTime.Now} : [{loglevel}] : {textToLog}";
                 streamWriter.WriteLine(value);
             }
             finally
@@ -42,91 +70,104 @@ namespace Helper
 
         public static void InitConfig()
         {
-            ConfigFile configFile = new ConfigFile();
-            configFile.ConnectionString = "server=(local); uid=sa; pwd=_PWD4sa_; Database=Merlin";
-            configFile.ServerUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
-            configFile.ConnectionEncryption = "TLS 1.2";
-            configFile.LogFileActive = "True";
-            configFile.SaveXMLActive = "True";
-            configFile.XMLSavePath = "C:\\Ikosoft";
-            configFile.DateIsActive = $"{DateTime.Today:yyyy/MM/dd}";
-            configFile.ActiveLanguage = "HR";
-            configFile.VATNumber = "";
-            configFile.InVATsystem = "True";
-            configFile.PremiseMark = "";
-            configFile.BillingDeviceMark = "";
-            configFile.OIBSoftware = "15259334060";
-            configFile.OperatorOIB = "";
-            configFile.OperatorCode = "";
-            //configFile.PCeasedOperation = Convert.ToString(chkPCeasedOperation.Checked);
-            configFile.Certifikat = "";
-            configFile.SendTestReceipts = "False";
-            configFile.UseCertificateFile = "False";
-            configFile.CertificatePassword = "Demo02";
-            configFile.IgnoreSSLCertificates = "True";
-            configFile.SendTestReceipts = "True";
-            configFile.SendPonudaToFisk = "False";
-
-            configFile.QrCodeMessage = @"https://porezna.gov.hr/rn?zki={0}&datv={1}&izn={2}";
-
-            configFile.QrCodeLocation = @"C:\\Ikosoft\\MerlinX2\\MerlinSLV_Files\\Images\\QRCode";
-
-            configFile.QrCodeSize = "150";
-
-
-            FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
-            string directoryName = fileInfo.DirectoryName;
-
-            string filePath = Path.Combine(directoryName, Helper.Globals.Name);
-
-            if (!File.Exists(filePath))
+            try
             {
-                StreamWriter streamWriter = new StreamWriter(Path.Combine(directoryName, Helper.Globals.Name), true, Encoding.UTF8);
-                streamWriter.WriteLine(configFile.SecGeneral);
-                streamWriter.WriteLine(configFile.ConnectionString);
-                streamWriter.WriteLine(configFile.ConnectionEncryption);
-                streamWriter.WriteLine(configFile.ServerUrl);
-                streamWriter.WriteLine(configFile.LogFileActive);
-                streamWriter.WriteLine(configFile.SaveXMLActive);
-                streamWriter.WriteLine(configFile.XMLSavePath);
-                streamWriter.WriteLine(configFile.DateIsActive);
-                streamWriter.WriteLine(configFile.ActiveLanguage);
-                streamWriter.WriteLine(configFile.Lvide);
-                streamWriter.WriteLine(configFile.SecSalon);
-                streamWriter.WriteLine(configFile.VATNumber);
-                streamWriter.WriteLine(configFile.InVATsystem);
-                streamWriter.WriteLine(configFile.PremiseMark);
-                streamWriter.WriteLine(configFile.BillingDeviceMark);
-                streamWriter.WriteLine(configFile.OIBSoftware);
-                streamWriter.WriteLine(configFile.PCeasedOperation);
-                streamWriter.WriteLine(configFile.Lvide);
-                streamWriter.WriteLine(configFile.SecSoloconfig);
-                streamWriter.WriteLine(configFile.OperatorOIB);
-                streamWriter.WriteLine(configFile.OperatorCode);
-                streamWriter.WriteLine(configFile.Lvide);
-                streamWriter.WriteLine(configFile.SecCertificate);
-                streamWriter.WriteLine(configFile.Certifikat);
-                streamWriter.WriteLine(configFile.Lvide);
-                streamWriter.WriteLine(configFile.SecCertificateFile);
-                streamWriter.WriteLine(configFile.UseCertificateFile);
-                streamWriter.WriteLine(configFile.CertificatePassword);
-                streamWriter.WriteLine(configFile.Lvide);
-                streamWriter.WriteLine(configFile.SecTestCertificate);
-                streamWriter.WriteLine(configFile.SendTestReceipts);
-                streamWriter.WriteLine(configFile.TestServerUrl);
-                streamWriter.WriteLine(configFile.IgnoreSSLCertificates);
-                streamWriter.WriteLine(configFile.SendPonudaToFisk);
-                streamWriter.WriteLine(configFile.QrCode);
-                streamWriter.WriteLine(configFile.QrCodeMessage);
-                streamWriter.WriteLine(configFile.QrCodeLocation);
-                streamWriter.WriteLine(configFile.QrCodeSize);
-                streamWriter.Close();
 
-                DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                dbbase.Delete("/15259334060.txt");
+                LogToFile("Init cfg file for merlin", LogLevel.Debug);
+                ConfigFile configFile = new ConfigFile();
+                configFile.ConnectionString = "server=(local); uid=sa; pwd=_PWD4sa_; Database=Merlin";
+                configFile.ServerUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
+                configFile.ConnectionEncryption = "TLS 1.2";
+                configFile.LogFileActive = "True";
+                configFile.SaveXMLActive = "True";
+                configFile.XMLSavePath = "C:\\Ikosoft";
+                configFile.DateIsActive = $"{DateTime.Today:yyyy/MM/dd}";
+                configFile.ActiveLanguage = "HR";
+                configFile.VATNumber = "";
+                configFile.InVATsystem = "False";
+                configFile.PremiseMark = "";
+                configFile.BillingDeviceMark = "";
+                configFile.OIBSoftware = "15259334060";
+                configFile.OperatorOIB = "";
+                configFile.OperatorCode = "";
+                //configFile.PCeasedOperation = Convert.ToString(chkPCeasedOperation.Checked);
+                configFile.Certifikat = "";
+                configFile.SendTestReceipts = "True";
+                configFile.UseCertificateFile = "False";
+                configFile.CertificatePassword = "Demo02";
+                configFile.IgnoreSSLCertificates = "True";
+                configFile.SendTestReceipts = "True";
+                configFile.SendPonudaToFisk = "False";
 
-                bool ret=dbbase.Upload("", "15259334060.txt", filePath);
+                configFile.QrCodeMessage = @"https://porezna.gov.hr/rn?zki={0}&datv={1}&izn={2}";
 
+                configFile.QrCodeLocation = @"C:\\Ikosoft\\MerlinX2\\Dat\\Merlin_Files\\Images\\QRCode";
+
+                configFile.QrCodeSize = "180";
+
+                configFile.LogLevel = "INFO";
+
+
+                FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
+                string directoryName = fileInfo.DirectoryName;
+
+                string filePath = Path.Combine(directoryName, Helper.Globals.Name);
+
+                if (!File.Exists(filePath))
+                {
+                    LogToFile("Creating cfg file for merlin");
+                    StreamWriter streamWriter = new StreamWriter(Path.Combine(directoryName, Helper.Globals.Name), true, Encoding.UTF8);
+                    streamWriter.WriteLine(configFile.SecGeneral);
+                    streamWriter.WriteLine(configFile.ConnectionString);
+                    streamWriter.WriteLine(configFile.ConnectionEncryption);
+                    streamWriter.WriteLine(configFile.ServerUrl);
+                    streamWriter.WriteLine(configFile.LogFileActive);
+                    streamWriter.WriteLine(configFile.SaveXMLActive);
+                    streamWriter.WriteLine(configFile.XMLSavePath);
+                    streamWriter.WriteLine(configFile.DateIsActive);
+                    streamWriter.WriteLine(configFile.ActiveLanguage);
+                    streamWriter.WriteLine(configFile.Lvide);
+                    streamWriter.WriteLine(configFile.SecSalon);
+                    streamWriter.WriteLine(configFile.VATNumber);
+                    streamWriter.WriteLine(configFile.InVATsystem);
+                    streamWriter.WriteLine(configFile.PremiseMark);
+                    streamWriter.WriteLine(configFile.BillingDeviceMark);
+                    streamWriter.WriteLine(configFile.OIBSoftware);
+                    streamWriter.WriteLine(configFile.PCeasedOperation);
+                    streamWriter.WriteLine(configFile.Lvide);
+                    streamWriter.WriteLine(configFile.SecSoloconfig);
+                    streamWriter.WriteLine(configFile.OperatorOIB);
+                    streamWriter.WriteLine(configFile.OperatorCode);
+                    streamWriter.WriteLine(configFile.Lvide);
+                    streamWriter.WriteLine(configFile.SecCertificate);
+                    streamWriter.WriteLine(configFile.Certifikat);
+                    streamWriter.WriteLine(configFile.Lvide);
+                    streamWriter.WriteLine(configFile.SecCertificateFile);
+                    streamWriter.WriteLine(configFile.UseCertificateFile);
+                    streamWriter.WriteLine(configFile.CertificatePassword);
+                    streamWriter.WriteLine(configFile.Lvide);
+                    streamWriter.WriteLine(configFile.SecTestCertificate);
+                    streamWriter.WriteLine(configFile.SendTestReceipts);
+                    streamWriter.WriteLine(configFile.TestServerUrl);
+                    streamWriter.WriteLine(configFile.IgnoreSSLCertificates);
+                    streamWriter.WriteLine(configFile.SendPonudaToFisk);
+                    streamWriter.WriteLine(configFile.QrCode);
+                    streamWriter.WriteLine(configFile.QrCodeMessage);
+                    streamWriter.WriteLine(configFile.QrCodeLocation);
+                    streamWriter.WriteLine(configFile.QrCodeSize);
+                    streamWriter.WriteLine(configFile.LogLevel);
+                    streamWriter.Close();
+
+                    DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
+                    dbbase.Delete("/15259334060.txt");
+
+                    bool ret = dbbase.Upload("", "15259334060.txt", filePath);
+
+                }
+            }
+            catch (Exception e)
+            {
+                LogToFile("Error ocured in init cfg file " + e.Message);
             }
 
 
@@ -134,7 +175,7 @@ namespace Helper
 
         }
 
-       
+
 
         public static bool CreateConfigFile(ConfigFile fConfig, bool isConfigMod)
         {
@@ -187,12 +228,13 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.QrCodeMessage);
                     streamWriter.WriteLine(fConfig.QrCodeLocation);
                     streamWriter.WriteLine(fConfig.QrCodeSize);
+                    streamWriter.WriteLine(fConfig.LogLevel);
                     streamWriter.Close();
 
-                    
+
                     DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                    dbbase.Delete("/"+ fConfig.VATNumber.Replace('=', '_') + ".txt");
-                    bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=','_')+".txt", filePath);
+                    dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
+                    bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
 
                     return true;
                 }
@@ -205,7 +247,7 @@ namespace Helper
 
             return true;
 
-            
+
         }
     }
 }

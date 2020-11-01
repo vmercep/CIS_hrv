@@ -54,9 +54,11 @@ public static class AppLink {
 
   public static string QrCodeMessage => GetParams("QrCodeMessage", "https://porezna.gov.hr/rn?zki={0}&datv={1}&izn={2}");
 
-    public static string QrCodeLocation => GetParams("QrCodeLocation", "C:\\Ikosoft\\MerlinX2\\MerlinSLV_Files\\Images\\QRCode");
+    public static string QrCodeLocation => GetParams("QrCodeLocation", "C:\\Ikosoft\\MerlinX2\\Dat\\Merlin_Files\\Images\\QRCode");
 
-    public static string QrCodeSize => GetParams("QrCodeSize", "150");
+    public static string QrCodeSize => GetParams("QrCodeSize", "180");
+
+    public static string LogLevel => GetParams("LogLevel", "INFO");
 
     private static string GetParams (string name, string defaultValue) {
     FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);

@@ -1532,7 +1532,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_912C886C7016436E9F172DF0F3E7A403"
             {
-            "SourcePath" = "8:..\\385_fisk\\obj\\Release\\385_fisk.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B75319E23DDD41C4A74C5C8DEEA7F51A"

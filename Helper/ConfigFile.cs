@@ -74,6 +74,8 @@
 
         public string QrCode;
 
+        private string _LogLevel;
+
         public string ConnectionString
         {
             get
@@ -420,6 +422,18 @@
             set
             {
                 _QrCodeSize = "QrCodeSize=" + value;
+            }
+        }
+
+        public string LogLevel
+        {
+            get
+            {
+                return _LogLevel;
+            }
+            set
+            {
+                _LogLevel = "LogLevel=" + value;
             }
         }
 

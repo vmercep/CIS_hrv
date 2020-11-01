@@ -10,109 +10,109 @@ using System.Windows.Forms;
 using System.Xml;
 
 public class Config : Form {
-  public bool runNormalMode = false;
+    public bool runNormalMode = false;
 
-  private bool state = false;
+    private bool state = false;
 
-  private readonly Stopwatch stopWatch = new Stopwatch();
+    private readonly Stopwatch stopWatch = new Stopwatch();
 
-  private string folderPath = string.Empty;
+    private string folderPath = string.Empty;
 
-  private ToolTip tooltip1 = new ToolTip();
+    private ToolTip tooltip1 = new ToolTip();
 
-  private IContainer components = null;
+    private IContainer components = null;
 
-  private Button btnSaveAndQuit;
+    private Button btnSaveAndQuit;
 
-  private Label lblConnectionString;
+    private Label lblConnectionString;
 
-  private TextBox txtConnectString;
+    private TextBox txtConnectString;
 
-  private TextBox txtURL;
+    private TextBox txtURL;
 
-  private Label lblURL;
+    private Label lblURL;
 
-  private CheckBox chkLogFileActive;
+    private CheckBox chkLogFileActive;
 
-  private DateTimePicker dtpDateActive;
+    private DateTimePicker dtpDateActive;
 
-  private Label lblDateActive;
+    private Label lblDateActive;
 
-  private GroupBox grpBasic;
+    private GroupBox grpBasic;
 
-  private GroupBox grpPremise;
+    private GroupBox grpPremise;
 
-  private Label lblOibSoftware;
+    private Label lblOibSoftware;
 
-  private TextBox txtOibSoftware;
+    private TextBox txtOibSoftware;
 
-  private Label lblBillingDeviceMark;
+    private Label lblBillingDeviceMark;
 
-  private TextBox txtBillingDeviceMark;
+    private TextBox txtBillingDeviceMark;
 
-  private Label lblPremiseMark;
+    private Label lblPremiseMark;
 
-  private TextBox txtPremiseMark;
+    private TextBox txtPremiseMark;
 
-  private CheckBox chkVatActive;
+    private CheckBox chkVatActive;
 
-  private Label lblOIB;
+    private Label lblOIB;
 
-  private TextBox txtVatNumber;
+    private TextBox txtVatNumber;
 
-  private GroupBox grpSolo;
+    private GroupBox grpSolo;
 
-  private Label lblCodeOperator;
+    private Label lblCodeOperator;
 
-  private TextBox txtCodeOperator;
+    private TextBox txtCodeOperator;
 
-  private Label lblOibOperator;
+    private Label lblOibOperator;
 
-  private TextBox txtOibOperator;
+    private TextBox txtOibOperator;
 
-  private Button btnUnlockSettings;
+    private Button btnUnlockSettings;
 
-  private PictureBox pictureBox1;
+    private PictureBox pictureBox1;
 
-  private Button btnQuit;
+    private Button btnQuit;
 
-  private GroupBox grpCertificate;
+    private GroupBox grpCertificate;
 
-  private Label lblCertificate;
+    private Label lblCertificate;
 
-  private TextBox txtCertificate;
+    private TextBox txtCertificate;
 
-  private Button btnXmlPathChoose;
+    private Button btnXmlPathChoose;
 
-  private Label lblXmlPath;
+    private Label lblXmlPath;
 
-  private CheckBox chkSaveXmlActive;
+    private CheckBox chkSaveXmlActive;
 
-  private ComboBox cmbConnectionEncryption;
+    private ComboBox cmbConnectionEncryption;
 
-  private Label lblConnectionEncryption;
+    private Label lblConnectionEncryption;
 
-  private Label lblErrorMessage;
+    private Label lblErrorMessage;
 
-  private Label lblActiveLanguage;
+    private Label lblActiveLanguage;
 
-  private ComboBox cmbActiveLanguage;
+    private ComboBox cmbActiveLanguage;
 
-  private GroupBox grpTestCertificate;
+    private GroupBox grpTestCertificate;
 
-  private CheckBox chkSendTest;
+    private CheckBox chkSendTest;
 
-  private Button btnProcessBills;
+    private Button btnProcessBills;
 
-  private GroupBox grpCertificateFile;
+    private GroupBox grpCertificateFile;
 
-  private CheckBox chkUseCertificateFile;
+    private CheckBox chkUseCertificateFile;
 
-  private Label label1;
+    private Label label1;
 
-  private Button btnCertificateFile;
+    private Button btnCertificateFile;
 
-  private Label label2;
+    private Label label2;
     private CheckBox cbCheckSSL;
     private Button btUpdate;
     private Label lbVerzija;
@@ -124,240 +124,322 @@ public class Config : Form {
     private Label label4;
     private TextBox txtQrSize;
     private Label label5;
+    private ComboBox cmbLogLevel;
+    private Label lbloglevel;
     private TextBox txtCertificatePassword;
 
-  public Config () {
-    InitializeComponent();
-  }
-
-  private void populateTranslations () {
-    Text = Translations.Translate(Text);
-    tooltip1.SetToolTip(btnUnlockSettings, Translations.Translate("Zaštićene postavke"));
-    //tooltip1.SetToolTip(btnSendData, Translations.Translate("Pošalji u poreznu upravu"));
-    tooltip1.SetToolTip(btnSaveAndQuit, Translations.Translate("Spremi / Izađi"));
-    tooltip1.SetToolTip(btnQuit, Translations.Translate("Izađi bez spremanja"));
-    lblErrorMessage.Text = Translations.Translate(lblErrorMessage.Text);
-    grpBasic.Text = Translations.Translate(grpBasic.Text);
-    chkSaveXmlActive.Text = Translations.Translate(chkSaveXmlActive.Text);
-    chkLogFileActive.Text = Translations.Translate(chkLogFileActive.Text);
-    lblXmlPath.Text = Translations.Translate(lblXmlPath.Text);
-    btnXmlPathChoose.Text = Translations.Translate(btnXmlPathChoose.Text);
-    lblDateActive.Text = Translations.Translate(lblDateActive.Text);
-    lblActiveLanguage.Text = Translations.Translate(lblActiveLanguage.Text);
-    grpPremise.Text = Translations.Translate(grpPremise.Text);
-    lblOIB.Text = Translations.Translate(lblOIB.Text);
-    chkVatActive.Text = Translations.Translate(chkVatActive.Text);
-    //lblBusinessPremiseMark.Text = Translations.Translate(lblBusinessPremiseMark.Text);
-    //lblStreet.Text = Translations.Translate(lblStreet.Text);
-    //lblHouseNumber.Text = Translations.Translate(lblHouseNumber.Text);
-    //lblHouseNumberExtra.Text = Translations.Translate(lblHouseNumberExtra.Text);
-    //lblZipCode.Text = Translations.Translate(lblZipCode.Text);
-    //lblTown.Text = Translations.Translate(lblTown.Text);
-    //lblDistrict.Text = Translations.Translate(lblDistrict.Text);
-    //lblWorkingHours.Text = Translations.Translate(lblWorkingHours.Text);
-    lblPremiseMark.Text = Translations.Translate(lblPremiseMark.Text);
-    lblBillingDeviceMark.Text = Translations.Translate(lblBillingDeviceMark.Text);
-    lblOibSoftware.Text = Translations.Translate(lblOibSoftware.Text);
-    //chkPCeasedOperation.Text = Translations.Translate(chkPCeasedOperation.Text);
-    grpSolo.Text = Translations.Translate(grpSolo.Text);
-    lblOibOperator.Text = Translations.Translate(lblOibOperator.Text);
-    lblCodeOperator.Text = Translations.Translate(lblCodeOperator.Text);
-    grpCertificate.Text = Translations.Translate(grpCertificate.Text);
-    lblCertificate.Text = Translations.Translate(lblCertificate.Text);
-    grpTestCertificate.Text = Translations.Translate(grpTestCertificate.Text);
-    chkSendTest.Text = Translations.Translate(chkSendTest.Text);
-        lbVerzija.Text="Verzija programa: CIS_HRV_ "+ Assembly.GetEntryAssembly().GetName().Version;
+    public Config()
+    {
+        InitializeComponent();
     }
 
-  private void btnSaveAndQuitClick (object sender, EventArgs e) {
-    if (saveConfig()) {
-      Application.Exit();
-    }
-  }
-    
-  private void verifyData () {
-    state = false;
-    lblErrorMessage.Visible = false;
-    if (txtConnectString.TextLength < 52 || txtConnectString.Text.Contains(":")) {
-      displayFieldError(txtConnectString, error: true);
-    } else {
-      displayFieldError(txtConnectString, error: false);
-    }
-    if (txtURL.TextLength < 54) {
-      displayFieldError(txtURL, error: true);
-    } else {
-      displayFieldError(txtURL, error: false);
-    }
-    if (txtVatNumber.TextLength < 1 || txtVatNumber.TextLength > 11) {
-      displayFieldError(txtVatNumber, error: true);
-    } else {
-      displayFieldError(txtVatNumber, error: false);
-    }
-    if (txtPremiseMark.TextLength < 1) {
-      displayFieldError(txtPremiseMark, error: true);
-    } else {
-      displayFieldError(txtPremiseMark, error: false);
-    }
-    if (txtBillingDeviceMark.TextLength < 1) {
-      displayFieldError(txtBillingDeviceMark, error: true);
-    } else {
-      displayFieldError(txtBillingDeviceMark, error: false);
-    }
-    if (txtOibSoftware.TextLength < 1) {
-      displayFieldError(txtOibSoftware, error: true);
-    } else {
-      displayFieldError(txtOibSoftware, error: false);
-    }
-    if (chkUseCertificateFile.CheckState == CheckState.Unchecked) {
-      if (txtCertificate.TextLength < 1) {
-        displayFieldError(txtCertificate, error: true);
-      } else {
-        displayFieldError(txtCertificate, error: false);
-      }
-      displayFieldError(txtCertificatePassword, error: false);
-    }
-    if (txtVatNumber.TextLength != 11) {
-      displayFieldError(txtVatNumber, error: true);
-    } else {
-      displayFieldError(txtVatNumber, error: false);
+    private void populateTranslations()
+    {
+        Text = Translations.Translate(Text);
+        tooltip1.SetToolTip(btnUnlockSettings, Translations.Translate("Zaštićene postavke"));
+        //tooltip1.SetToolTip(btnSendData, Translations.Translate("Pošalji u poreznu upravu"));
+        tooltip1.SetToolTip(btnSaveAndQuit, Translations.Translate("Spremi / Izađi"));
+        tooltip1.SetToolTip(btnQuit, Translations.Translate("Izađi bez spremanja"));
+        lblErrorMessage.Text = Translations.Translate(lblErrorMessage.Text);
+        grpBasic.Text = Translations.Translate(grpBasic.Text);
+        chkSaveXmlActive.Text = Translations.Translate(chkSaveXmlActive.Text);
+        chkLogFileActive.Text = Translations.Translate(chkLogFileActive.Text);
+        lblXmlPath.Text = Translations.Translate(lblXmlPath.Text);
+        btnXmlPathChoose.Text = Translations.Translate(btnXmlPathChoose.Text);
+        lblDateActive.Text = Translations.Translate(lblDateActive.Text);
+        lblActiveLanguage.Text = Translations.Translate(lblActiveLanguage.Text);
+        grpPremise.Text = Translations.Translate(grpPremise.Text);
+        lblOIB.Text = Translations.Translate(lblOIB.Text);
+        chkVatActive.Text = Translations.Translate(chkVatActive.Text);
+        lblPremiseMark.Text = Translations.Translate(lblPremiseMark.Text);
+        lblBillingDeviceMark.Text = Translations.Translate(lblBillingDeviceMark.Text);
+        lblOibSoftware.Text = Translations.Translate(lblOibSoftware.Text);
+        grpSolo.Text = Translations.Translate(grpSolo.Text);
+        lblOibOperator.Text = Translations.Translate(lblOibOperator.Text);
+        lblCodeOperator.Text = Translations.Translate(lblCodeOperator.Text);
+        grpCertificate.Text = Translations.Translate(grpCertificate.Text);
+        lblCertificate.Text = Translations.Translate(lblCertificate.Text);
+        grpTestCertificate.Text = Translations.Translate(grpTestCertificate.Text);
+        chkSendTest.Text = Translations.Translate(chkSendTest.Text);
+        lbVerzija.Text = "Verzija programa: CIS_HRV_ " + Assembly.GetEntryAssembly().GetName().Version;
+        LogFile.LogToFile("Config screen loaded!", LogLevel.Debug);
     }
 
-    if (txtOibSoftware.TextLength != 11) {
-      displayFieldError(txtOibSoftware, error: true);
-    } else {
-      displayFieldError(txtOibSoftware, error: false);
+    private void btnSaveAndQuitClick(object sender, EventArgs e)
+    {
+        if (saveConfig())
+        {
+            Application.Exit();
+        }
     }
-    if (txtOibOperator.TextLength > 0) {
-      if (txtOibOperator.TextLength != 11) {
-        displayFieldError(txtOibOperator, error: true);
-      } else {
-        displayFieldError(txtOibOperator, error: false);
-      }
-    } else {
-      displayFieldError(txtOibOperator, error: false);
-    }
-    if (chkUseCertificateFile.CheckState == CheckState.Checked && txtCertificatePassword.TextLength < 1) {
-      displayFieldError(txtCertificatePassword, error: true);
-      displayFieldError(txtCertificate, error: false);
-    }
-  }
 
-  private void displayFieldError (Control ctrl, bool error) {
-    if (error) {
-      ctrl.BackColor = Color.LightCoral;
-      state = true;
-      lblErrorMessage.Visible = true;
-    } else {
-      ctrl.BackColor = Color.White;
-    }
-  }
+    private void verifyData()
+    {
+        state = false;
+        lblErrorMessage.Visible = false;
+        if (txtConnectString.TextLength < 52 || txtConnectString.Text.Contains(":"))
+        {
+            displayFieldError(txtConnectString, error: true);
+        }
+        else
+        {
+            displayFieldError(txtConnectString, error: false);
+        }
+        if (txtURL.TextLength < 54)
+        {
+            displayFieldError(txtURL, error: true);
+        }
+        else
+        {
+            displayFieldError(txtURL, error: false);
+        }
+        if (txtVatNumber.TextLength < 1 || txtVatNumber.TextLength > 11)
+        {
+            displayFieldError(txtVatNumber, error: true);
+        }
+        else
+        {
+            displayFieldError(txtVatNumber, error: false);
+        }
+        if (txtPremiseMark.TextLength < 1)
+        {
+            displayFieldError(txtPremiseMark, error: true);
+        }
+        else
+        {
+            displayFieldError(txtPremiseMark, error: false);
+        }
+        if (txtBillingDeviceMark.TextLength < 1)
+        {
+            displayFieldError(txtBillingDeviceMark, error: true);
+        }
+        else
+        {
+            displayFieldError(txtBillingDeviceMark, error: false);
+        }
+        if (txtOibSoftware.TextLength < 1)
+        {
+            displayFieldError(txtOibSoftware, error: true);
+        }
+        else
+        {
+            displayFieldError(txtOibSoftware, error: false);
+        }
+        if (chkUseCertificateFile.CheckState == CheckState.Unchecked)
+        {
+            if (txtCertificate.TextLength < 1)
+            {
+                displayFieldError(txtCertificate, error: true);
+            }
+            else
+            {
+                displayFieldError(txtCertificate, error: false);
+            }
+            displayFieldError(txtCertificatePassword, error: false);
+        }
+        if (txtVatNumber.TextLength != 11)
+        {
+            displayFieldError(txtVatNumber, error: true);
+        }
+        else
+        {
+            displayFieldError(txtVatNumber, error: false);
+        }
 
-  private void Config_Load (object sender, EventArgs e) {
-    txtConnectString.Text = AppLink.ConnectionString;
-    string connectionEncryption = AppLink.ConnectionEncryption;
-    if (!string.IsNullOrEmpty(connectionEncryption)) {
-      cmbConnectionEncryption.SelectedItem = connectionEncryption;
-    } else {
-      cmbConnectionEncryption.SelectedItem = "TLS 1.2";
+        if (txtOibSoftware.TextLength != 11)
+        {
+            displayFieldError(txtOibSoftware, error: true);
+        }
+        else
+        {
+            displayFieldError(txtOibSoftware, error: false);
+        }
+        if (txtOibOperator.TextLength > 0)
+        {
+            if (txtOibOperator.TextLength != 11)
+            {
+                displayFieldError(txtOibOperator, error: true);
+            }
+            else
+            {
+                displayFieldError(txtOibOperator, error: false);
+            }
+        }
+        else
+        {
+            displayFieldError(txtOibOperator, error: false);
+        }
+        if (chkUseCertificateFile.CheckState == CheckState.Checked && txtCertificatePassword.TextLength < 1)
+        {
+            displayFieldError(txtCertificatePassword, error: true);
+            displayFieldError(txtCertificate, error: false);
+        }
     }
-    txtURL.Text = AppLink.URL;
-    string logFileActive = AppLink.LogFileActive;
-    string a = logFileActive;
-    if (!(a == "0")) {
-      if (a == "1") {
-        chkLogFileActive.CheckState = CheckState.Checked;
-      } else {
-        chkLogFileActive.CheckState = CheckState.Checked;
-      }
-    } else {
-      chkLogFileActive.CheckState = CheckState.Unchecked;
+
+    private void displayFieldError(Control ctrl, bool error)
+    {
+        if (error)
+        {
+            ctrl.BackColor = Color.LightCoral;
+            state = true;
+            lblErrorMessage.Visible = true;
+        }
+        else
+        {
+            ctrl.BackColor = Color.White;
+        }
     }
-    string saveXMLActive = AppLink.SaveXMLActive;
-    string a2 = saveXMLActive;
-    if (!(a2 == "0")) {
-      if (a2 == "1") {
-        chkSaveXmlActive.CheckState = CheckState.Checked;
-      } else {
-        chkSaveXmlActive.CheckState = CheckState.Checked;
-      }
-    } else {
-      chkSaveXmlActive.CheckState = CheckState.Unchecked;
-    }
-    folderPath = AppLink.XMLSavePath;
-    string dateIsActive = AppLink.DateIsActive;
-    DateTime value = (!string.IsNullOrEmpty(dateIsActive)) ? Convert.ToDateTime(dateIsActive) : DateTime.Now;
-    dtpDateActive.Value = value;
-    string activeLanguage = AppLink.ActiveLanguage;
-    if (!string.IsNullOrEmpty(activeLanguage)) {
-      cmbActiveLanguage.SelectedItem = activeLanguage;
-    } else {
-      cmbActiveLanguage.SelectedItem = "hr";
-    }
-    txtVatNumber.Text = AppLink.VATNumber;
-    string inVATsystem = AppLink.InVATsystem;
-    string a3 = inVATsystem;
-    if (!(a3 == "0")) {
-      if (a3 == "1") {
-        chkVatActive.CheckState = CheckState.Checked;
-      } else {
-        chkVatActive.CheckState = CheckState.Checked;
-      }
-    } else {
-      chkVatActive.CheckState = CheckState.Unchecked;
-    }
-    string pCeasedOperation = AppLink.PCeasedOperation;
-    string a4 = pCeasedOperation;
-    if (!(a4 == "0")) {
-      if (a4 == "1") {
-        //chkPCeasedOperation.CheckState = CheckState.Checked;
-      } else {
-        //chkPCeasedOperation.CheckState = CheckState.Unchecked;
-      }
-    } else {
-      //chkPCeasedOperation.CheckState = CheckState.Unchecked;
-    }
-    txtPremiseMark.Text = AppLink.PremiseMark;
-    txtBillingDeviceMark.Text = AppLink.BillingDeviceMark;
-    txtOibSoftware.Text = AppLink.OIBSoftware;
-    txtOibOperator.Text = AppLink.OperatorOIB;
-    txtCodeOperator.Text = AppLink.OperatorCode;
-    txtCertificate.Text = AppLink.Certificate;
-    string sendTestReceipts = AppLink.SendTestReceipts;
-    string a5 = sendTestReceipts;
-    if (!(a5 == "0")) {
-      if (a5 == "1") {
-        chkSendTest.CheckState = CheckState.Checked;
-      } else {
-        chkSendTest.CheckState = CheckState.Unchecked;
-      }
-    } else {
-      chkSendTest.CheckState = CheckState.Unchecked;
-    }
-    string useCertificateFile = AppLink.UseCertificateFile;
-    string a6 = useCertificateFile;
-    if (!(a6 == "0")) {
-      if (a6 == "1") {
-        chkUseCertificateFile.CheckState = CheckState.Checked;
-      } else {
-        chkUseCertificateFile.CheckState = CheckState.Unchecked;
-      }
-    } else {
-      chkUseCertificateFile.CheckState = CheckState.Unchecked;
-    }
-    txtCertificatePassword.Text = AppLink.CertificatePassword;
-    txtConnectString.BackColor = Color.Gainsboro;
-    txtURL.BackColor = Color.Gainsboro;
-    txtOibOperator.BackColor = Color.Gainsboro;
-    txtCodeOperator.BackColor = Color.Gainsboro;
-    txtCertificate.BackColor = Color.Gainsboro;
-    tooltip1.AutoPopDelay = 5000;
-    tooltip1.InitialDelay = 1000;
-    tooltip1.ReshowDelay = 500;
-    tooltip1.ShowAlways = true;
+
+    private void Config_Load(object sender, EventArgs e)
+    {
+        LogFile.LogToFile("Config screen loading!", LogLevel.Debug);
+        txtConnectString.Text = AppLink.ConnectionString;
+        string connectionEncryption = AppLink.ConnectionEncryption;
+        if (!string.IsNullOrEmpty(connectionEncryption))
+        {
+            cmbConnectionEncryption.SelectedItem = connectionEncryption;
+        }
+        else
+        {
+            cmbConnectionEncryption.SelectedItem = "TLS 1.2";
+        }
+        txtURL.Text = AppLink.URL;
+        string logFileActive = AppLink.LogFileActive;
+        string a = logFileActive;
+        if (!(a == "0"))
+        {
+            if (a == "1")
+            {
+                chkLogFileActive.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                chkLogFileActive.CheckState = CheckState.Checked;
+            }
+        }
+        else
+        {
+            chkLogFileActive.CheckState = CheckState.Unchecked;
+        }
+        string saveXMLActive = AppLink.SaveXMLActive;
+        string a2 = saveXMLActive;
+        if (!(a2 == "0"))
+        {
+            if (a2 == "1")
+            {
+                chkSaveXmlActive.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                chkSaveXmlActive.CheckState = CheckState.Checked;
+            }
+        }
+        else
+        {
+            chkSaveXmlActive.CheckState = CheckState.Unchecked;
+        }
+        folderPath = AppLink.XMLSavePath;
+        string dateIsActive = AppLink.DateIsActive;
+        DateTime value = (!string.IsNullOrEmpty(dateIsActive)) ? Convert.ToDateTime(dateIsActive) : DateTime.Now;
+        dtpDateActive.Value = value;
+        string activeLanguage = AppLink.ActiveLanguage;
+        if (!string.IsNullOrEmpty(activeLanguage))
+        {
+            cmbActiveLanguage.SelectedItem = activeLanguage;
+        }
+        else
+        {
+            cmbActiveLanguage.SelectedItem = "hr";
+        }
+        txtVatNumber.Text = AppLink.VATNumber;
+        string inVATsystem = AppLink.InVATsystem;
+        string a3 = inVATsystem;
+        if (!(a3 == "0"))
+        {
+            if (a3 == "1")
+            {
+                chkVatActive.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                chkVatActive.CheckState = CheckState.Checked;
+            }
+        }
+        else
+        {
+            chkVatActive.CheckState = CheckState.Unchecked;
+        }
+        string pCeasedOperation = AppLink.PCeasedOperation;
+        string a4 = pCeasedOperation;
+        if (!(a4 == "0"))
+        {
+            if (a4 == "1")
+            {
+                //chkPCeasedOperation.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                //chkPCeasedOperation.CheckState = CheckState.Unchecked;
+            }
+        }
+        else
+        {
+            //chkPCeasedOperation.CheckState = CheckState.Unchecked;
+        }
+        txtPremiseMark.Text = AppLink.PremiseMark;
+        txtBillingDeviceMark.Text = AppLink.BillingDeviceMark;
+        txtOibSoftware.Text = AppLink.OIBSoftware;
+        txtOibOperator.Text = AppLink.OperatorOIB;
+        txtCodeOperator.Text = AppLink.OperatorCode;
+        txtCertificate.Text = AppLink.Certificate;
+        string sendTestReceipts = AppLink.SendTestReceipts;
+        string a5 = sendTestReceipts;
+        if (!(a5 == "0"))
+        {
+            if (a5 == "1")
+            {
+                chkSendTest.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                chkSendTest.CheckState = CheckState.Unchecked;
+            }
+        }
+        else
+        {
+            chkSendTest.CheckState = CheckState.Unchecked;
+        }
+        string useCertificateFile = AppLink.UseCertificateFile;
+        string a6 = useCertificateFile;
+        if (!(a6 == "0"))
+        {
+            if (a6 == "1")
+            {
+                chkUseCertificateFile.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                chkUseCertificateFile.CheckState = CheckState.Unchecked;
+            }
+        }
+        else
+        {
+            chkUseCertificateFile.CheckState = CheckState.Unchecked;
+        }
+        txtCertificatePassword.Text = AppLink.CertificatePassword;
+        txtConnectString.BackColor = Color.Gainsboro;
+        txtURL.BackColor = Color.Gainsboro;
+        txtOibOperator.BackColor = Color.Gainsboro;
+        txtCodeOperator.BackColor = Color.Gainsboro;
+        txtCertificate.BackColor = Color.Gainsboro;
+        tooltip1.AutoPopDelay = 5000;
+        tooltip1.InitialDelay = 1000;
+        tooltip1.ReshowDelay = 500;
+        tooltip1.ShowAlways = true;
         txtQrMessage.Text = AppLink.QrCodeMessage;
         txtQrSize.Text = AppLink.QrCodeSize;
         txtQrSaveLocation.Text = AppLink.QrCodeLocation;
-    populateTranslations();
+        populateTranslations();
 
         string useSSLValidation = AppLink.IgnoreSSLCertificates;
         if (!(useSSLValidation == "0"))
@@ -393,233 +475,270 @@ public class Config : Form {
             cbFiskPonude.CheckState = CheckState.Unchecked;
         }
 
+
+        string logLevel = AppLink.LogLevel;
+        if (!string.IsNullOrEmpty(logLevel))
+        {
+            cmbLogLevel.SelectedItem = logLevel;
+        }
+        else
+        {
+            cmbLogLevel.SelectedItem = "INFO";
+        }
+
     }
 
+
+
+    public static string inputBox (string prompt, string title, string defaultValue) 
+    {
+        InputBoxDialog inputBoxDialog = new InputBoxDialog();
+        inputBoxDialog.FormPrompt = prompt;
+        inputBoxDialog.FormCaption = title;
+        inputBoxDialog.DefaultValue = defaultValue;
+        inputBoxDialog.ShowDialog();
+        string inputResponse = inputBoxDialog.InputResponse;
+        inputBoxDialog.Close();
+        return inputResponse;
+    }
+
+    private void btnUnlockSettingClick (object sender, EventArgs e) 
+    {
+        LogFile.LogToFile("Unlock setting screen!", LogLevel.Debug);
+        string text = inputBox(Translations.Translate("Unesite tehničku šifru"), Translations.Translate("Tehnička šifra"), "");
+        string techCode = AppLink.GetTechCode();
+
+        if (text == techCode) 
+        {
+                      
+            LogFile.LogToFile("Settings unlocked!", LogLevel.Debug);          
+            dtpDateActive.Enabled = true;            
+            cmbActiveLanguage.Enabled = true;
+            chkVatActive.Enabled = true;
+            txtConnectString.Enabled = true;
+            cmbConnectionEncryption.Enabled = true; 
+            btnXmlPathChoose.Enabled = true;            
+            txtURL.Enabled = true;            
+            chkLogFileActive.Enabled = true;            
+            chkSaveXmlActive.Enabled = true;            
+            txtOibOperator.Enabled = true;            
+            txtCodeOperator.Enabled = true;            
+            txtVatNumber.Enabled = true;          
+            txtPremiseMark.Enabled = true;            
+            txtBillingDeviceMark.Enabled = true;            
+            txtOibSoftware.Enabled = true;            
+            txtCertificate.Enabled = true;            
+            chkUseCertificateFile.Enabled = true;            
+            btnCertificateFile.Enabled = true;            
+            txtCertificatePassword.Enabled = true;            
+            cbCheckSSL.Enabled = true;            
+            txtCertificatePassword.BackColor = Color.White;            
+            chkSendTest.Enabled = true;            
+            txtConnectString.BackColor = Color.White;            
+            txtURL.BackColor = Color.White;            
+            txtOibOperator.BackColor = Color.White;            
+            txtCodeOperator.BackColor = Color.White;            
+            txtVatNumber.BackColor = Color.White;           
+            txtPremiseMark.BackColor = Color.White;            
+            txtBillingDeviceMark.BackColor = Color.White;            
+            txtOibSoftware.BackColor = Color.White;            
+            txtCertificate.BackColor = Color.White;
+            txtQrMessage.Enabled = true;            
+            txtQrMessage.BackColor = Color.White;            
+            txtQrSaveLocation.Enabled = true;           
+            txtQrSaveLocation.BackColor = Color.White;            
+            txtQrSize.Enabled = true;            
+            txtQrSize.BackColor = Color.White;
+            cbFiskPonude.Enabled = true;                    
+            cmbLogLevel.Enabled = true;
+        } 
+        else if (text.Length > 0) 
+        {
+                LogFile.LogToFile("Wrong password for setting screen entered!", LogLevel.Debug);
+                MessageBox.Show(Translations.Translate("Pogrešna šifra!"), Translations.Translate("Greška"), MessageBoxButtons.OK, MessageBoxIcon.Hand);
+    
+        }
+  }
    
-
-    public static string inputBox (string prompt, string title, string defaultValue) {
-    InputBoxDialog inputBoxDialog = new InputBoxDialog();
-    inputBoxDialog.FormPrompt = prompt;
-    inputBoxDialog.FormCaption = title;
-    inputBoxDialog.DefaultValue = defaultValue;
-    inputBoxDialog.ShowDialog();
-    string inputResponse = inputBoxDialog.InputResponse;
-    inputBoxDialog.Close();
-    return inputResponse;
-  }
-
-  private void btnUnlockSettingClick (object sender, EventArgs e) {
-    string text = inputBox(Translations.Translate("Unesite tehničku šifru"), Translations.Translate("Tehnička šifra"), "");
-    string techCode = AppLink.GetTechCode();
-    if (text == techCode) {
-                  dtpDateActive.Enabled = true;
-                  cmbActiveLanguage.Enabled = true;
-                  chkVatActive.Enabled = true;
-                  //chkPCeasedOperation.Enabled = true;
-                  txtConnectString.Enabled = true;
-                  cmbConnectionEncryption.Enabled = true;
-                  btnXmlPathChoose.Enabled = true;
-                  txtURL.Enabled = true;
-                  chkLogFileActive.Enabled = true;
-                  chkSaveXmlActive.Enabled = true;
-                  txtOibOperator.Enabled = true;
-                  txtCodeOperator.Enabled = true;
-                  txtVatNumber.Enabled = true;
-                  //txtBuisnessPremiseMark.Enabled = true;
-                  txtPremiseMark.Enabled = true;
-                  txtBillingDeviceMark.Enabled = true;
-                  txtOibSoftware.Enabled = true;
-                  txtCertificate.Enabled = true;
-                chkUseCertificateFile.Enabled = true;
-                btnCertificateFile.Enabled = true;
-                txtCertificatePassword.Enabled = true;
-                cbCheckSSL.Enabled = true;
-
-
-              txtCertificatePassword.BackColor = Color.White;
-              chkSendTest.Enabled = true;
-              txtConnectString.BackColor = Color.White;
-              txtURL.BackColor = Color.White;
-              txtOibOperator.BackColor = Color.White;
-              txtCodeOperator.BackColor = Color.White;
-              txtVatNumber.BackColor = Color.White;
-              //txtBuisnessPremiseMark.BackColor = Color.White;
-              txtPremiseMark.BackColor = Color.White;
-              txtBillingDeviceMark.BackColor = Color.White;
-              txtOibSoftware.BackColor = Color.White;
-              txtCertificate.BackColor = Color.White;
-
-                txtQrMessage.Enabled = true;
-                txtQrMessage.BackColor = Color.White;
-
-                txtQrSaveLocation.Enabled = true;
-                txtQrSaveLocation.BackColor = Color.White;
-
-                txtQrSize.Enabled = true;
-                txtQrSize.BackColor = Color.White;
-
-
-            cbFiskPonude.Enabled = true;
-    } else if (text.Length > 0) {
-      MessageBox.Show(Translations.Translate("Pogrešna šifra!"), Translations.Translate("Greška"), MessageBoxButtons.OK, MessageBoxIcon.Hand);
+    private void cis_SoapMessageSending (object sender, CentralniInformacijskiSustavEventArgs e) 
+    {
+        Cursor.Current = Cursors.WaitCursor;
+        stopWatch.Start(); 
+        pictureBox1.Visible = true;
+        Application.DoEvents();
     }
-  }
-   
-  private void cis_SoapMessageSending (object sender, CentralniInformacijskiSustavEventArgs e) {
-    Cursor.Current = Cursors.WaitCursor;
-    stopWatch.Start();
-    pictureBox1.Visible = true;
-    Application.DoEvents();
-  }
 
-  private void cis_SoapMessageSent (object sender, EventArgs e) {
-    stopWatch.Stop();
-    pictureBox1.Visible = false;
-    btnSaveAndQuit.Enabled = true;
-    btnUnlockSettings.Enabled = true;
-    //btnSendData.Enabled = true;
-    Application.DoEvents();
-    stopWatch.Reset();
-    Cursor.Current = Cursors.Default;
-  }
+  
+    private void cis_SoapMessageSent (object sender, EventArgs e) 
+    {
+        stopWatch.Stop();
+        pictureBox1.Visible = false;
+        btnSaveAndQuit.Enabled = true;
+        btnUnlockSettings.Enabled = true;
+        //btnSendData.Enabled = true;
+        Application.DoEvents();
+        stopWatch.Reset();
+        Cursor.Current = Cursors.Default;
 
-  private void btnQuitClick (object sender, EventArgs e) {
-    Environment.Exit(0);
-  }
-
-  private void btnChooseClick (object sender, EventArgs e) {
-    btnUnlockSettings.Enabled = false;
-    //btnSendData.Enabled = false;
-    btnQuit.Enabled = false;
-    btnSaveAndQuit.Enabled = false;
-    btnXmlPathChoose.Enabled = false;
-    FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-    if (!string.IsNullOrEmpty(folderPath)) {
-      folderBrowserDialog.SelectedPath = folderPath;
     }
-    folderBrowserDialog.Description = Translations.Translate("Odaberite mapu u koju će se spremati XML zahtjevi i odgovori.");
-    DialogResult dialogResult = folderBrowserDialog.ShowDialog();
-    if (dialogResult == DialogResult.OK) {
-      folderPath = folderBrowserDialog.SelectedPath;
-      DirectoryInfo directoryInfo = new DirectoryInfo(folderPath + "\\Record of XML message with respond\\BusinessPremise\\Requests\\");
-      if (!directoryInfo.Exists) {
-        directoryInfo.Create();
-      }
-      directoryInfo = new DirectoryInfo(folderPath + "\\Record of XML message with respond\\BusinessPremise\\Response\\");
-      if (!directoryInfo.Exists) {
-        directoryInfo.Create();
-      }
-      directoryInfo = new DirectoryInfo(folderPath + "\\Record of XML message with respond\\Invoice\\Requests\\");
-      if (!directoryInfo.Exists) {
-        directoryInfo.Create();
-      }
-      directoryInfo = new DirectoryInfo(folderPath + "\\Record of XML message with respond\\Invoice\\Response\\");
-      if (!directoryInfo.Exists) {
-        directoryInfo.Create();
-      }
-    }
-    btnUnlockSettings.Enabled = true;
-    //btnSendData.Enabled = true;
-    btnQuit.Enabled = true;
-    btnSaveAndQuit.Enabled = true;
-    btnXmlPathChoose.Enabled = true;
-  }
 
-  private bool saveConfig () {
-    state = false;
-    ConfigFile configFile = new ConfigFile();
-    configFile.ConnectionString = txtConnectString.Text;
-    configFile.ServerUrl = txtURL.Text;
-    configFile.ConnectionEncryption = cmbConnectionEncryption.SelectedItem.ToString();
-    configFile.LogFileActive = Convert.ToString(chkLogFileActive.Checked);
-    configFile.SaveXMLActive = Convert.ToString(chkSaveXmlActive.Checked);
-    configFile.XMLSavePath = folderPath;
-    configFile.DateIsActive = $"{dtpDateActive.Value:yyyy/MM/dd}";
-    configFile.ActiveLanguage = cmbActiveLanguage.SelectedItem.ToString();
-    configFile.VATNumber = txtVatNumber.Text;
-    configFile.InVATsystem = Convert.ToString(chkVatActive.Checked);
-    configFile.PremiseMark = txtPremiseMark.Text;
-    configFile.BillingDeviceMark = txtBillingDeviceMark.Text;
-    configFile.OIBSoftware = txtOibSoftware.Text;
-    configFile.OperatorOIB = txtOibOperator.Text;
-    configFile.OperatorCode = txtCodeOperator.Text;
-    //configFile.PCeasedOperation = Convert.ToString(chkPCeasedOperation.Checked);
-    configFile.Certifikat = txtCertificate.Text;
-    configFile.SendTestReceipts = Convert.ToString(chkSendTest.Checked);
-    configFile.UseCertificateFile = Convert.ToString(chkUseCertificateFile.Checked);
-    configFile.CertificatePassword = txtCertificatePassword.Text;
-    configFile.IgnoreSSLCertificates= Convert.ToString(cbCheckSSL.Checked);
-    configFile.SendPonudaToFisk= Convert.ToString(cbFiskPonude.Checked);
+    private void btnQuitClick(object sender, EventArgs e)
+    {
+        Environment.Exit(0);
+    }
+
+    private void btnChooseClick(object sender, EventArgs e)
+    {
+        btnUnlockSettings.Enabled = false;
+        btnQuit.Enabled = false;
+        btnSaveAndQuit.Enabled = false;
+        btnXmlPathChoose.Enabled = false;
+        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+        if (!string.IsNullOrEmpty(folderPath))
+        {
+            folderBrowserDialog.SelectedPath = folderPath;
+        }
+        folderBrowserDialog.Description = Translations.Translate("Odaberite mapu u koju će se spremati XML zahtjevi i odgovori.");
+        DialogResult dialogResult = folderBrowserDialog.ShowDialog();
+        if (dialogResult == DialogResult.OK)
+        {
+            DirectoryInfo directoryInfo = null;
+            folderPath = folderBrowserDialog.SelectedPath;
+
+
+            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\");
+            if (!directoryInfo.Exists)
+            {
+                directoryInfo.Create();
+            }
+            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\");
+            if (!directoryInfo.Exists)
+            {
+                directoryInfo.Create();
+            }
+
+
+        }
+        btnUnlockSettings.Enabled = true;
+        btnQuit.Enabled = true;
+        btnSaveAndQuit.Enabled = true;
+        btnXmlPathChoose.Enabled = true;
+    }
+
+    private bool saveConfig()
+    {
+        LogFile.LogToFile("Config saved!",LogLevel.Debug);
+        state = false;
+        ConfigFile configFile = new ConfigFile();
+        configFile.ConnectionString = txtConnectString.Text;
+        configFile.ServerUrl = txtURL.Text;
+        configFile.ConnectionEncryption = cmbConnectionEncryption.SelectedItem.ToString();
+        configFile.LogFileActive = Convert.ToString(chkLogFileActive.Checked);
+        configFile.SaveXMLActive = Convert.ToString(chkSaveXmlActive.Checked);
+        configFile.XMLSavePath = folderPath;
+        configFile.DateIsActive = $"{dtpDateActive.Value:yyyy/MM/dd}";
+        configFile.ActiveLanguage = cmbActiveLanguage.SelectedItem.ToString();
+        configFile.VATNumber = txtVatNumber.Text;
+        configFile.InVATsystem = Convert.ToString(chkVatActive.Checked);
+        configFile.PremiseMark = txtPremiseMark.Text;
+        configFile.BillingDeviceMark = txtBillingDeviceMark.Text;
+        configFile.OIBSoftware = txtOibSoftware.Text;
+        configFile.OperatorOIB = txtOibOperator.Text;
+        configFile.OperatorCode = txtCodeOperator.Text;
+        configFile.Certifikat = txtCertificate.Text;
+        configFile.SendTestReceipts = Convert.ToString(chkSendTest.Checked);
+        configFile.UseCertificateFile = Convert.ToString(chkUseCertificateFile.Checked);
+        configFile.CertificatePassword = txtCertificatePassword.Text;
+        configFile.IgnoreSSLCertificates = Convert.ToString(cbCheckSSL.Checked);
+        configFile.SendPonudaToFisk = Convert.ToString(cbFiskPonude.Checked);
         configFile.QrCodeMessage = txtQrMessage.Text;
         configFile.QrCodeLocation = txtQrSaveLocation.Text;
         configFile.QrCodeSize = txtQrSize.Text;
-
+        configFile.LogLevel = cmbLogLevel.SelectedItem.ToString();
 
         verifyData();
-    if (state) {
-      return false;
+        if (state)
+        {
+            return false;
+        }
+        LogFile.CreateConfigFile(configFile, isConfigMod: true);
+        return true;
     }
-    LogFile.CreateConfigFile(configFile, isConfigMod: true);
-    return true;
-  }
 
-  private void btnProcessBills_Click (object sender, EventArgs e) {
-    using (Process process = new Process()) {
-      process.StartInfo.FileName = "C:\\Ikosoft\\MerlinX2\\385_fisk.exe";
-      process.Start();
-      process.WaitForExit();
+    private void btnProcessBills_Click(object sender, EventArgs e)
+    {
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = "C:\\Ikosoft\\MerlinX2\\385_fisk.exe";
+            process.Start();
+            process.WaitForExit();
+        }
     }
-  }
 
 
 
-  private void btnCertificateFile_Click (object sender, EventArgs e) {
-    btnUnlockSettings.Enabled = false;
-    //btnSendData.Enabled = false;
-    btnQuit.Enabled = false;
-    btnSaveAndQuit.Enabled = false;
-    btnCertificateFile.Enabled = false;
-    OpenFileDialog openFileDialog = new OpenFileDialog();
-    openFileDialog.Filter = "Certificate|*.p12";
-    DialogResult dialogResult = openFileDialog.ShowDialog();
-    if (dialogResult == DialogResult.OK) {
-      string fileName = openFileDialog.FileName;
-      FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
-      string directoryName = fileInfo.DirectoryName;
-      string destFileName = Path.Combine(directoryName + "/Certificates", "certificate.p12");
-      if (!Directory.Exists(directoryName)) {
-        Directory.CreateDirectory(directoryName);
-      }
-      File.Copy(fileName, destFileName, overwrite: true);
+    private void btnCertificateFile_Click(object sender, EventArgs e)
+    {
+        btnUnlockSettings.Enabled = false;
+        //btnSendData.Enabled = false;
+        btnQuit.Enabled = false;
+        btnSaveAndQuit.Enabled = false;
+        btnCertificateFile.Enabled = false;
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+        openFileDialog.Filter = "Certificate|*.p12";
+        DialogResult dialogResult = openFileDialog.ShowDialog();
+        if (dialogResult == DialogResult.OK)
+        {
+            string fileName = openFileDialog.FileName;
+            FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
+            string directoryName = fileInfo.DirectoryName;
+            string destFileName = Path.Combine(directoryName + "/Certificates", "certificate.p12");
+            if (!Directory.Exists(directoryName))
+            {
+                Directory.CreateDirectory(directoryName);
+            }
+            File.Copy(fileName, destFileName, overwrite: true);
+        }
+        btnUnlockSettings.Enabled = true;
+        //btnSendData.Enabled = true;
+        btnQuit.Enabled = true;
+        btnSaveAndQuit.Enabled = true;
+        btnCertificateFile.Enabled = true;
     }
-    btnUnlockSettings.Enabled = true;
-    //btnSendData.Enabled = true;
-    btnQuit.Enabled = true;
-    btnSaveAndQuit.Enabled = true;
-    btnCertificateFile.Enabled = true;
-  }
 
-  private void chkUseCertificateFile_CheckedChanged_1 (object sender, EventArgs e) {
-    if (chkUseCertificateFile.CheckState == CheckState.Checked && chkUseCertificateFile.Enabled) {
-      txtCertificatePassword.Enabled = true;
-      btnCertificateFile.Enabled = true;
-    } else {
-      txtCertificatePassword.Enabled = false;
-      btnCertificateFile.Enabled = false;
+    private void chkUseCertificateFile_CheckedChanged_1(object sender, EventArgs e)
+    {
+        if (chkUseCertificateFile.CheckState == CheckState.Checked && chkUseCertificateFile.Enabled)
+        {
+            txtCertificatePassword.Enabled = true;
+            btnCertificateFile.Enabled = true;
+        }
+        else
+        {
+            txtCertificatePassword.Enabled = false;
+            btnCertificateFile.Enabled = false;
+        }
     }
-  }
 
 
-
-  protected override void Dispose (bool disposing) {
-    if (disposing && components != null) {
-      components.Dispose();
+    private void btUpdate_Click(object sender, EventArgs e)
+    {
+        //AutoUpdater.Mandatory = true;
+        AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
+        AutoUpdater.DownloadPath = Environment.CurrentDirectory;
     }
-    base.Dispose(disposing);
-  }
 
 
     #region Inicijalizacija
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && components != null)
+        {
+            components.Dispose();
+        }
+        base.Dispose(disposing);
+    }
     private void InitializeComponent () {
             this.btnSaveAndQuit = new System.Windows.Forms.Button();
             this.lblConnectionString = new System.Windows.Forms.Label();
@@ -679,6 +798,8 @@ public class Config : Form {
             this.label5 = new System.Windows.Forms.Label();
             this.txtQrSaveLocation = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.lbloglevel = new System.Windows.Forms.Label();
+            this.cmbLogLevel = new System.Windows.Forms.ComboBox();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
@@ -752,7 +873,7 @@ public class Config : Form {
             this.chkLogFileActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkLogFileActive.Location = new System.Drawing.Point(9, 103);
             this.chkLogFileActive.Name = "chkLogFileActive";
-            this.chkLogFileActive.Size = new System.Drawing.Size(252, 0);
+            this.chkLogFileActive.Size = new System.Drawing.Size(252, 16);
             this.chkLogFileActive.TabIndex = 5;
             this.chkLogFileActive.Text = "Log datoteka :";
             this.chkLogFileActive.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -763,7 +884,7 @@ public class Config : Form {
             this.dtpDateActive.Enabled = false;
             this.dtpDateActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpDateActive.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDateActive.Location = new System.Drawing.Point(248, 180);
+            this.dtpDateActive.Location = new System.Drawing.Point(248, 199);
             this.dtpDateActive.Name = "dtpDateActive";
             this.dtpDateActive.Size = new System.Drawing.Size(112, 20);
             this.dtpDateActive.TabIndex = 6;
@@ -772,7 +893,7 @@ public class Config : Form {
             // lblDateActive
             // 
             this.lblDateActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDateActive.Location = new System.Drawing.Point(9, 183);
+            this.lblDateActive.Location = new System.Drawing.Point(9, 202);
             this.lblDateActive.Name = "lblDateActive";
             this.lblDateActive.Size = new System.Drawing.Size(233, 13);
             this.lblDateActive.TabIndex = 7;
@@ -782,6 +903,8 @@ public class Config : Form {
             // grpBasic
             // 
             this.grpBasic.BackColor = System.Drawing.Color.Transparent;
+            this.grpBasic.Controls.Add(this.cmbLogLevel);
+            this.grpBasic.Controls.Add(this.lbloglevel);
             this.grpBasic.Controls.Add(this.cmbActiveLanguage);
             this.grpBasic.Controls.Add(this.lblActiveLanguage);
             this.grpBasic.Controls.Add(this.cmbConnectionEncryption);
@@ -799,7 +922,7 @@ public class Config : Form {
             this.grpBasic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpBasic.Location = new System.Drawing.Point(12, 42);
             this.grpBasic.Name = "grpBasic";
-            this.grpBasic.Size = new System.Drawing.Size(555, 248);
+            this.grpBasic.Size = new System.Drawing.Size(555, 264);
             this.grpBasic.TabIndex = 8;
             this.grpBasic.TabStop = false;
             this.grpBasic.Text = "Osnovno :";
@@ -812,7 +935,7 @@ public class Config : Form {
             this.cmbActiveLanguage.Items.AddRange(new object[] {
             "HR",
             "EN"});
-            this.cmbActiveLanguage.Location = new System.Drawing.Point(248, 205);
+            this.cmbActiveLanguage.Location = new System.Drawing.Point(248, 224);
             this.cmbActiveLanguage.Name = "cmbActiveLanguage";
             this.cmbActiveLanguage.Size = new System.Drawing.Size(112, 21);
             this.cmbActiveLanguage.TabIndex = 15;
@@ -822,9 +945,9 @@ public class Config : Form {
             this.lblActiveLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblActiveLanguage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblActiveLanguage.Location = new System.Drawing.Point(-24, 208);
+            this.lblActiveLanguage.Location = new System.Drawing.Point(9, 225);
             this.lblActiveLanguage.Name = "lblActiveLanguage";
-            this.lblActiveLanguage.Size = new System.Drawing.Size(233, 0);
+            this.lblActiveLanguage.Size = new System.Drawing.Size(233, 16);
             this.lblActiveLanguage.TabIndex = 14;
             this.lblActiveLanguage.Text = "Aktivan jezik :";
             this.lblActiveLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -857,7 +980,7 @@ public class Config : Form {
             this.btnXmlPathChoose.AutoSize = true;
             this.btnXmlPathChoose.Enabled = false;
             this.btnXmlPathChoose.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.btnXmlPathChoose.Location = new System.Drawing.Point(247, 149);
+            this.btnXmlPathChoose.Location = new System.Drawing.Point(247, 168);
             this.btnXmlPathChoose.Margin = new System.Windows.Forms.Padding(2);
             this.btnXmlPathChoose.Name = "btnXmlPathChoose";
             this.btnXmlPathChoose.Size = new System.Drawing.Size(112, 23);
@@ -869,7 +992,7 @@ public class Config : Form {
             // lblXmlPath
             // 
             this.lblXmlPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblXmlPath.Location = new System.Drawing.Point(9, 154);
+            this.lblXmlPath.Location = new System.Drawing.Point(9, 173);
             this.lblXmlPath.Name = "lblXmlPath";
             this.lblXmlPath.Size = new System.Drawing.Size(233, 13);
             this.lblXmlPath.TabIndex = 10;
@@ -881,7 +1004,7 @@ public class Config : Form {
             this.chkSaveXmlActive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkSaveXmlActive.Enabled = false;
             this.chkSaveXmlActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.chkSaveXmlActive.Location = new System.Drawing.Point(9, 127);
+            this.chkSaveXmlActive.Location = new System.Drawing.Point(9, 146);
             this.chkSaveXmlActive.Margin = new System.Windows.Forms.Padding(2);
             this.chkSaveXmlActive.Name = "chkSaveXmlActive";
             this.chkSaveXmlActive.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -1397,6 +1520,30 @@ public class Config : Form {
             this.label4.Text = "Putanja spremanja kodova :";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // lbloglevel
+            // 
+            this.lbloglevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbloglevel.Location = new System.Drawing.Point(9, 125);
+            this.lbloglevel.Name = "lbloglevel";
+            this.lbloglevel.Size = new System.Drawing.Size(233, 13);
+            this.lbloglevel.TabIndex = 16;
+            this.lbloglevel.Text = "Log level :";
+            this.lbloglevel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cmbLogLevel
+            // 
+            this.cmbLogLevel.Enabled = false;
+            this.cmbLogLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.cmbLogLevel.FormattingEnabled = true;
+            this.cmbLogLevel.Items.AddRange(new object[] {
+            "INFO",
+            "DEBUG",
+            "ERROR"});
+            this.cmbLogLevel.Location = new System.Drawing.Point(247, 122);
+            this.cmbLogLevel.Name = "cmbLogLevel";
+            this.cmbLogLevel.Size = new System.Drawing.Size(112, 21);
+            this.cmbLogLevel.TabIndex = 17;
+            // 
             // Config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1448,12 +1595,7 @@ public class Config : Form {
 
   }
     #endregion
-    private void btUpdate_Click(object sender, EventArgs e)
-    {
-        //AutoUpdater.Mandatory = true;
-        AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
-        AutoUpdater.DownloadPath = Environment.CurrentDirectory;
-    }
+    
 
 
 }

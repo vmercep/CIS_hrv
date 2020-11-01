@@ -1,4 +1,5 @@
-﻿using AutoUpdaterDotNET;
+﻿using _385_fisk.Exceptions;
+using AutoUpdaterDotNET;
 using System;
 using System.Management;
 using System.Text.RegularExpressions;
@@ -27,28 +28,37 @@ internal static class Program {
                 }
             }
         }
-
-        CentralniInformacijskiSustav.CreateDirectories(); //CreateDirectories();
         Helper.LogFile.InitConfig();
+        CentralniInformacijskiSustav.CreateDirectories();
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         string[] commandLineArgs = Environment.GetCommandLineArgs();
         Console.WriteLine(commandLineArgs.Length);
-    
-        if (commandLineArgs.Length > 1) {
-      string[] array = commandLineArgs;
-      foreach (string a in array) {
-        if (a == "/config") {
-          Application.Run(new Config());
+
+        if (commandLineArgs.Length > 1)
+        {
+            string[] array = commandLineArgs;
+            foreach (string a in array)
+            {
+                if (a == "/config")
+                {
+                    Application.Run(new Config());
+                }
+                if (a == "/validity")
+                {
+                    Application.Run(new ExpirationDate());
+                }
+                if(a=="/bla")
+                {
+                    Application.Run(new ErrorMessageBox());
+                }
+            }
         }
-        if (a == "/validity") {
-          Application.Run(new ExpirationDate());
+        else
+        {
+            Application.Run(new MainForm());
         }
-      }
-    } else {
-      Application.Run(new MainForm());
     }
-  }
 
 
 

@@ -30,6 +30,8 @@ namespace Helper
 
         public static void GenerateQrCode(string zki, DateTime datVrijeme, string iznosUkupno, int idTicket)
         {
+
+            LogFile.LogToFile("Kreiram QR kode",LogLevel.Debug);
             QRCodeGenerator.ECCLevel eccLevel = QRCodeGenerator.ECCLevel.L;
             int pixelsPerModule = 30;
             string foregroundColor = "#000000";
@@ -62,8 +64,8 @@ namespace Helper
                                 {
                                     directoryInfo.Create();
                                 }
-                                //bitmap.Save(directoryName+"\\Dat\\MerlinSLV_Files\\Images\\QRCode\\" + idTicket.ToString() + ".jpg", actualFormat);
                                 resized.Save(AppLink.QrCodeLocation + "\\" + idTicket.ToString() + ".jpg", actualFormat);
+                                LogFile.LogToFile("QR kode kreiran "+ idTicket.ToString() + ".jpg i spremljen na " + AppLink.QrCodeLocation, LogLevel.Debug);
                             }
                         }
 
