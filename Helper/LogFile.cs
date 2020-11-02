@@ -73,7 +73,7 @@ namespace Helper
             try
             {
 
-                LogToFile("Init cfg file for merlin", LogLevel.Debug);
+                //LogToFile("Init cfg file for merlin", LogLevel.Debug);
                 ConfigFile configFile = new ConfigFile();
                 configFile.ConnectionString = "server=(local); uid=sa; pwd=_PWD4sa_; Database=Merlin";
                 configFile.ServerUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
@@ -115,7 +115,7 @@ namespace Helper
 
                 if (!File.Exists(filePath))
                 {
-                    LogToFile("Creating cfg file for merlin");
+                    //LogToFile("Creating cfg file for merlin");
                     StreamWriter streamWriter = new StreamWriter(Path.Combine(directoryName, Helper.Globals.Name), true, Encoding.UTF8);
                     streamWriter.WriteLine(configFile.SecGeneral);
                     streamWriter.WriteLine(configFile.ConnectionString);
@@ -167,7 +167,7 @@ namespace Helper
             }
             catch (Exception e)
             {
-                LogToFile("Error ocured in init cfg file " + e.Message);
+                //LogToFile("Error ocured in init cfg file " + e.Message);
             }
 
 

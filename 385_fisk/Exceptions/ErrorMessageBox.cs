@@ -32,12 +32,15 @@ namespace _385_fisk.Exceptions
         {
             try
             {
+
+
+
                 MailMessage mail = new MailMessage();
-                SmtpClient SmtpServer = new SmtpClient("mail.ikosoft.com.hr",465);
+                SmtpClient SmtpServer = new SmtpClient("mail.ikosoft.com.hr", 587);
 
                 mail.From = new MailAddress("info@ikosoft.com.hr");
                 mail.To.Add("info@ikosoft.com.hr");
-                mail.Subject = "Error ocured on CIS application "+AppLink.OperatorOIB;
+                mail.Subject = "Greška na CIS aplikaciji "+AppLink.VATNumber;
                 mail.Body = lbMessageText.Text + "\r\n" + lbMessageDetails.Text;
 
                 //SmtpServer.Port = 465;
@@ -46,7 +49,7 @@ namespace _385_fisk.Exceptions
                 SmtpServer.EnableSsl = true;
                 SmtpServer.Timeout = 10000;
                 SmtpServer.Send(mail);
-                MessageBox.Show("Mail Send");
+                //MessageBox.Show("Mail Send");
                 Close();
             }
             catch (Exception ex)
