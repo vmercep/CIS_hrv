@@ -30,7 +30,8 @@ namespace CisDal
         public static bool GetBill(List<DataBill> allBills, string OIB, bool vatIsActive)
         {
             DataSalon dataSalon = new DataSalon();
-            dataSalon.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
+            //dataSalon.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
+            dataSalon.DateIsActive = DateTime.Now.AddDays(-60);
             try
             {
                 using (SqlConnection sqlConnection = GetSqlConnection())
