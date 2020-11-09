@@ -1,23 +1,27 @@
 ﻿using DataObjects;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using static DataObjects.DataBill;
 
 namespace CisDal
 {
-    public static class MerlinData
+    public class MerlinData : IMerlinData, IDisposable
     {
-        private static SqlConnection GetSqlConnection()
+
+        private SqlConnection _sqlConnection;
+
+        private SqlConnection GetSqlConnection()
         {
-            SqlConnection sqlConnection = new SqlConnection(AppLink.ConnectionString);
-            sqlConnection.Open();
-            return sqlConnection;
+            _sqlConnection = new SqlConnection(AppLink.ConnectionString);
+            _sqlConnection.Open();
+            return _sqlConnection;
         }
 
 
-        public static bool checkIfNewTaxes()
+        public bool checkIfNewTaxes()
         {
             using (SqlConnection sqlConnection = GetSqlConnection())
             {
@@ -27,8 +31,56 @@ namespace CisDal
             }
         }
 
-        public static bool GetBill(List<DataBill> allBills, string OIB, bool vatIsActive)
+        public List<DataBill> GetOffer(string OIB, bool vatIsActive)
         {
+            List<DataBill> allBills = new List<DataBill>();
+            DataSalon dataSalon = new DataSalon();
+            //dataSalon.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
+            dataSalon.DateIsActive = DateTime.Now.AddDays(-60);
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, idsysmachine, typetik, notes from caisseticket where datalength(Hash) > 64 and typetik in(3) and id>=@Date";
+
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(dataSalon.DateIsActive)));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DataBill dataBill = new DataBill();
+                            dataBill.VATNumber_Salon_Bill = OIB;
+                            dataBill.TaxPayer_Bill = vatIsActive;
+                            dataBill.BillDate_Bill = AppLink.DateFromLong((int)sqlDataReader["DateHeure"]);
+                            dataBill.SequenceMark_Bill = OznakaSlijednostiType.P;
+                            dataBill.PremiseMark_Bill = AppLink.PremiseMark;
+                            dataBill.BillingDeviceMark_Bill = AppLink.BillingDeviceMark;
+                            dataBill.BillNumberMark_Bill = Convert.ToString(sqlDataReader["Code"]);
+                            
+                            dataBill.TypeTik = (short)sqlDataReader["typetik"];
+                            dataBill.IdTicket = (int)sqlDataReader["Id"];
+                            dataBill.HashStatus = ((sqlDataReader["Hash"] == DBNull.Value) ? "0" : ((string)sqlDataReader["Hash"]));
+                            dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
+                            
+                            allBills.Add(dataBill);
+                            
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in dal get bill method " + ex.Message);
+            }
+            return allBills;
+        }
+
+        public List<DataBill> GetBill(string OIB, bool vatIsActive)
+        {
+            List<DataBill> allBills = new List<DataBill>();
             DataSalon dataSalon = new DataSalon();
             //dataSalon.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
             dataSalon.DateIsActive = DateTime.Now.AddDays(-60);
@@ -82,12 +134,12 @@ namespace CisDal
             catch (Exception ex)
             {
                 SimpleLog.Log(ex);
-                return false;
+                throw new Exception("error ocured in dal get bill method "+ex.Message);
             }
-            return true;
+            return allBills;
         }
 
-        public static bool GetBillFollow(DataBill Bill)
+        public DataBill GetBillFollow(DataBill Bill)
         {
             //int num = 0;
             List<DataPay> list = new List<DataPay>();
@@ -142,8 +194,7 @@ namespace CisDal
             catch (Exception ex)
             {
                 SimpleLog.Log(ex);
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new Exception("error ocured in GetBillFollow "+ex.Message);
             }
             try
             {
@@ -225,17 +276,16 @@ namespace CisDal
                             break;
                         }
                 }
-                return true;
+                return Bill;
             }
             catch (Exception ex2)
             {
                 SimpleLog.Log(ex2);
-                Console.WriteLine(ex2.Message);
-                return false;
+                throw new Exception("error ocured in GetBillFollow " + ex2.Message);
             }
         }
 
-        public static bool SaveTicketJir(int ticketid, string jir)
+        public int SaveTicketJir(int ticketid, string jir)
         {
             try
             {
@@ -245,16 +295,17 @@ namespace CisDal
                     sqlCommand.CommandText = "UPDATE CaisseTicket set Hash=@jir where Id=@Id";
                     sqlCommand.Parameters.Add(new SqlParameter("@jir", jir));
                     sqlCommand.Parameters.Add(new SqlParameter("@Id", ticketid));
-                    sqlCommand.ExecuteNonQuery();
+                    return sqlCommand.ExecuteNonQuery();
                 }
             }
-            catch
+            catch (Exception ex2)
             {
+                SimpleLog.Log(ex2);
+                throw new Exception("error ocured in SaveTicketJir " + ex2.Message);
             }
-            return false;
         }
 
-        public static bool SaveNotes(int ticketid, string notes)
+        public int SaveNotes(int ticketid, string notes)
         {
             try
             {
@@ -264,17 +315,19 @@ namespace CisDal
                     sqlCommand.CommandText = "UPDATE CaisseTicket set notes=@notes where Id=@Id";
                     sqlCommand.Parameters.Add(new SqlParameter("@notes", notes));
                     sqlCommand.Parameters.Add(new SqlParameter("@Id", ticketid));
-                    sqlCommand.ExecuteNonQuery();
+                    return sqlCommand.ExecuteNonQuery();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in SaveNotes " + ex.Message);
             }
-            return false;
         }
 
-        public static bool GetPerso(List<DataPerso> allPerso)
+        public List<DataPerso> GetPerso()
         {
+            List<DataPerso> allPerso = new List<DataPerso>();
             try
             {
                 using (SqlConnection sqlConnection = GetSqlConnection())
@@ -298,13 +351,12 @@ namespace CisDal
             catch (Exception ex)
             {
                 SimpleLog.Log(ex);
-                Console.WriteLine(ex.Message);
-                return false;
+                throw new Exception("error ocured in GetPerso " + ex.Message);
             }
-            return true;
+            return allPerso;
         }
 
-        public static bool CheckForWeirdTaxesWhenNotInVAT()
+        public bool CheckForWeirdTaxesWhenNotInVAT()
         {
             SqlConnection sqlConnection = new SqlConnection(AppLink.ConnectionString);
             sqlConnection.Open();
@@ -328,7 +380,7 @@ namespace CisDal
             return true;
         }
 
-        public static bool UpdatePerso(string cmdSQL)
+        public void UpdatePerso(string cmdSQL)
         {
             try
             {
@@ -339,13 +391,14 @@ namespace CisDal
                     sqlCommand.ExecuteNonQuery();
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in UpdatePerso " + ex.Message);
             }
-            return false;
         }
 
-        public static bool UseNoTva()
+        public bool UseNoTva()
         {
             try
             {
@@ -365,7 +418,7 @@ namespace CisDal
             return false;
         }
 
-        public static bool FlushBillsWithNoJir()
+        public void FlushBillsWithNoJir()
         {
             try
             {
@@ -374,23 +427,23 @@ namespace CisDal
                     SqlCommand sqlCommand = sqlConnection.CreateCommand();
                     sqlCommand.CommandText = "delete caisseticketoutput";
                     sqlCommand.ExecuteNonQuery();
-                    return true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in UpdatePerso " + ex.Message);
             }
-            return false;
         }
 
-        public static List<DataTax> GetTaxes(int id)
+        public List<DataTax> GetTaxes(int id)
         {
             List<DataTax> list = new List<DataTax>();
             list.AddRange(GetMainTaxes(id));
             return list;
         }
 
-        private static List<DataTax> GetMainTaxes(int id)
+        private List<DataTax> GetMainTaxes(int id)
         {
             List<DataTax> list = new List<DataTax>();
             using (SqlConnection sqlConnection = GetSqlConnection())
@@ -430,7 +483,7 @@ namespace CisDal
             return list;
         }
 
-        private static List<DataTax> GetRelatedTaxes(int id)
+        private List<DataTax> GetRelatedTaxes(int id)
         {
             List<DataTax> list = new List<DataTax>();
             using (SqlConnection sqlConnection = GetSqlConnection())
@@ -468,7 +521,7 @@ namespace CisDal
             return list;
         }
 
-        public static List<DataNewTax> GetNewTaxes(int id)
+        public List<DataNewTax> GetNewTaxes(int id)
         {
             List<DataNewTax> list = new List<DataNewTax>();
             List<int> comboBillId = GetComboBillId(id);
@@ -526,7 +579,7 @@ namespace CisDal
             return list;
         }
 
-        public static List<int> GetComboBillId(int mainBillId)
+        public List<int> GetComboBillId(int mainBillId)
         {
             List<int> list = new List<int>();
             using (SqlConnection sqlConnection = GetSqlConnection())
@@ -546,6 +599,102 @@ namespace CisDal
             return list;
         }
 
+        public void Dispose()
+        {
+            if (_sqlConnection.State == ConnectionState.Open)
+            {
+                _sqlConnection.Close();
+            }
+        }
 
+        public List<DataBill> GetTicket(int dticket)
+        {
+            List<DataBill> allBills = new List<DataBill>();
+            DataSalon dataSalon = new DataSalon();
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, notes, idsysmachine, typetik from caisseticket where id="+ dticket;
+                    //sqlCommand.Parameters.Add(new SqlParameter("@Date", dticket));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DataBill dataBill = new DataBill();
+                            dataBill.VATNumber_Salon_Bill = "xxxxxxxx";
+                            dataBill.TaxPayer_Bill = true;
+                            dataBill.BillDate_Bill = AppLink.DateFromLong((int)sqlDataReader["DateHeure"]);
+                            dataBill.SequenceMark_Bill = OznakaSlijednostiType.P;
+                            dataBill.PremiseMark_Bill = AppLink.PremiseMark;
+                            dataBill.BillingDeviceMark_Bill = AppLink.BillingDeviceMark;
+                            //dataBill.BillNumberMark_Bill = Convert.ToString(sqlDataReader["Code"]);
+                            dataBill.TypeTik = (short)sqlDataReader["typetik"];
+                            //dataBill.CashierVATNumber_Bill = ((sqlDataReader["OIBPerso"] == DBNull.Value) ? "OIBPERSOERROR" : Convert.ToString(sqlDataReader["OIBPerso"]));
+                            //dataBill.CountLigPay_Bill = (int)sqlDataReader["CountLigPay"];
+                            dataBill.IdTicket = (int)sqlDataReader["Id"];
+                            dataBill.HashStatus = ((sqlDataReader["Hash"] == DBNull.Value) ? "0" : ((string)sqlDataReader["Hash"]));
+                            dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
+     
+                             allBills.Add(dataBill);
+                            
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in dal get bill method " + ex.Message);
+            }
+            return allBills;
+        }
+
+        public int GetPersoByOib(string vATNumber_Salon)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT Id from perso where NumeroSecu='" + vATNumber_Salon+"'";
+                    var result = sqlCommand.ExecuteScalar();
+
+                    if (result == null)
+                        return -1;
+                    
+                    return (int)result;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                return -1;
+            }
+        }
+
+        public int UpdateTicketWithOib(int idTicket, int idCashier)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "UPDATE CaisseTicket set idpersoencaiss=@idCashier where Id=@Id";
+                    sqlCommand.Parameters.Add(new SqlParameter("@idCashier", idCashier));
+                    sqlCommand.Parameters.Add(new SqlParameter("@Id", idTicket));
+                    return sqlCommand.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex2)
+            {
+                SimpleLog.Log(ex2);
+                throw new Exception("error ocured in SaveTicketJir " + ex2.Message);
+            }
+        }
     }
 }

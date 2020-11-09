@@ -165,7 +165,7 @@ namespace Helper
 
                 }
             }
-            catch (Exception e)
+            catch
             {
                 //LogToFile("Error ocured in init cfg file " + e.Message);
             }

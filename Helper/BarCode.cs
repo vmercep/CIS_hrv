@@ -31,7 +31,7 @@ namespace Helper
         public static void GenerateQrCode(string zki, DateTime datVrijeme, string iznosUkupno, int idTicket)
         {
 
-            LogFile.LogToFile("Kreiram QR kode",LogLevel.Debug);
+            LogFile.LogToFile("Generate QR code for bill id "+idTicket,LogLevel.Debug);
             QRCodeGenerator.ECCLevel eccLevel = QRCodeGenerator.ECCLevel.L;
             int pixelsPerModule = 30;
             string foregroundColor = "#000000";
@@ -65,7 +65,7 @@ namespace Helper
                                     directoryInfo.Create();
                                 }
                                 resized.Save(AppLink.QrCodeLocation + "\\" + idTicket.ToString() + ".jpg", actualFormat);
-                                LogFile.LogToFile("QR kode kreiran "+ idTicket.ToString() + ".jpg i spremljen na " + AppLink.QrCodeLocation, LogLevel.Debug);
+                                LogFile.LogToFile("QR code created "+ idTicket.ToString() + ".jpg and saved " + AppLink.QrCodeLocation, LogLevel.Debug);
                             }
                         }
 
@@ -77,7 +77,7 @@ namespace Helper
             }
             catch(Exception e)
             {
-                Helper.LogFile.LogToFile("Greška u generiranju bar koda " + e.Message);
+                LogFile.LogToFile("Greška u generiranju bar koda " + e.Message);
                 throw new Exception("Error ocured in QR generation " + e.Message);
             }
 

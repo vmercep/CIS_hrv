@@ -10,8 +10,6 @@ namespace Helper
     {
         #region Variables  
         private DropboxClient DBClient;
-        private ListFolderArg DBFolders;
-        private string oauth2State;
         #endregion
 
         #region Constructor  
@@ -88,7 +86,7 @@ namespace Helper
                 var result = folder.Result;
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -117,7 +115,7 @@ namespace Helper
                 var result = folders.Result;
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -132,20 +130,12 @@ namespace Helper
         {
             try
             {
-                if (AccessTocken == null)
-                {
-                    throw new Exception("AccessToken not generated !");
-                }
-                if (AuthenticationURL == null)
-                {
-                    throw new Exception("AuthenticationURI not generated !");
-                }
 
                 var folders = DBClient.Files.DeleteAsync(path);
                 var result = folders.Result;
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -196,7 +186,7 @@ namespace Helper
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

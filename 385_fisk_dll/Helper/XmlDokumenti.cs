@@ -69,6 +69,7 @@ public static class XmlDokumenti {
     return result;
   }
 
+    /*
   public static Tuple<string, string> DohvatiStatusProvjere (XmlDocument dokument) {
     Tuple<string, string> result = null;
     if (dokument != null) {
@@ -91,13 +92,16 @@ public static class XmlDokumenti {
     }
     return result;
   }
+    */
 
-  public static Tuple<string, string> DohvatiStatusGreške (XmlDocument dokument) {
+  public static Tuple<string, string> DohvatiStatusGreške (XmlDocument dokument, bool provjera) {
     Tuple<string, string> result = null;
     if (dokument != null) {
       DodajNamespace(dokument, out XmlNamespaceManager nsmgr);
       XmlElement documentElement = dokument.DocumentElement;
       XmlNodeList xmlNodeList = documentElement.SelectNodes("soap:Body/tns:RacunOdgovor/f73:Greske", nsmgr);
+      if (provjera) xmlNodeList = documentElement.SelectNodes("soap:Body/tns:ProvjeraOdgovor/f73:Greske", nsmgr);
+
       foreach (XmlNode item3 in xmlNodeList) {
         string item = "";
         string item2 = "";

@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}</ProjectGuid>
+    <ProjectGuid>{4D4F570D-9252-437B-9962-5D3228C860BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CisDal</RootNamespace>
-    <AssemblyName>CisDal</AssemblyName>
+    <RootNamespace>CisBl</RootNamespace>
+    <AssemblyName>CisBl</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -31,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,13 +45,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IMerlinData.cs" />
-    <Compile Include="MerlinData.cs" />
+    <Compile Include="CisBussines.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\385_fisk_dll\385_fisk_dll.csproj">
+      <Project>{2f6bd99d-1b53-4f85-89e3-f1b6667e2bcf}</Project>
+      <Name>385_fisk_dll</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CisDal\CisDal.csproj">
+      <Project>{98FEE2D9-8E04-4D3E-9B2E-E953BE22623B}</Project>
+      <Name>CisDal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataObjects\DataObjects.csproj">
-      <Project>{825d97da-c557-457e-a831-27efca7730e1}</Project>
+      <Project>{825D97DA-C557-457E-A831-27EFCA7730E1}</Project>
       <Name>DataObjects</Name>
     </ProjectReference>
     <ProjectReference Include="..\FiskHelper\FiskHelper.csproj">
@@ -55,10 +66,12 @@
       <Name>FiskHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\Helper\CisHelper.csproj">
-      <Project>{295b286d-62fa-4fa6-9303-e933182a1a1a}</Project>
+      <Project>{295B286D-62FA-4FA6-9303-E933182A1A1A}</Project>
       <Name>CisHelper</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

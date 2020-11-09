@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CisHelperTests</RootNamespace>
     <AssemblyName>CisHelperTests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Helper\CisHelper.csproj">
-      <Project>{295B286D-62FA-4FA6-9303-E933182A1A1A}</Project>
+      <Project>{295b286d-62fa-4fa6-9303-e933182a1a1a}</Project>
       <Name>CisHelper</Name>
     </ProjectReference>
   </ItemGroup>
