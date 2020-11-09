@@ -44,8 +44,6 @@ namespace Helper
             {
                 LogToFileFinal(textToLog, logLevel);
             }
-            else
-                LogToFileFinal(textToLog, LogLevel.Info);
 
         }
 
