@@ -112,6 +112,14 @@ namespace CisBl
                 return true;
             }
 
+            if(tuple.Item1.Equals("v101") || tuple.Item1.Equals("v103") || tuple.Item1.Equals("v104") || tuple.Item1.Equals("v152") || tuple.Item1.Equals("v153"))
+            {
+                LogFile.LogToFile("Error form CIS returned, not critical"+ tuple.Item1, LogLevel.Debug);
+                message = tuple.Item1;
+                return false;
+            }
+
+
             LogFile.LogToFile(String.Format("Error in sending bill to cis {0}", JsonConvert.SerializeObject(xmlDocument)), LogLevel.Debug);
             string ErrorCode = tuple.Item1;
             string ErrorMessage = Translations.Translate(tuple.Item2);

@@ -272,8 +272,12 @@ public class MainForm : Form
             if (!cisBl.CheckBillAnswer(xmlDocument, true, out message))
             {
                 MessageAlert(message, Translations.Translate("Greška"));
-                LogFile.LogToFile(String.Format("Greška slanja računa na CIS {0} : {1}", billDetails.IdTicket, message), LogLevel.Debug);
-                AddBillToFailedAttempts(billDetails.IdTicket);
+                LogFile.LogToFile(String.Format("Error returned from bill check for ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
+                if (message.Equals("v101") || message.Equals("v103") || message.Equals("v104") || message.Equals("v152") || message.Equals("v153"))
+                {
+                    LogFile.LogToFile(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
+                    AddBillToFailedAttempts(billDetails.IdTicket);
+                }
                 SaveErrorOnBill(billDetails.IdTicket, "ERROR_CIS       "+message.Substring(0,10), dalMerlin);
                 return false;
             }
@@ -410,7 +414,7 @@ public class MainForm : Form
 
     public void AddBillToFailedAttempts(int idTicket)
     {
-
+        LogFile.LogToFile(String.Format("Ticket id: {0} added to counting", idTicket), LogLevel.Debug);
         if (numberOfFailedAttempts.ContainsKey(idTicket.ToString()))
         {
             int num5 = numberOfFailedAttempts[idTicket.ToString()];
@@ -421,6 +425,9 @@ public class MainForm : Form
         {
             numberOfFailedAttempts.Add(idTicket.ToString(), 1);
         }
+
+        LogFile.LogToFile(String.Format("Ticket id: {0} added to counting {1}", idTicket, serializer.Serialize(numberOfFailedAttempts)), LogLevel.Debug);
+
         _385_fisk.Properties.Settings.Default.TestBills = serializer.Serialize(numberOfFailedAttempts);
         _385_fisk.Properties.Settings.Default.Save();
     }
