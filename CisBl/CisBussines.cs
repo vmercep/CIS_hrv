@@ -115,7 +115,7 @@ namespace CisBl
             if(tuple.Item1.Equals("v101") || tuple.Item1.Equals("v103") || tuple.Item1.Equals("v104") || tuple.Item1.Equals("v152") || tuple.Item1.Equals("v153"))
             {
                 LogFile.LogToFile("Error form CIS returned, not critical"+ tuple.Item1, LogLevel.Debug);
-                message = tuple.Item1;
+                message = tuple.Item1 + " " + tuple.Item2;
                 return false;
             }
 

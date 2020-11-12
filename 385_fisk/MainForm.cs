@@ -273,7 +273,7 @@ public class MainForm : Form
             {
                 MessageAlert(message, Translations.Translate("Greška"));
                 LogFile.LogToFile(String.Format("Error returned from bill check for ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
-                if (message.Equals("v101") || message.Equals("v103") || message.Equals("v104") || message.Equals("v152") || message.Equals("v153"))
+                if (message.Contains("v101") || message.Contains("v103") || message.Contains("v104") || message.Contains("v152") || message.Contains("v153"))
                 {
                     LogFile.LogToFile(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
                     AddBillToFailedAttempts(billDetails.IdTicket);
