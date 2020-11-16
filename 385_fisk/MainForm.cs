@@ -254,7 +254,7 @@ public class MainForm : Form
         }
         try
         {
-            CisBussines cisBl = new CisBussines();
+            CisBussines cisBl = new CisBussines(DataSalonToSend);
 
             Log.WriteLog(NumLog.SendingTest, billDetails.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
 
@@ -317,7 +317,7 @@ public class MainForm : Form
     {
         try
         {
-            CisBussines cisBl = new CisBussines();
+            CisBussines cisBl = new CisBussines(DataSalonToSend);
             LogFile.LogToFile(String.Format("Slanje računa na prod CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)), LogLevel.Debug);
             Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
             lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");

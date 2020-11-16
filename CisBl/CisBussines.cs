@@ -15,6 +15,12 @@ namespace CisBl
 {
     public class CisBussines
     {
+        private DataSalon _dataSalonToSend;
+
+        public CisBussines(DataSalon dataSalonToSend)
+        {
+            this._dataSalonToSend = dataSalonToSend;
+        }
 
         private string ProperNumber(string myNumber)
         {
@@ -167,6 +173,7 @@ namespace CisBl
                 CentralniInformacijskiSustav centralniInformacijskiSustav = new CentralniInformacijskiSustav();
                 if(test)
                 {
+                    racunType.Oib= _dataSalonToSend.OIBSoftware;
                     return centralniInformacijskiSustav.PosaljiProvjeru(racunType);
                 }
                 XmlDocument xmlDocument = centralniInformacijskiSustav.PosaljiRacun(racunType, CertificateName);
