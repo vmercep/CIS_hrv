@@ -36,8 +36,9 @@ namespace Helper
             int pixelsPerModule = 30;
             string foregroundColor = "#000000";
             string backgroundColor = "#FFFFFF";
-            
-            
+
+            iznosUkupno = iznosUkupno.Replace(".", string.Empty);
+            iznosUkupno = iznosUkupno.Replace(",", string.Empty);
 
             string payloadString = String.Format(AppLink.QrCodeMessage, zki, datVrijeme.ToString("yyyyMMdd_HHmm"), iznosUkupno);
 
