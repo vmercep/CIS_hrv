@@ -50,6 +50,7 @@
     <Compile Include="DataNewTax.cs" />
     <Compile Include="DataPay.cs" />
     <Compile Include="DataPerso.cs" />
+    <Compile Include="DataQrCode.cs" />
     <Compile Include="DataSalon.cs" />
     <Compile Include="DataTax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

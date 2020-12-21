@@ -1,4 +1,6 @@
-﻿using AutoUpdaterDotNET;
+﻿using _385_fisk.Exceptions;
+using AutoUpdaterDotNET;
+using CisBl;
 using Helper;
 using System;
 using System.ComponentModel;
@@ -126,6 +128,7 @@ public class Config : Form {
     private Label label5;
     private ComboBox cmbLogLevel;
     private Label lbloglevel;
+    private Button btQrRegen;
     private TextBox txtCertificatePassword;
 
     public Config()
@@ -551,6 +554,7 @@ public class Config : Form {
             txtQrSize.BackColor = Color.White;
             cbFiskPonude.Enabled = true;                    
             cmbLogLevel.Enabled = true;
+            btQrRegen.Enabled = true;
         } 
         else if (text.Length > 0) 
         {
@@ -728,6 +732,37 @@ public class Config : Form {
         AutoUpdater.DownloadPath = Environment.CurrentDirectory;
     }
 
+    private void MessageAlert(string content, string title, NumLog logerror = NumLog.None, int ticket = 1, string extendmessage = "")
+    {
+        //MessageBox.Show(content, title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
+        ErrorMessageBox errorMessageBox = new ErrorMessageBox();
+        errorMessageBox.lbMessageText.Text = title;
+        errorMessageBox.lbMessageDetails.Text = content;
+        errorMessageBox.ShowDialog();
+
+        LogFile.LogToFile("Error in QR code regen " + content, LogLevel.Debug);
+    }
+
+    /// <summary>
+    /// regeneriranje barkodova
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void button1_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            QrCodeRegen regen = new QrCodeRegen();
+            bool result=regen.QrCodeRegeneration();
+            if (!result) MessageAlert("Greška u generiranju barkodova, molim provjerite log ili kontaktirajte održavanje", "Error in qrcode regeneration");
+        }
+        catch(Exception ex)
+        {
+            LogFile.LogToFile("Error in QR code regen " +ex.Message, LogLevel.Debug);
+        }
+
+    }
+
 
     #region Inicijalizacija
 
@@ -749,6 +784,8 @@ public class Config : Form {
             this.dtpDateActive = new System.Windows.Forms.DateTimePicker();
             this.lblDateActive = new System.Windows.Forms.Label();
             this.grpBasic = new System.Windows.Forms.GroupBox();
+            this.cmbLogLevel = new System.Windows.Forms.ComboBox();
+            this.lbloglevel = new System.Windows.Forms.Label();
             this.cmbActiveLanguage = new System.Windows.Forms.ComboBox();
             this.lblActiveLanguage = new System.Windows.Forms.Label();
             this.cmbConnectionEncryption = new System.Windows.Forms.ComboBox();
@@ -798,8 +835,7 @@ public class Config : Form {
             this.label5 = new System.Windows.Forms.Label();
             this.txtQrSaveLocation = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.lbloglevel = new System.Windows.Forms.Label();
-            this.cmbLogLevel = new System.Windows.Forms.ComboBox();
+            this.btQrRegen = new System.Windows.Forms.Button();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
@@ -926,6 +962,30 @@ public class Config : Form {
             this.grpBasic.TabIndex = 8;
             this.grpBasic.TabStop = false;
             this.grpBasic.Text = "Osnovno :";
+            // 
+            // cmbLogLevel
+            // 
+            this.cmbLogLevel.Enabled = false;
+            this.cmbLogLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.cmbLogLevel.FormattingEnabled = true;
+            this.cmbLogLevel.Items.AddRange(new object[] {
+            "INFO",
+            "DEBUG",
+            "ERROR"});
+            this.cmbLogLevel.Location = new System.Drawing.Point(247, 122);
+            this.cmbLogLevel.Name = "cmbLogLevel";
+            this.cmbLogLevel.Size = new System.Drawing.Size(112, 21);
+            this.cmbLogLevel.TabIndex = 17;
+            // 
+            // lbloglevel
+            // 
+            this.lbloglevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbloglevel.Location = new System.Drawing.Point(9, 125);
+            this.lbloglevel.Name = "lbloglevel";
+            this.lbloglevel.Size = new System.Drawing.Size(233, 13);
+            this.lbloglevel.TabIndex = 16;
+            this.lbloglevel.Text = "Log level :";
+            this.lbloglevel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbActiveLanguage
             // 
@@ -1466,6 +1526,7 @@ public class Config : Form {
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox1.Controls.Add(this.btQrRegen);
             this.groupBox1.Controls.Add(this.txtQrSize);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.txtQrSaveLocation);
@@ -1520,29 +1581,19 @@ public class Config : Form {
             this.label4.Text = "Putanja spremanja kodova :";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lbloglevel
+            // btQrRegen
             // 
-            this.lbloglevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbloglevel.Location = new System.Drawing.Point(9, 125);
-            this.lbloglevel.Name = "lbloglevel";
-            this.lbloglevel.Size = new System.Drawing.Size(233, 13);
-            this.lbloglevel.TabIndex = 16;
-            this.lbloglevel.Text = "Log level :";
-            this.lbloglevel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // cmbLogLevel
-            // 
-            this.cmbLogLevel.Enabled = false;
-            this.cmbLogLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
-            this.cmbLogLevel.FormattingEnabled = true;
-            this.cmbLogLevel.Items.AddRange(new object[] {
-            "INFO",
-            "DEBUG",
-            "ERROR"});
-            this.cmbLogLevel.Location = new System.Drawing.Point(247, 122);
-            this.cmbLogLevel.Name = "cmbLogLevel";
-            this.cmbLogLevel.Size = new System.Drawing.Size(112, 21);
-            this.cmbLogLevel.TabIndex = 17;
+            this.btQrRegen.AutoSize = true;
+            this.btQrRegen.Enabled = false;
+            this.btQrRegen.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.btQrRegen.Location = new System.Drawing.Point(247, 99);
+            this.btQrRegen.Margin = new System.Windows.Forms.Padding(2);
+            this.btQrRegen.Name = "btQrRegen";
+            this.btQrRegen.Size = new System.Drawing.Size(142, 23);
+            this.btQrRegen.TabIndex = 17;
+            this.btQrRegen.Text = "Regeneriranje kodova";
+            this.btQrRegen.UseVisualStyleBackColor = true;
+            this.btQrRegen.Click += new System.EventHandler(this.button1_Click);
             // 
             // Config
             // 
@@ -1594,8 +1645,9 @@ public class Config : Form {
             this.PerformLayout();
 
   }
+
+
     #endregion
+
     
-
-
 }

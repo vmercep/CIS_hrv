@@ -31,6 +31,12 @@ namespace CisDal
             }
         }
 
+        /// <summary>
+        /// metoda za dohvat ponuda
+        /// </summary>
+        /// <param name="OIB"></param>
+        /// <param name="vatIsActive"></param>
+        /// <returns></returns>
         public List<DataBill> GetOffer(string OIB, bool vatIsActive)
         {
             List<DataBill> allBills = new List<DataBill>();
@@ -78,6 +84,13 @@ namespace CisDal
             return allBills;
         }
 
+
+        /// <summary>
+        /// metoda za dohvat računa
+        /// </summary>
+        /// <param name="OIB"></param>
+        /// <param name="vatIsActive"></param>
+        /// <returns></returns>
         public List<DataBill> GetBill(string OIB, bool vatIsActive)
         {
             List<DataBill> allBills = new List<DataBill>();
@@ -139,6 +152,153 @@ namespace CisDal
             return allBills;
         }
 
+
+        public List<DataQrCode> GetBillForQrCodeRegen()
+        {
+
+            List<DataQrCode> allBills = new List<DataQrCode>();
+            DateTime dateIsActive = DateTime.Now.AddDays(-120);
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT id, DateHeure,notes  from CaisseTicket where typetik in(1,2) and id>=@Date";
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(dateIsActive)));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+
+                            DataQrCode dataBill = new DataQrCode();
+                            dataBill.IdTicket= (int)sqlDataReader["Id"];
+                            dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
+                            dataBill.TotalAmount_Bill = GetBillTotalAmount(dataBill.IdTicket);
+                            dataBill.DateTimeIssue_Bill= AppLink.DateFromLong((int)sqlDataReader["DateHeure"]);
+
+                            allBills.Add(dataBill);
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in GetBillForQrCodeRegen method " + ex.Message);
+            }
+            return allBills;
+
+
+
+        }
+
+
+        private string GetBillTotalAmount(int ticketId)
+        {
+            string dataToPay;
+            //int num = 0;
+            List<DataPay> list = new List<DataPay>();
+            decimal num2 = default(decimal);
+            int num3 = 0;
+            int num4 = 0;
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT IdCaisseTicket, Id, (select idcaissetypemoypaiement from caissemoypaiement where \r\n\t\t\t\t\tid=caisseligpaiement.idCaisseMoyPaiement) TYPEPAI,IdCaisseMoyPaiement, prix, InfoMisc3 \r\n                    from CaisseLigPaiement where IdCaisseTicket=@IdCaisseTicket";
+                    sqlCommand.Parameters.Add(new SqlParameter("@IdCaisseTicket", ticketId));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DataPay dataPay = new DataPay();
+                            dataPay.IdCtick = (int)sqlDataReader["IdCaisseTicket"];
+                            dataPay.TypePay = (int)sqlDataReader["TYPEPAI"];
+                            dataPay.IdCmoyPay = (short)sqlDataReader["IdCaisseMoyPaiement"];
+                            dataPay.Prix = (decimal)sqlDataReader["prix"];
+                            dataPay.Tip = (((string)sqlDataReader["InfoMisc3"] == "TIP") ? true : false);
+                            switch (sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("TYPEPAI")))
+                            {
+                                case 0:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.G;
+                                    break;
+                                case 1:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.C;
+                                    break;
+                                case 2:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.K;
+                                    break;
+                                case 3:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.C;
+                                    break;
+                                case 12:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.T;
+                                    break;
+                                default:
+                                    dataPay.MoyPayFinal = NacinPlacanjaType.O;
+                                    break;
+                            }
+                            list.Add(dataPay);
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in GetBillFollow " + ex.Message);
+            }
+            try
+            {
+
+                    foreach (DataPay item in list)
+                    {
+                        switch (item.MoyPayFinal)
+                        {
+                            case NacinPlacanjaType.G:
+                                num2 += item.Prix;
+                                num3++;
+                                break;
+                            case NacinPlacanjaType.C:
+                                num2 += item.Prix;
+                                num3++;
+                                break;
+                            case NacinPlacanjaType.K:
+                                num2 += item.Prix;
+                                num3++;
+                                break;
+                            case NacinPlacanjaType.T:
+                                num2 += item.Prix;
+                                num3++;
+                                break;
+                            case NacinPlacanjaType.O:
+                                num4++;
+                                break;
+                        }
+                        
+                    }
+                
+                dataToPay = (num2 / 100m).ToString("0.00");
+                return dataToPay;
+            }
+            catch (Exception ex2)
+            {
+                SimpleLog.Log(ex2);
+                throw new Exception("error ocured in GetBillTotalAmount " + ex2.Message);
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// dohvat detalja računA
+        /// </summary>
+        /// <param name="Bill"></param>
+        /// <returns></returns>
         public DataBill GetBillFollow(DataBill Bill)
         {
             //int num = 0;

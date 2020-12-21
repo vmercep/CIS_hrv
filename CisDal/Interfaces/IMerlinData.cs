@@ -25,5 +25,7 @@ namespace CisDal
         int UpdateTicketWithOib(int idTicket, int idCashier);
 
         List<DataBill> GetOffer(string OIB, bool vatIsActive);
+
+        List<DataQrCode> GetBillForQrCodeRegen();
     }
 }
