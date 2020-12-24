@@ -10,12 +10,12 @@ namespace CisBl
 {
     public class QrCodeRegen
     {
-        public bool QrCodeRegeneration()
+        public bool QrCodeRegeneration(DateTime fromDate)
         {
             IMerlinData dalMerlin = new MerlinData();
             try
             {
-                var dataToRegen = dalMerlin.GetBillForQrCodeRegen();
+                var dataToRegen = dalMerlin.GetBillForQrCodeRegen(fromDate);
                 LogFile.LogToFile("Found " + dataToRegen.Count +" to regenerate bills", LogLevel.Debug);
                 foreach (var data in dataToRegen)
                 {

@@ -1,4 +1,5 @@
 ﻿using DataObjects;
+using System;
 using System.Collections.Generic;
 
 namespace CisDal
@@ -26,6 +27,6 @@ namespace CisDal
 
         List<DataBill> GetOffer(string OIB, bool vatIsActive);
 
-        List<DataQrCode> GetBillForQrCodeRegen();
+        List<DataQrCode> GetBillForQrCodeRegen(DateTime datetime);
     }
 }

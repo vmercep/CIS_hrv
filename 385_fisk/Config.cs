@@ -752,8 +752,11 @@ public class Config : Form {
     {
         try
         {
+            ExpirationDate expDate = new ExpirationDate();
+            expDate.ShowDialog();
+            DateTime fromDate= expDate.dateTimePicker1.Value;
             QrCodeRegen regen = new QrCodeRegen();
-            bool result=regen.QrCodeRegeneration();
+            bool result=regen.QrCodeRegeneration(fromDate);
             if (!result) MessageAlert("Greška u generiranju barkodova, molim provjerite log ili kontaktirajte održavanje", "Error in qrcode regeneration");
         }
         catch(Exception ex)

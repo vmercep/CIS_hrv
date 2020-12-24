@@ -98,6 +98,12 @@
     <EmbeddedResource Include="Exceptions\ErrorMessageBox.resx">
       <DependentUpon>ErrorMessageBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ExpirationDate.resx">
+      <DependentUpon>ExpirationDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBoxDialog.resx">
+      <DependentUpon>InputBoxDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

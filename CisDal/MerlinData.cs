@@ -153,18 +153,18 @@ namespace CisDal
         }
 
 
-        public List<DataQrCode> GetBillForQrCodeRegen()
+        public List<DataQrCode> GetBillForQrCodeRegen(DateTime fromDate)
         {
 
             List<DataQrCode> allBills = new List<DataQrCode>();
-            DateTime dateIsActive = DateTime.Now.AddDays(-120);
+            //DateTime dateIsActive = DateTime.Now.AddDays(-120);
             try
             {
                 using (SqlConnection sqlConnection = GetSqlConnection())
                 {
                     SqlCommand sqlCommand = sqlConnection.CreateCommand();
                     sqlCommand.CommandText = "SELECT id, DateHeure,notes  from CaisseTicket where typetik in(1,2) and id>=@Date";
-                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(dateIsActive)));
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(fromDate)));
                     using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
                     {
                         while (sqlDataReader.Read())

@@ -44,14 +44,6 @@ internal static class Program {
                 {
                     Application.Run(new Config());
                 }
-                if (a == "/validity")
-                {
-                    Application.Run(new ExpirationDate());
-                }
-                if(a=="/bla")
-                {
-                    Application.Run(new ErrorMessageBox());
-                }
             }
         }
         else

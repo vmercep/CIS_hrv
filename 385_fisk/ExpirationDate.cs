@@ -9,50 +9,16 @@ public class ExpirationDate : Form {
   private IContainer components = null;
 
   private Button button1;
-
-  private DateTimePicker dateTimePicker1;
-
-  private Label label1;
+    public DateTimePicker dateTimePicker1;
+    private Label label1;
 
   public ExpirationDate () {
-    if (!File.Exists("95d6c3f32d0508ebce35724496382eb3")) {
-      FileStream fileStream = File.Create("95d6c3f32d0508ebce35724496382eb3");
-      fileStream.Flush();
-      fileStream.Close();
-      ValidateExpiryDate.Save(DateTime.Now.ToString("yyyy.MM.dd"));
-    }
     InitializeComponent();
   }
 
-  private void ExpirationDate_Load (object sender, EventArgs e) {
-    string a = InputBox(Translations.Translate("Unesite tehničku šifru"), Translations.Translate("Tehnička šifra"), "");
-    string techCode = AppLink.GetTechCode();
-    if (a == techCode) {
-      DateTime value = ValidateExpiryDate.Load();
-      dateTimePicker1.Value = value;
-    } else {
-      MessageBox.Show(Translations.Translate("Neispravna šifra!"), Translations.Translate("Greška"), MessageBoxButtons.OK, MessageBoxIcon.Hand);
-      Application.Exit();
-    }
-    Text = Translations.Translate(Text);
-    label1.Text = Translations.Translate(label1.Text);
-    button1.Text = Translations.Translate(button1.Text);
-  }
-
-  public static string InputBox (string prompt, string title, string defaultValue) {
-    InputBoxDialog inputBoxDialog = new InputBoxDialog();
-    inputBoxDialog.FormPrompt = prompt;
-    inputBoxDialog.FormCaption = title;
-    inputBoxDialog.DefaultValue = defaultValue;
-    inputBoxDialog.ShowDialog();
-    string inputResponse = inputBoxDialog.InputResponse;
-    inputBoxDialog.Close();
-    return inputResponse;
-  }
+  
 
   private void button1_Click (object sender, EventArgs e) {
-    string dateTime = dateTimePicker1.Value.ToString("yyyy.MM.dd");
-    ValidateExpiryDate.Save(dateTime);
     Application.Exit();
   }
 
@@ -64,43 +30,62 @@ public class ExpirationDate : Form {
   }
 
   private void InitializeComponent () {
-    System.ComponentModel.ComponentResourceManager componentResourceManager = new System.ComponentModel.ComponentResourceManager(typeof(ExpirationDate));
-    button1 = new System.Windows.Forms.Button();
-    dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-    label1 = new System.Windows.Forms.Label();
-    SuspendLayout();
-    button1.Location = new System.Drawing.Point(133, 85);
-    button1.Name = "button1";
-    button1.Size = new System.Drawing.Size(101, 23);
-    button1.TabIndex = 5;
-    button1.Text = "Spremi izmjenu";
-    button1.UseVisualStyleBackColor = true;
-    button1.Click += new System.EventHandler(button1_Click);
-    dateTimePicker1.Location = new System.Drawing.Point(23, 38);
-    dateTimePicker1.Name = "dateTimePicker1";
-    dateTimePicker1.Size = new System.Drawing.Size(200, 20);
-    dateTimePicker1.TabIndex = 4;
-    label1.AutoSize = true;
-    label1.Location = new System.Drawing.Point(16, 15);
-    label1.Name = "label1";
-    label1.Size = new System.Drawing.Size(215, 13);
-    label1.TabIndex = 3;
-    label1.Text = "Datum isteka opcije spremanja XML poruka:";
-    base.AutoScaleDimensions = new System.Drawing.SizeF(6f, 13f);
-    base.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-    base.ClientSize = new System.Drawing.Size(246, 120);
-    base.Controls.Add(button1);
-    base.Controls.Add(dateTimePicker1);
-    base.Controls.Add(label1);
-    base.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-    base.Icon = _385_fisk.Properties.Resources.icon;
-    base.Margin = new System.Windows.Forms.Padding(2);
-    base.MaximizeBox = false;
-    base.Name = "ExpirationDate";
-    base.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-    Text = "Validacija";
-    base.Load += new System.EventHandler(ExpirationDate_Load);
-    ResumeLayout(performLayout: false);
-    PerformLayout();
+            this.button1 = new System.Windows.Forms.Button();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(200, 131);
+            this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(152, 35);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Spremi izmjenu";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Location = new System.Drawing.Point(34, 58);
+            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(298, 26);
+            this.dateTimePicker1.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(24, 23);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 20);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Datum od:";
+            // 
+            // ExpirationDate
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(369, 185);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.dateTimePicker1);
+            this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = global::_385_fisk.Properties.Resources.icon;
+            this.MaximizeBox = false;
+            this.Name = "ExpirationDate";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "QrRegenDatum";
+            this.Load += new System.EventHandler(this.ExpirationDate_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
   }
+
+    private void ExpirationDate_Load(object sender, EventArgs e)
+    {
+        dateTimePicker1.Value = DateTime.Today.AddMonths(-1);
+    }
 }
