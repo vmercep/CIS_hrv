@@ -153,6 +153,29 @@ namespace CisDal
         }
 
 
+        public int CountQrCodeRegen(DateTime fromDate)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT count(id)from CaisseTicket where typetik in(1,2) and id>=@Date";
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(fromDate)));
+                    Int32 count = (Int32)sqlCommand.ExecuteScalar();
+                    return count;
+                }
+            }
+            catch (Exception ex)
+            {
+                SimpleLog.Log(ex);
+                throw new Exception("error ocured in GetBillForQrCodeRegen method " + ex.Message);
+            }
+
+        }
+
+
+
         public List<DataQrCode> GetBillForQrCodeRegen(DateTime fromDate)
         {
 

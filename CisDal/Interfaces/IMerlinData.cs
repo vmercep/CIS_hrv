@@ -28,5 +28,6 @@ namespace CisDal
         List<DataBill> GetOffer(string OIB, bool vatIsActive);
 
         List<DataQrCode> GetBillForQrCodeRegen(DateTime datetime);
+        int CountQrCodeRegen(DateTime fromDate);
     }
 }
