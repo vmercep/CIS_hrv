@@ -1,4 +1,5 @@
 ﻿using Helper;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -206,6 +207,8 @@ public class CentralniInformacijskiSustav {
         XmlDocument xmlDocument = null;
         OdgovorGreska = null;
 
+        LogFile.LogToFile("Sending soap message "+ JsonConvert.SerializeObject(soapMessage), LogLevel.Debug);
+
         if (AppLink.IgnoreSSLCertificates == "1") BypassCertificateError();
 
         if (this.SoapMessageSending != null)
@@ -280,6 +283,7 @@ public class CentralniInformacijskiSustav {
                     xmlDocument = new XmlDocument();
                     xmlDocument.PreserveWhitespace = true;
                     xmlDocument.LoadXml(xml);
+                    LogFile.LogToFile("Response " + JsonConvert.SerializeObject(xmlDocument), LogLevel.Debug);
                     if (this.SoapMessageSent != null)
                     {
                         EventArgs e = new EventArgs();
@@ -290,9 +294,13 @@ public class CentralniInformacijskiSustav {
         }
         catch (WebException ex)
         {
+            LogFile.LogToFile("WebException Error in sending XML " + ex.Message, LogLevel.Debug);
+            LogFile.LogToFile("WebException Error in sending XML " + ex.InnerException, LogLevel.Debug);
             SimpleLog.Log(ex);
             OdgovorGreskaStatus = ex.Status;
             WebResponse response = ex.Response;
+
+            LogFile.LogToFile("WebException Error in sending XML "+ JsonConvert.SerializeObject(response), LogLevel.Debug);
             if (response != null)
             {
                 using (Stream stream2 = response.GetResponseStream())
@@ -301,6 +309,7 @@ public class CentralniInformacijskiSustav {
                     OdgovorGreska = new XmlDocument();
                     OdgovorGreska.Load(txtReader);
                     SimpleLog.Log(OdgovorGreska.OuterXml);
+                    LogFile.LogToFile("WebException Error in sending XML " + OdgovorGreska.OuterXml, LogLevel.Debug);
                     return OdgovorGreska;
                 }
             }
@@ -309,6 +318,7 @@ public class CentralniInformacijskiSustav {
         }
         catch (Exception ex2)
         {
+            LogFile.LogToFile("Exception ex2 Error in sending XML " + ex2.Message, LogLevel.Debug);
             SimpleLog.Log(ex2);
             Trace.TraceError($"Greška kod slanja SOAP poruke: {ex2.Message}");
             throw;

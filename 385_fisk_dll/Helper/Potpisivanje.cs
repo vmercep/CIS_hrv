@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Helper;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -20,7 +21,8 @@ public class Potpisivanje {
     while (enumerator.MoveNext()) {
       X509Certificate2 current = enumerator.Current;
       if (current.FriendlyName.StartsWith(certificateSubject)) {
-        result = current;
+                LogFile.LogToFile("Cert loaded details issuer "+ current.Issuer + ", subject "+current.Subject, LogLevel.Debug);
+                result = current;
         break;
       }
     }
