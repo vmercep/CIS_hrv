@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -130,8 +132,9 @@ public class Config : Form {
     private Label lbloglevel;
     private Button btQrRegen;
     private ProgressBar pgBarQr;
-    private BackgroundWorker bgWorker;
     private TextBox txtCertificatePassword;
+
+    QrCodeRegen regen = new QrCodeRegen();
 
     public Config()
     {
@@ -750,14 +753,27 @@ public class Config : Form {
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void button1_Click(object sender, EventArgs e)
+    private async void button1_Click(object sender, EventArgs e)
     {
         try
         {
+            ExpirationDate expDate = new ExpirationDate();
+            expDate.ShowDialog();
+            DateTime fromDate = expDate.dateTimePicker1.Value;
             pgBarQr.Visible = true;
-            bgWorker.RunWorkerAsync();
-            
-            
+            pgBarQr.Minimum = 0;
+            pgBarQr.Maximum = regen.GetDataCount(fromDate);
+            var progressHandler = new Progress<int>(value =>
+            {
+                pgBarQr.Value = value;
+            });
+            var progress = progressHandler as IProgress<int>;
+            await Task.Run(() =>
+            {
+                regen.QrCodeRegeneration(fromDate,progress);
+            });
+            MessageAlert("Qr kodovi generirani", "QrCode generator");
+            pgBarQr.Visible = false;
         }
         catch(Exception ex)
         {
@@ -767,25 +783,7 @@ public class Config : Form {
 
     }
 
-    private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
-    {
-        ExpirationDate expDate = new ExpirationDate();
-        expDate.ShowDialog();
-        DateTime fromDate = expDate.dateTimePicker1.Value;
-        QrCodeRegen regen = new QrCodeRegen(fromDate);
-        regen.QrCodeRegeneration(bgWorker.ReportProgress);
-    }
 
-    private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-    {
-        pgBarQr.Value = e.ProgressPercentage;
-    }
-
-    private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        MessageAlert("Qr kodovi generirani", "QrCode generator");
-        pgBarQr.Visible = false;
-    }
 
 
     #region Inicijalizacija
@@ -799,6 +797,7 @@ public class Config : Form {
         base.Dispose(disposing);
     }
     private void InitializeComponent () {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Config));
             this.btnSaveAndQuit = new System.Windows.Forms.Button();
             this.lblConnectionString = new System.Windows.Forms.Label();
             this.txtConnectString = new System.Windows.Forms.TextBox();
@@ -855,13 +854,12 @@ public class Config : Form {
             this.btUpdate = new System.Windows.Forms.Button();
             this.lbVerzija = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.pgBarQr = new System.Windows.Forms.ProgressBar();
             this.btQrRegen = new System.Windows.Forms.Button();
             this.txtQrSize = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtQrSaveLocation = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.bgWorker = new System.ComponentModel.BackgroundWorker();
-            this.pgBarQr = new System.Windows.Forms.ProgressBar();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
@@ -877,7 +875,7 @@ public class Config : Form {
             this.btnSaveAndQuit.BackColor = System.Drawing.Color.Transparent;
             this.btnSaveAndQuit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSaveAndQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSaveAndQuit.Image = global::_385_fisk.Properties.Resources.btnSaveAndQuit;
+            this.btnSaveAndQuit.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveAndQuit.Image")));
             this.btnSaveAndQuit.Location = new System.Drawing.Point(1502, 15);
             this.btnSaveAndQuit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSaveAndQuit.Name = "btnSaveAndQuit";
@@ -1265,7 +1263,7 @@ public class Config : Form {
             this.btnUnlockSettings.BackColor = System.Drawing.Color.Transparent;
             this.btnUnlockSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUnlockSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUnlockSettings.Image = global::_385_fisk.Properties.Resources.btnUnlockSettings;
+            this.btnUnlockSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnUnlockSettings.Image")));
             this.btnUnlockSettings.Location = new System.Drawing.Point(1292, 15);
             this.btnUnlockSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnUnlockSettings.Name = "btnUnlockSettings";
@@ -1338,7 +1336,7 @@ public class Config : Form {
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = global::_385_fisk.Properties.Resources.ajaxLoader;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 5);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBox1.Name = "pictureBox1";
@@ -1353,7 +1351,7 @@ public class Config : Form {
             this.btnQuit.BackColor = System.Drawing.Color.Transparent;
             this.btnQuit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnQuit.Image = global::_385_fisk.Properties.Resources.btnQuit;
+            this.btnQuit.Image = ((System.Drawing.Image)(resources.GetObject("btnQuit.Image")));
             this.btnQuit.Location = new System.Drawing.Point(1431, 15);
             this.btnQuit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnQuit.Name = "btnQuit";
@@ -1467,7 +1465,7 @@ public class Config : Form {
             this.btnProcessBills.BackColor = System.Drawing.Color.Transparent;
             this.btnProcessBills.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnProcessBills.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProcessBills.Image = global::_385_fisk.Properties.Resources.btnProcessBills;
+            this.btnProcessBills.Image = ((System.Drawing.Image)(resources.GetObject("btnProcessBills.Image")));
             this.btnProcessBills.Location = new System.Drawing.Point(1360, 15);
             this.btnProcessBills.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnProcessBills.Name = "btnProcessBills";
@@ -1582,7 +1580,7 @@ public class Config : Form {
             this.btUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btUpdate.ForeColor = System.Drawing.Color.Transparent;
-            this.btUpdate.Image = global::_385_fisk.Properties.Resources.cloud_download_40;
+            this.btUpdate.Image = ((System.Drawing.Image)(resources.GetObject("btUpdate.Image")));
             this.btUpdate.Location = new System.Drawing.Point(1569, 15);
             this.btUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btUpdate.Name = "btUpdate";
@@ -1624,6 +1622,14 @@ public class Config : Form {
             this.groupBox1.TabIndex = 29;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Postavke QR Coda :";
+            // 
+            // pgBarQr
+            // 
+            this.pgBarQr.Location = new System.Drawing.Point(370, 205);
+            this.pgBarQr.Name = "pgBarQr";
+            this.pgBarQr.Size = new System.Drawing.Size(392, 46);
+            this.pgBarQr.TabIndex = 22;
+            this.pgBarQr.Visible = false;
             // 
             // btQrRegen
             // 
@@ -1682,27 +1688,12 @@ public class Config : Form {
             this.label4.Text = "Putanja spremanja kodova :";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // bgWorker
-            // 
-            this.bgWorker.WorkerReportsProgress = true;
-            this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
-            this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
-            this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorker_RunWorkerCompleted);
-            // 
-            // pgBarQr
-            // 
-            this.pgBarQr.Location = new System.Drawing.Point(370, 205);
-            this.pgBarQr.Name = "pgBarQr";
-            this.pgBarQr.Size = new System.Drawing.Size(392, 46);
-            this.pgBarQr.TabIndex = 22;
-            this.pgBarQr.Visible = false;
-            // 
             // Config
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.BackgroundImage = global::_385_fisk.Properties.Resources.background2;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1646, 909);
             this.Controls.Add(this.groupBox1);
@@ -1723,7 +1714,7 @@ public class Config : Form {
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = global::_385_fisk.Properties.Resources.icon;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.Name = "Config";

@@ -93,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7416C9C06599777B07B3B891909BB5EE"
+        "OwnerKey" = "8:_10300B791F6449B3ADD0C4AE261ABA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_912C886C7016436E9F172DF0F3E7A403"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -866,15 +872,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CIS-HRV"
-        "ProductCode" = "8:{749E2B41-31B4-45A1-8DB6-C187E444E261}"
-        "PackageCode" = "8:{FF9D78DD-8EAE-47D4-93D0-C815BB61BEF0}"
+        "ProductCode" = "8:{80FB58C4-6B8D-4526-BFFD-15CB342F06F8}"
+        "PackageCode" = "8:{EC8C6FB4-F620-419B-A13D-1ADCB9033A3E}"
         "UpgradeCode" = "8:{A6946A89-83C7-426B-8CD1-E86B11B89118}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.4"
+        "ProductVersion" = "8:1.1.5"
         "Manufacturer" = "8:CIS-HRV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
