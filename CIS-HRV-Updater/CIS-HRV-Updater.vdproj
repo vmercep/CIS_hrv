@@ -153,6 +153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CF142BCB48C6281BDF662C858DDA1252"
+        "OwnerKey" = "8:_F5C5FCD9B06757A062B6D6290B0E0DF4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D8969954636EAEDFB5456FDFE65F20F8"
         "OwnerKey" = "8:_0775DD0EB6134648FEFC449F6E544221"
         "MsmSig" = "8:_UNDEFINED"
@@ -382,7 +388,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Helper, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Helper, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0775DD0EB6134648FEFC449F6E544221"
@@ -515,7 +521,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CisBl, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CisBl, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_997E466A53EE7B3D0FFB86D6DD5B1AF2"
@@ -772,7 +778,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DataObjects, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DataObjects, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_FB25A134FCE538B81116ACE1561709C1"
@@ -866,15 +872,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CIS-HRV"
-        "ProductCode" = "8:{5425BAF6-390C-4542-B0BD-C923E27E2862}"
-        "PackageCode" = "8:{F3685D53-0256-4946-AAB1-2D04109CBB07}"
+        "ProductCode" = "8:{660BC859-EA61-4CBB-9251-86DCC8177764}"
+        "PackageCode" = "8:{B054E75B-3CB3-49CD-AC3E-936E53699033}"
         "UpgradeCode" = "8:{A6946A89-83C7-426B-8CD1-E86B11B89118}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.2"
+        "ProductVersion" = "8:1.1.5"
         "Manufacturer" = "8:CIS-HRV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

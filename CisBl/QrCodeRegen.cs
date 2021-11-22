@@ -70,6 +70,7 @@ namespace CisBl
                     //string zki = data.Notes.Replace("ZKI:", "").Trim();
                     //LogFile.LogToFile("Regenerate bill for ZKI " + zki, LogLevel.Debug);
                     //if (!string.IsNullOrEmpty(zki)) BarCode.GenerateQrCode(zki, data.DateTimeIssue_Bill, data.TotalAmount_Bill, data.IdTicket);
+                    //LogFile.LogToFile("pass qr code regeneration " + i, LogLevel.Debug);
                 }
 
 

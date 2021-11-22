@@ -615,12 +615,12 @@ public class Config : Form {
             folderPath = folderBrowserDialog.SelectedPath;
 
 
-            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\");
+            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\"+(DateTime.Today.Year.ToString())+"\\");
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
             }
-            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\");
+            directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\");
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
@@ -757,9 +757,11 @@ public class Config : Form {
     {
         try
         {
+            
             ExpirationDate expDate = new ExpirationDate();
             expDate.ShowDialog();
             DateTime fromDate = expDate.dateTimePicker1.Value;
+            
             pgBarQr.Visible = true;
             pgBarQr.Minimum = 0;
             pgBarQr.Maximum = regen.GetDataCount(fromDate);
@@ -771,8 +773,9 @@ public class Config : Form {
             await Task.Run(() =>
             {
                 regen.QrCodeRegeneration(fromDate,progress);
+
             });
-            MessageAlert("Qr kodovi generirani", "QrCode generator");
+            MessageBox.Show("Qr kodovi generirani", "QrCode generator");
             pgBarQr.Visible = false;
         }
         catch(Exception ex)
@@ -1529,6 +1532,7 @@ public class Config : Form {
             this.txtCertificatePassword.Location = new System.Drawing.Point(370, 111);
             this.txtCertificatePassword.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtCertificatePassword.Name = "txtCertificatePassword";
+            this.txtCertificatePassword.PasswordChar = 'x';
             this.txtCertificatePassword.Size = new System.Drawing.Size(396, 26);
             this.txtCertificatePassword.TabIndex = 15;
             // 

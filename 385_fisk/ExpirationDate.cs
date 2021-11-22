@@ -19,7 +19,7 @@ public class ExpirationDate : Form {
   
 
   private void button1_Click (object sender, EventArgs e) {
-    Application.Exit();
+        Close();
   }
 
   protected override void Dispose (bool disposing) {
