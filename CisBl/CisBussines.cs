@@ -16,6 +16,8 @@ namespace CisBl
     public class CisBussines
     {
         private DataSalon _dataSalonToSend;
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public CisBussines(DataSalon dataSalonToSend)
         {
@@ -113,20 +115,20 @@ namespace CisBl
 
             if (tuple == null || tuple.Item1.Equals("v100"))
             {
-                LogFile.LogToFile("Test OK! sending to production CIS", LogLevel.Debug);
+                log.Debug("Test OK! sending to production CIS");
                 message = null;
                 return true;
             }
 
             if(tuple.Item1.Equals("v101") || tuple.Item1.Equals("v103") || tuple.Item1.Equals("v104") || tuple.Item1.Equals("v152") || tuple.Item1.Equals("v153"))
             {
-                LogFile.LogToFile("Error form CIS returned, not critical"+ tuple.Item1, LogLevel.Debug);
+                log.Error("Error form CIS returned, not critical"+ tuple.Item1);
                 message = tuple.Item1 + " " + tuple.Item2;
                 return false;
             }
 
 
-            LogFile.LogToFile(String.Format("Error in sending bill to cis {0}", JsonConvert.SerializeObject(xmlDocument)), LogLevel.Debug);
+            log.Error(String.Format("Error in sending bill to cis {0}", JsonConvert.SerializeObject(xmlDocument)));
             string ErrorCode = tuple.Item1;
             string ErrorMessage = Translations.Translate(tuple.Item2);
             message = ErrorCode + " " + ErrorMessage;
@@ -136,13 +138,13 @@ namespace CisBl
 
         public XmlDocument SendBill(DataBill dataBillToSend, IMerlinData dalMerlin, string CertificateName, bool test)
         {
-            LogFile.LogToFile(String.Format("Bill id {0} sending to CIS, method SendBill", dataBillToSend.IdTicket), LogLevel.Debug);
-            LogFile.LogToFile(String.Format("Bill content {0}", JsonConvert.SerializeObject(dataBillToSend)), LogLevel.Debug);
+            log.Debug(String.Format("Bill id {0} sending to CIS, method SendBill", dataBillToSend.IdTicket));
+            log.Debug(String.Format("Bill content {0}", JsonConvert.SerializeObject(dataBillToSend)));
 
             try
             {
                 var racunType = GetRacun(dataBillToSend, dalMerlin);
-                LogFile.LogToFile(String.Format("Created bill to send content {0}", JsonConvert.SerializeObject(racunType)), LogLevel.Debug);
+                log.Debug(String.Format("Created bill to send content {0}", JsonConvert.SerializeObject(racunType)));
 
                 
                 string text = (!(AppLink.UseCertificateFile == "1")) ? Razno.ZastitniKodIzracun(CertificateName, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString()) : Razno.ZastitniKodIzracun(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString());
@@ -164,9 +166,9 @@ namespace CisBl
                 }
                 if (flag)
                 {
-                    LogFile.LogToFile(String.Format("Račun {0} poslan na potpisivanje spremam ZKI {1}", dataBillToSend.IdTicket, text), LogLevel.Debug);
+                    log.Debug(String.Format("Bill {0} ready for signature ZKI {1}", dataBillToSend.IdTicket, text));
                     int ret = dalMerlin.SaveNotes(dataBillToSend.IdTicket, text2);
-                    LogFile.LogToFile(String.Format("Račun {0} Nadopunjen sa ZKI return {1}", dataBillToSend.IdTicket, ret), LogLevel.Debug);
+                    log.Debug(String.Format("Bill {0} added ZKI return {1}", dataBillToSend.IdTicket, ret));
                 }
                 racunType.ZastKod = text;
                 racunType.NakDost = dataBillToSend.MarkSubseqBillDelivery_Bill;
@@ -187,7 +189,8 @@ namespace CisBl
             }
             catch (Exception e)
             {
-                LogFile.LogToFile("Greška se desila u fiskalizaciji računa " + e.Message);
+                log.Error("Error in CIS bussines part", e);
+                
                 throw new Exception(e.Message);
             }
 

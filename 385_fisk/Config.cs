@@ -135,6 +135,8 @@ public class Config : Form {
     private TextBox txtCertificatePassword;
 
     QrCodeRegen regen = new QrCodeRegen();
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
     public Config()
     {
@@ -170,7 +172,7 @@ public class Config : Form {
         grpTestCertificate.Text = Translations.Translate(grpTestCertificate.Text);
         chkSendTest.Text = Translations.Translate(chkSendTest.Text);
         lbVerzija.Text = "Verzija programa: CIS_HRV_ " + Assembly.GetEntryAssembly().GetName().Version;
-        LogFile.LogToFile("Config screen loaded!", LogLevel.Debug);
+
     }
 
     private void btnSaveAndQuitClick(object sender, EventArgs e)
@@ -300,7 +302,7 @@ public class Config : Form {
 
     private void Config_Load(object sender, EventArgs e)
     {
-        LogFile.LogToFile("Config screen loading!", LogLevel.Debug);
+        log.Debug("Config screen loading!");
         txtConnectString.Text = AppLink.ConnectionString;
         string connectionEncryption = AppLink.ConnectionEncryption;
         if (!string.IsNullOrEmpty(connectionEncryption))
@@ -512,14 +514,14 @@ public class Config : Form {
 
     private void btnUnlockSettingClick (object sender, EventArgs e) 
     {
-        LogFile.LogToFile("Unlock setting screen!", LogLevel.Debug);
+        log.Debug("Unlock setting screen!");
         string text = inputBox(Translations.Translate("Unesite tehničku šifru"), Translations.Translate("Tehnička šifra"), "");
         string techCode = AppLink.GetTechCode();
 
         if (text == techCode) 
         {
-                      
-            LogFile.LogToFile("Settings unlocked!", LogLevel.Debug);          
+
+            log.Debug("Settings unlocked!");          
             dtpDateActive.Enabled = true;            
             cmbActiveLanguage.Enabled = true;
             chkVatActive.Enabled = true;
@@ -563,7 +565,7 @@ public class Config : Form {
         } 
         else if (text.Length > 0) 
         {
-                LogFile.LogToFile("Wrong password for setting screen entered!", LogLevel.Debug);
+                log.Debug("Wrong password for setting screen entered!");
                 MessageBox.Show(Translations.Translate("Pogrešna šifra!"), Translations.Translate("Greška"), MessageBoxButtons.OK, MessageBoxIcon.Hand);
     
         }
@@ -636,7 +638,7 @@ public class Config : Form {
 
     private bool saveConfig()
     {
-        LogFile.LogToFile("Config saved!",LogLevel.Debug);
+        log.Debug("Config saved!");
         state = false;
         ConfigFile configFile = new ConfigFile();
         configFile.ConnectionString = txtConnectString.Text;
@@ -745,7 +747,7 @@ public class Config : Form {
         errorMessageBox.lbMessageDetails.Text = content;
         errorMessageBox.ShowDialog();
 
-        LogFile.LogToFile("Error in QR code regen " + content, LogLevel.Debug);
+        log.Debug("Error in QR code regen " + content);
     }
 
     /// <summary>
@@ -780,7 +782,7 @@ public class Config : Form {
         }
         catch(Exception ex)
         {
-            LogFile.LogToFile("Error in QR code regen " +ex.Message, LogLevel.Debug);
+            log.Error("Error in QR code regen " ,ex);
             MessageAlert("Greška u generiranju barkodova, molim provjerite log ili kontaktirajte održavanje", "Error in qrcode regeneration");
         }
 

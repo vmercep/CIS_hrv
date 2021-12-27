@@ -9,7 +9,13 @@ using System.Text;
 using System.Xml;
 
 public class Potpisivanje {
-  public static X509Certificate2 DohvatiCertifikat (string certificateSubject) {
+
+   private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+
+
+    public static X509Certificate2 DohvatiCertifikat (string certificateSubject) {
     return DohvatiCertifikat(certificateSubject, StoreLocation.CurrentUser, StoreName.My);
   }
 
@@ -21,7 +27,7 @@ public class Potpisivanje {
     while (enumerator.MoveNext()) {
       X509Certificate2 current = enumerator.Current;
       if (current.FriendlyName.StartsWith(certificateSubject)) {
-                LogFile.LogToFile("Cert loaded details issuer "+ current.Issuer + ", subject "+current.Subject, LogLevel.Debug);
+                log.Debug("Cert loaded details issuer "+ current.Issuer + ", subject "+current.Subject);
                 result = current;
         break;
       }
@@ -55,6 +61,7 @@ public class Potpisivanje {
         SignedXml signedXml = null;
         try
         {
+            log.Debug("Signing document using certificate "+certifikat.Subject + " START");
             signedXml = new SignedXml(dokument);
             signedXml.SigningKey = signingKey;
             signedXml.SignedInfo.CanonicalizationMethod = "http://www.w3.org/2001/10/xml-exc-c14n#";
@@ -72,9 +79,11 @@ public class Potpisivanje {
             signedXml.ComputeSignature();
             XmlElement xml = signedXml.GetXml();
             dokument.DocumentElement.AppendChild(xml);
+            log.Debug("Signing document using certificate " + certifikat.Subject + " END");
         }
         catch (Exception ex)
         {
+            log.Error("Error in signing document ",ex);
             SimpleLog.Log(ex);
             Trace.TraceError($"Greška kod potpisivanja XML dokumenta: {ex.Message}");
             throw;
@@ -91,7 +100,8 @@ public class Potpisivanje {
         return rSACryptoServiceProvider.SignData(bytes, new SHA1CryptoServiceProvider());
       } catch (Exception ex) {
         SimpleLog.Log(ex);
-        Trace.TraceError($"Greška kod potpisivanja teksta: {ex.Message}");
+                log.Error("Error in signing document ", ex);
+                Trace.TraceError($"Greška kod potpisivanja teksta: {ex.Message}");
         throw;
       }
     }

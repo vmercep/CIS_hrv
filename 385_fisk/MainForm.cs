@@ -25,7 +25,7 @@ using System.Xml;
 public class MainForm : Form
 {
 
-
+    #region declarations
     private readonly Stopwatch stopWatch = new Stopwatch();
 
     private DataSalon DataSalonToSend = new DataSalon();
@@ -70,6 +70,11 @@ public class MainForm : Form
 
     private string errorMessage;
 
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+    #endregion
+
     public MainForm()
     {
         AutoUpdater.DownloadPath = Environment.CurrentDirectory;
@@ -93,8 +98,10 @@ public class MainForm : Form
     {
         MessageAlert(Translations.Translate(myMessage), Translations.Translate("Greška"));
         Log.WriteLog(NumLog.MissingSetting, 0, "", placeholders, ErrorCode, ErrorMessage);
+        log.Error("Error in config data verification " + myMessage);
     }
-
+    // remove in future since is not in use
+    /*
     private void cis_SoapMessageSent(object sender, EventArgs e)
     {
         stopWatch.Stop();
@@ -111,7 +118,7 @@ public class MainForm : Form
         stopWatch.Start();
         Application.DoEvents();
     }
-
+    */ 
     private void Principal()
     {
         IMerlinData dalMerlin = new MerlinData();
@@ -119,18 +126,20 @@ public class MainForm : Form
 
         LogFile.createSimpleLog();
         progressBar1.Value = 0;
-        LogFile.LogToFile("------------Startam sa provjerom principala----------------", LogLevel.Debug);
+        log.Debug("------------Starting with principal check----------------");
 
         if (!AppLink.TestFileCfg())
         {
             MessageAlert(Translations.Translate("Nedostaje konfiguracijska datoteka!"), Translations.Translate("Greška"), NumLog.CfgMissing, 0, "");
+            log.Error("Missing config file, closing application");
             Close();
         }
 
         try
         {
+            log.Debug("Loading data for bussines unit");
             lblInfo.Text = Translations.Translate("Učitavanje podataka o poslovnom prostoru...");
-            LogFile.LogToFile(lblInfo.Text, LogLevel.Debug);
+            
             DataSalonToSend.VATNumber_Salon = AppLink.VATNumber;
             DataSalonToSend.LogFileIsActive = Convert.ToInt16(AppLink.LogFileActive);
             DataSalonToSend.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
@@ -141,7 +150,7 @@ public class MainForm : Form
 
             int num2 = 0;
             CheckCertificate(ref num2);
-
+            log.Debug("Bussines unit data loaded");
 
 
             if (!Helper.DataVerification.VerifDataOk(DataSalonToSend, out vatActif, out errorMessage))
@@ -149,18 +158,21 @@ public class MainForm : Form
                 ErrorMessVerifData(errorMessage);
                 Close();
             }
+            
+
 
             FlushBillsWithNoJir(dalMerlin);
 
-            LogFile.LogToFile("Fatching offers", LogLevel.Debug);
+            log.Debug("Offer processing START ");
             var offers = dalMerlin.GetOffer(DataSalonToSend.VATNumber_Salon, vatActif);
             if (offers.Count > 0)
             {
-                LogFile.LogToFile(String.Format("Found {0} offers ", offers.Count), LogLevel.Debug);
+               
+                log.Debug(String.Format("Found {0} offers in database continuing with application", offers.Count));
 
                 foreach (DataBill offer in offers)
                 {
-                    LogFile.LogToFile(String.Format("For offer id {0}/{1} update Hash", offer.IdTicket, JsonConvert.SerializeObject(offer)), LogLevel.Debug);
+                    log.Debug(String.Format("For offer id {0}/{1} update Hash", offer.IdTicket, JsonConvert.SerializeObject(offer)));
                     SaveErrorOnBill(offer.IdTicket, "OVO NIJE FISKALIZIRANI RAČUN    " , dalMerlin);
 
                 }
@@ -168,34 +180,26 @@ public class MainForm : Form
 
 
             }
-
+            log.Debug("Offer processing END ");
 
             lblInfo.Text = Translations.Translate("Obrada računa (korak 1)...");
-            LogFile.LogToFile("Fatching bills for fiscalization", LogLevel.Debug);
+            log.Debug("Fatching bills for fiscalization");
+
+
             var bills = dalMerlin.GetBill(DataSalonToSend.VATNumber_Salon, vatActif);
             Log.WriteLog(NumLog.BillProcSt1ok, 0, "", placeholders, ErrorCode, ErrorMessage);
-            if (bills.Count < 1)
-            {
-                LogFile.LogToFile("There are no bills for fiscalization", LogLevel.Debug);
-                Log.WriteLog(NumLog.NoBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-                CheckForUpdateEvent();
-                LogFile.LogToFile("Closing screen", LogLevel.Debug);
-                Close();
-            }
-
-
-
-
 
             lblInfo.Text = Translations.Translate("Obrada računa (korak 2)...");
-            LogFile.LogToFile(String.Format("Found {0} bills for fiscal, continuing with batch", bills.Count), LogLevel.Debug);
+            log.Debug(String.Format("Found {0} bills for fiscal, continuing with batch", bills.Count));
             Log.WriteLog(NumLog.StartBillProcSt2, 0, "", placeholders, ErrorCode, ErrorMessage);
             foreach (DataBill bill in bills)
             {
-                LogFile.LogToFile(String.Format("For bill id {0}/{1} fetching details", bill.IdTicket, JsonConvert.SerializeObject(bill)), LogLevel.Debug);
+
+                log.Debug(String.Format("For bill id {0}/{1} fetching details", bill.IdTicket, JsonConvert.SerializeObject(bill)));
+                
                 var billDetails = dalMerlin.GetBillFollow(bill);
 
-                LogFile.LogToFile(String.Format("Details fetched bill id {0}/{1}", bill.IdTicket, JsonConvert.SerializeObject(billDetails)), LogLevel.Debug);
+                log.Debug(String.Format("Details fetched bill id {0}/{1}", bill.IdTicket, JsonConvert.SerializeObject(billDetails)));
                 if (billDetails.Notes.Contains("ZKI:") && billDetails.HashStatus.Length != 36)
                 {
                     billDetails.MarkSubseqBillDelivery_Bill = true;
@@ -226,9 +230,15 @@ public class MainForm : Form
 
             }
 
-
             FlushBillsWithNoJir(dalMerlin);
             lblInfo.Text = Translations.Translate("Zatvaranje aplikacije");
+            
+
+
+            
+            
+            
+            log.Debug("Closing application");
             CheckForUpdateEvent();
             Close();
 
@@ -237,7 +247,7 @@ public class MainForm : Form
         }
         catch (Exception e)
         {
-            LogFile.LogToFile(String.Format("Greška u principalu {0}", e.Message), LogLevel.Debug);
+            log.Debug(String.Format("Error in principal {0}", e.Message));
             MessageAlert("Kritična greška u principalu "+e.Message +" izlazim iz aplikacije","Greška u principalu");
             Close();
 
@@ -246,10 +256,10 @@ public class MainForm : Form
 
     private bool SendBillToTestCis(DataBill billDetails, IMerlinData dalMerlin)
     {
-        LogFile.LogToFile(String.Format("Bill id {0} sending to test CIS", billDetails.IdTicket), LogLevel.Debug);
+        log.Debug(String.Format("Bill id {0} sending to test CIS", billDetails.IdTicket));
         if (GetBillFailedAttempts(billDetails.IdTicket) >= 3)
         {
-            LogFile.LogToFile(String.Format("Bill oid {0} checked 3 times send to production CIS", billDetails.IdTicket), LogLevel.Debug);
+            log.Debug(String.Format("Bill oid {0} checked 3 times send to production CIS", billDetails.IdTicket));
             return true;
         }
         try
@@ -259,8 +269,9 @@ public class MainForm : Form
             Log.WriteLog(NumLog.SendingTest, billDetails.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
 
             lblInfo.Text = Translations.Translate("Slanje zahtjeva za provjerom racuna, molimo pričekajte...");
-            LogFile.LogToFile("Sending request to test CIS", LogLevel.Debug);
-            //XmlDocument xmlDocument = sendBillCheck(billDetails, dalMerlin);
+            log.Debug("Sending request to test CIS");
+            
+
             XmlDocument xmlDocument = cisBl.SendBill(billDetails, dalMerlin, CertificateName, true);
             if (xmlDocument == null)
             {
@@ -272,10 +283,10 @@ public class MainForm : Form
             if (!cisBl.CheckBillAnswer(xmlDocument, true, out message))
             {
                 MessageAlert(message, Translations.Translate("Greška"));
-                LogFile.LogToFile(String.Format("Error returned from bill check for ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
+                log.Debug(String.Format("Error returned from bill check for ticket id: {0} error message: {1}", billDetails.IdTicket, message));
                 if (message.Contains("v101") || message.Contains("v103") || message.Contains("v104") || message.Contains("v152") || message.Contains("v153"))
                 {
-                    LogFile.LogToFile(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message), LogLevel.Debug);
+                    log.Debug(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message));
                     AddBillToFailedAttempts(billDetails.IdTicket);
                 }
                 SaveErrorOnBill(billDetails.IdTicket, "ERROR_CIS       "+message.Substring(0,10), dalMerlin);
@@ -286,7 +297,7 @@ public class MainForm : Form
         }
         catch (NoOibException e)
         {
-            LogFile.LogToFile(String.Format("Error for sending bill id to test CIS {0} / message: {1}", billDetails.IdTicket, e.Message), LogLevel.Debug);
+            log.Error(String.Format("Error for sending bill id to test CIS {0} ", billDetails.IdTicket), e);
             AddBillToFailedAttempts(billDetails.IdTicket);
             SaveErrorOnBill(billDetails.IdTicket, "ERROR_OIB                              ", dalMerlin);
             MessageAlert(Translations.Translate("Nedostaje OIB zaposlenika!"), Translations.Translate("Greška"));
@@ -306,7 +317,7 @@ public class MainForm : Form
             }
             MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
             SaveErrorOnBill(billDetails.IdTicket, "ERROR_CIS                              ", dalMerlin);
-            LogFile.LogToFile(String.Format("General error for bill id {0} / message: {1}", billDetails.IdTicket, ex2.Message), LogLevel.Debug);
+            log.Error(String.Format("General error for bill id {0} ", billDetails.IdTicket), ex2);
             Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex2.Message, placeholders, ErrorCode, ErrorMessage);
             return false;
         }
@@ -318,10 +329,10 @@ public class MainForm : Form
         try
         {
             CisBussines cisBl = new CisBussines(DataSalonToSend);
-            LogFile.LogToFile(String.Format("Slanje računa na prod CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)), LogLevel.Debug);
+            log.Debug(String.Format("Slanje računa na prod CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)));
             Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
             lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
-            LogFile.LogToFile(lblInfo.Text, LogLevel.Debug);
+            log.Debug("Connectiong with CIS please stand by");
             XmlDocument xmlDocument = cisBl.SendBill(listBill, dalMerlin, CertificateName, false); //sendBill(listBill, dalMerlin);
 
             if (xmlDocument == null)
@@ -334,12 +345,12 @@ public class MainForm : Form
             {
                 MessageAlert(message, Translations.Translate("Greška"));
                 SaveErrorOnBill(listBill.IdTicket, "ERROR_CIS       " + message.Substring(0, 10), dalMerlin);
-                LogFile.LogToFile(String.Format("Greška slanja računa na prod CIS {0} : {1}", listBill.IdTicket, message), LogLevel.Debug);
+                log.Debug(String.Format("Error in sending to prod CIS {0} : {1}", listBill.IdTicket, message));
                 throw new Exception("Error on CIS "+message);
             }
 
             txtResponse.Text = xmlDocument.OuterXml;
-            LogFile.LogToFile(String.Format("Račun uspješno poslan na CIS {0}, odgovor: {1}", listBill.IdTicket, JsonConvert.SerializeObject(xmlDocument)), LogLevel.Debug);
+            log.Debug(String.Format("Bill succesfully sent to CIS {0}, response: {1}", listBill.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
 
             Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
 
@@ -358,7 +369,7 @@ public class MainForm : Form
             }
             else
             {
-                LogFile.LogToFile(String.Format("Sranje u kodu  {0}", listBill.IdTicket), LogLevel.Debug);
+                log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
                 SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP                             ", dalMerlin);
             }
 
@@ -390,23 +401,23 @@ public class MainForm : Form
     {
         try
         {
-            LogFile.LogToFile(String.Format("For bill id {0} missing OIB", bill.IdTicket), LogLevel.Debug);
+            log.Debug(String.Format("For bill id {0} missing OIB", bill.IdTicket));
             var idCashier = dalMerlin.GetPersoByOib(DataSalonToSend.VATNumber_Salon);
             if (idCashier == -1)
             {
                 MessageAlert(String.Format("Nedostaje OIB zaposlenika za račun {0}, defaultni zaposlenik ne postoji", bill.IdTicket), "Nedostaje OIB zaposlenika");
-                LogFile.LogToFile(String.Format("Missing OIB for bill id {0}, default cachier dose not exist in database", bill.IdTicket), LogLevel.Debug);
+                log.Debug(String.Format("Missing OIB for bill id {0}, default cachier dose not exist in database", bill.IdTicket));
                 return false;
             }
             int ret=dalMerlin.UpdateTicketWithOib(bill.IdTicket, idCashier);
-            LogFile.LogToFile(String.Format("Bill id {0} filled with OIB id {1}/db return {2}", bill.IdTicket, idCashier, ret), LogLevel.Debug);
+            log.Debug(String.Format("Bill id {0} filled with OIB id {1}/db return {2}", bill.IdTicket, idCashier, ret));
 
             return true;
 
         }
         catch(Exception e)
         {
-            LogFile.LogToFile(String.Format("Error ocured for bill ticket id {0} message {1}", bill.IdTicket, e.Message), LogLevel.Debug);
+            log.Error(String.Format("Error ocured for bill ticket id {0} ", bill.IdTicket), e);
             MessageAlert(String.Format("Greška u ažuriranju računa {0} sa OIB-om, poruka greške {1}", bill.IdTicket, e.Message), "Nedostaje OIB zaposlenika");
             return false;
         }
@@ -414,7 +425,7 @@ public class MainForm : Form
 
     public void AddBillToFailedAttempts(int idTicket)
     {
-        LogFile.LogToFile(String.Format("Ticket id: {0} added to counting", idTicket), LogLevel.Debug);
+        log.Debug(String.Format("Ticket id: {0} added to counting", idTicket));
         if (numberOfFailedAttempts.ContainsKey(idTicket.ToString()))
         {
             int num5 = numberOfFailedAttempts[idTicket.ToString()];
@@ -426,7 +437,7 @@ public class MainForm : Form
             numberOfFailedAttempts.Add(idTicket.ToString(), 1);
         }
 
-        LogFile.LogToFile(String.Format("Ticket id: {0} added to counting {1}", idTicket, serializer.Serialize(numberOfFailedAttempts)), LogLevel.Debug);
+        log.Debug(String.Format("Ticket id: {0} added to counting {1}", idTicket, serializer.Serialize(numberOfFailedAttempts)));
 
         _385_fisk.Properties.Settings.Default.TestBills = serializer.Serialize(numberOfFailedAttempts);
         _385_fisk.Properties.Settings.Default.Save();
@@ -461,7 +472,7 @@ public class MainForm : Form
                 placeholders = new Dictionary<string, string>();
                 placeholders["{{%certificate_title%}}"] = CertificateName;
                 MessageAlert(Translations.Translate("Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!", placeholders), Translations.Translate("Greška"));
-                LogFile.LogToFile(Translations.Translate("Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!", placeholders));
+                log.Debug(String.Format("Certificate {0} dose not exist", CertificateName));
                 Close();
             }
             if (CertificateName.Length > 1)
@@ -490,20 +501,18 @@ public class MainForm : Form
                     placeholders = new Dictionary<string, string>();
                     placeholders["{{%certificate_title%}}"] = CertificateName;
                     MessageAlert(Translations.Translate("Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!", placeholders), Translations.Translate("Greška"));
-                    LogFile.LogToFile(Translations.Translate("Osobni certifikat s nazivom {{%certificate_title%}} ne postoji!", placeholders));
-                    Close();
+                    log.Debug(String.Format("Certificate {0} dose not exist", CertificateName)); Close();
                     break;
                 case 1:
                     placeholders = new Dictionary<string, string>();
                     placeholders["{{%certificate_title%}}"] = CertificateName;
-                    LogFile.LogToFile(Translations.Translate("Pronađen je osobni certifikat s nazivom {{%certificate_title%}}!", placeholders));
+                    log.Debug("Certificate loaded succsessfully");
                     break;
                 case 2:
                     placeholders = new Dictionary<string, string>();
                     placeholders["{{%certificate_title%}}"] = CertificateName;
                     MessageAlert(Translations.Translate("Pronađeno je više osobnih certifikata s nazivom {{%certificate_title%}}!", placeholders), Translations.Translate("Greška"));
-                    LogFile.LogToFile(Translations.Translate("Pronađeno je više osobnih certifikata s nazivom {{%certificate_title%}}!", placeholders));
-                    Close();
+                    log.Debug(String.Format("Multiple Certificate {0} found", CertificateName)); Close();
                     break;
             }
         }
@@ -514,7 +523,8 @@ public class MainForm : Form
     {
         if (!lastCheck.Equals(now.ToString("d.M.y")))
         {
-            LogFile.LogToFile("Provjeravam novu verziju", LogLevel.Debug);
+            
+            log.Debug("Checking for new version of CIS application");
             _385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
             _385_fisk.Properties.Settings.Default.Save();
             base.TopMost = false;
@@ -563,22 +573,20 @@ public class MainForm : Form
     }
     #endregion
 
-    
-
-
 
     private void SaveErrorOnBill(int Idticket, string m_Text, IMerlinData dalMerlin)
     {
         try
         {
-            LogFile.LogToFile(String.Format("Adding error on ticket id {0}  error: {1}", Idticket, m_Text), LogLevel.Debug);
+            log.Debug(String.Format("Adding error on ticket id {0}  error: {1}", Idticket, m_Text));
             var ret=dalMerlin.SaveTicketJir(Idticket, m_Text);
-            LogFile.LogToFile(String.Format("Updated ticket id {0}  return code {1}", Idticket, ret), LogLevel.Debug);
+            log.Debug(String.Format("Updated ticket id {0}  return code {1}", Idticket, ret));
             Log.WriteLog(NumLog.BillUpdateOK, Idticket, m_Text, placeholders, ErrorCode, ErrorMessage);
         }
         catch(Exception e)
         {
-            LogFile.LogToFile(String.Format("Greška u dodavanju Error an račun {0} , {1}", Idticket, e.Message), LogLevel.Debug);
+            log.Error("Error ocured in SaveErrorOnBill",e);
+            
         }
 
     }
@@ -653,6 +661,7 @@ public class MainForm : Form
             SimpleLog.Log(ex);
             MessageAlert(ex.Message + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
             Log.WriteLog(NumLog.XMLerror, IDticket, ex.Message, placeholders, ErrorCode, ErrorMessage);
+            log.Error("Error ocured in line 670",ex);
             flag = false;
         }
         if (!flag)
@@ -660,12 +669,16 @@ public class MainForm : Form
             return false;
         }
         var ret=dalMerlin.SaveTicketJir(IDticket, text);
-        LogFile.LogToFile(String.Format( "ticket updated {0} return {1} ", IDticket, ret ));
-
+        
+        log.Debug(String.Format("ticket updated {0} return {1} ", IDticket, ret));
         var ticket = dalMerlin.GetTicket(IDticket);
 
-        LogFile.LogToFile("number of Ticket fetched from database "+ticket.Count);
-        LogFile.LogToFile("Ticket fetched from database " + JsonConvert.SerializeObject(ticket));
+        log.Debug("Number of Ticket fetched from database " + ticket.Count);
+        log.Debug("Ticket fetched from database " + JsonConvert.SerializeObject(ticket));
+
+
+
+
         Log.WriteLog(NumLog.BillUpdateOK, IDticket, text, placeholders, ErrorCode, ErrorMessage);
         if (State)
         {
@@ -712,6 +725,7 @@ public class MainForm : Form
         errorMessageBox.ShowDialog();
 
         Log.WriteLog(logerror, ticket, extendmessage, placeholders, ErrorCode, ErrorMessage);
+        log.Debug(String.Format("Message alert with content {0}", content));
     }
 
     private void Form1_Shown_1(object sender, EventArgs e)
@@ -723,6 +737,7 @@ public class MainForm : Form
         }
         else
         {
+            log.Debug("Config file creation START");
             ConfigFile configFile = new ConfigFile();
             configFile.ConnectionString = "server=(local); uid=sa; pwd=_PWD4sa_; Database=Merlin";
             configFile.ServerUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
@@ -742,6 +757,7 @@ public class MainForm : Form
             Config config = new Config();
             config.Show();
             config.TopMost = true;
+            log.Debug("Config file creation END");
         }
     }
 
@@ -772,7 +788,8 @@ public class MainForm : Form
         }
         catch(Exception e)
         {
-            LogFile.LogToFile("greška u IsSoloMode "+e.Message, LogLevel.Debug);
+            
+            log.Error("Error in solo mode ",e);
             Close();
         }
         
@@ -781,13 +798,14 @@ public class MainForm : Form
     private void FlushBillsWithNoJir(IMerlinData dalMerlin)
     {
         try
-        {
-            LogFile.LogToFile("Flush računa u bazi bez JIR-a", LogLevel.Debug);
+        {          
+            log.Debug("Flush database for bills without JIR");
             dalMerlin.FlushBillsWithNoJir();
         }
         catch(Exception e)
         {
-            LogFile.LogToFile("greške u FlushBillsWithNoJir " + e.Message, LogLevel.Debug);
+  
+            log.Error("Error in FlushBillsWithNoJir",e);
         }
 
     }

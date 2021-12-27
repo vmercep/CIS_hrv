@@ -13,6 +13,7 @@ namespace CisBl
     public class QrCodeRegen
     {
         IMerlinData _dalMerlin = new MerlinData();
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
         public QrCodeRegen()
@@ -33,13 +34,13 @@ namespace CisBl
             try
             {
                 var dataToRegen = _dalMerlin.GetBillForQrCodeRegen(fromDate);
-                LogFile.LogToFile("Found " + dataToRegen.Count +" to regenerate bills", LogLevel.Debug);
+                log.Debug("Found " + dataToRegen.Count +" to regenerate bills");
                 int i = 0;
                 foreach (var data in dataToRegen)
                 {
                     progress.Report(i);
                     string zki = data.Notes.Replace("ZKI:", "").Trim();
-                    LogFile.LogToFile("Regenerate bill for ZKI " + zki, LogLevel.Debug);
+                    log.Debug("Regenerate bill for ZKI " + zki);
                     if (!string.IsNullOrEmpty(zki)) BarCode.GenerateQrCode(zki, data.DateTimeIssue_Bill, data.TotalAmount_Bill, data.IdTicket);
                     i++;
                 }
@@ -48,8 +49,8 @@ namespace CisBl
             }
             catch(Exception e)
             {
-                LogFile.LogToFile("Error ocured in qr code regeneration "+e.InnerException, LogLevel.Debug);
-                LogFile.LogToFile("Error ocured in qr code regeneration " + e.Message, LogLevel.Debug);
+                log.Debug("Error ocured in qr code regeneration "+e.InnerException);
+                log.Debug("Error ocured in qr code regeneration " + e.Message);
                 throw new Exception("Error in qrGen "+e.Message);
             }
         }
@@ -60,25 +61,18 @@ namespace CisBl
             try
             {
                 var dataToRegen = 1000;
-                int count = 1000;
-                //LogFile.LogToFile("Found " + dataToRegen.Count + " to regenerate bills", LogLevel.Debug);
                 for(int i=0;i<dataToRegen;i++)
                 {
                     progress.Report(i);
                     Thread.Sleep(10);
-                    //count++;
-                    //string zki = data.Notes.Replace("ZKI:", "").Trim();
-                    //LogFile.LogToFile("Regenerate bill for ZKI " + zki, LogLevel.Debug);
-                    //if (!string.IsNullOrEmpty(zki)) BarCode.GenerateQrCode(zki, data.DateTimeIssue_Bill, data.TotalAmount_Bill, data.IdTicket);
-                    //LogFile.LogToFile("pass qr code regeneration " + i, LogLevel.Debug);
+ 
                 }
 
 
             }
             catch (Exception e)
             {
-                LogFile.LogToFile("Error ocured in qr code regeneration " + e.InnerException, LogLevel.Debug);
-                LogFile.LogToFile("Error ocured in qr code regeneration " + e.Message, LogLevel.Debug);
+                log.Error("Error ocured in qr code regeneration ", e);
                 throw new Exception("Error in qrGen " + e.Message);
             }
         }

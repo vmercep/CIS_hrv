@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 internal static class Program {
 
-
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
     [STAThread]
@@ -16,6 +16,7 @@ internal static class Program {
 
         try
         {
+            log.Debug("Starting CIS application");
             ManagementClass mngmtClass = new ManagementClass("Win32_Process");
             foreach (ManagementObject o in mngmtClass.GetInstances())
             {
@@ -26,14 +27,15 @@ internal static class Program {
                     Match m = envRE.Match(commandLine);
                     if (m.Success)
                     {
-                        //Console.WriteLine(o["Name"] + " [" + m.Groups[1] + "]");
                         Helper.Globals.Name = m.Groups[1].Value;
+                        log.Debug("Setting global name to "+ Helper.Globals.Name);
                     }
                 }
             }
 
         }catch(Exception e)
         {
+            log.Error("Error ocured in trying to find merlin exe " + e.Message);
             using (EventLog eventLog = new EventLog("Application"))
             {
                 eventLog.Source = "Application";
@@ -46,7 +48,8 @@ internal static class Program {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         string[] commandLineArgs = Environment.GetCommandLineArgs();
-        Console.WriteLine(commandLineArgs.Length);
+        //Console.WriteLine(commandLineArgs.Length);
+        log.Debug("Command line arguments "+commandLineArgs.Length);
 
         if (commandLineArgs.Length > 1)
         {
@@ -55,12 +58,14 @@ internal static class Program {
             {
                 if (a == "/config")
                 {
+                    log.Debug("Starting config form-------");
                     Application.Run(new Config());
                 }
             }
         }
         else
         {
+            log.Debug("Starting main form------");
             Application.Run(new MainForm());
         }
     }

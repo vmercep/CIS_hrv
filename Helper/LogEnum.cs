@@ -6,126 +6,129 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
+
     public static class Log
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static void WriteLog(NumLog numLog, int IDticket, string extendMess, Dictionary<string, string> placeholders,string ErrorCode, string ErrorMessage)
         {
 
                 switch (numLog)
                 {
                     case NumLog.AppLaunch:
-                        LogFile.LogToFile("------------------------- " + Translations.Translate("POČETAK APLIKACIJE") + " -------------------------");
+                        log.Debug("------------------------- " + Translations.Translate("POČETAK APLIKACIJE") + " -------------------------");
                         break;
                     case NumLog.MissingSetting:
-                        LogFile.LogToFile(Translations.Translate("Nedostaju postavke"));
+                        log.Debug(Translations.Translate("Nedostaju postavke"));
                         break;
                     case NumLog.SettingsOk:
-                        LogFile.LogToFile(Translations.Translate("Postavke su u redu"));
+                        log.Debug(Translations.Translate("Postavke su u redu"));
                         break;
                     case NumLog.ConnectionCISFailed:
-                        LogFile.LogToFile(Translations.Translate("Povezivanje s CIS servisom nije uspijelo"));
+                        log.Debug(Translations.Translate("Povezivanje s CIS servisom nije uspijelo"));
                         break;
                     case NumLog.ConnectionCISOk:
-                        LogFile.LogToFile(Translations.Translate("Uspiješno povezivanje s CIS servisom"));
+                        log.Debug(Translations.Translate("Uspiješno povezivanje s CIS servisom"));
                         break;
                     case NumLog.PbBillProcSt1:
-                        LogFile.LogToFile(Translations.Translate("Problem prilikom obrade računa (korak 1)"));
+                        log.Debug(Translations.Translate("Problem prilikom obrade računa (korak 1)"));
                         break;
                     case NumLog.BillProcSt1ok:
-                        LogFile.LogToFile(Translations.Translate("Uspiješna obrada računa (korak 1)"));
+                        log.Debug(Translations.Translate("Uspiješna obrada računa (korak 1)"));
                         break;
                     case NumLog.NoBill:
-                        LogFile.LogToFile("-- " + Translations.Translate("Ne postoji račun za obradu. ZATVRANJE APLIKACIJE") + " --");
+                        log.Debug("-- " + Translations.Translate("Ne postoji račun za obradu. ZATVRANJE APLIKACIJE") + " --");
                         break;
                     case NumLog.StartBillProcSt2:
-                        LogFile.LogToFile(Translations.Translate("Započinje obrada računa (korak 2)"));
+                        log.Debug(Translations.Translate("Započinje obrada računa (korak 2)"));
                         break;
                     case NumLog.PbBillProcSt2:
-                        LogFile.LogToFile(Translations.Translate("Problem prilikom obrade računa (korak 2)") + " :" + IDticket);
+                        log.Debug(Translations.Translate("Problem prilikom obrade računa (korak 2)") + " :" + IDticket);
                         break;
                     case NumLog.MissingOIBEmp:
-                        LogFile.LogToFile(Translations.Translate("Nedostaje OIB zaposlenika"));
+                        log.Debug(Translations.Translate("Nedostaje OIB zaposlenika"));
                         break;
                     case NumLog.SendBill:
-                        LogFile.LogToFile(">" + Translations.Translate("Šaljem račun") + ": " + IDticket);
+                        log.Debug(">" + Translations.Translate("Šaljem račun") + ": " + IDticket);
                         break;
                     case NumLog.SendBillOK:
-                        LogFile.LogToFile(">>>" + Translations.Translate("Uspiješno slanje"));
+                        log.Debug(">>>" + Translations.Translate("Uspiješno slanje"));
                         break;
                     case NumLog.ErrorHttp:
-                        LogFile.LogToFile(extendMess + " - " + Translations.Translate("Greška prilikom slanja računa"));
+                        log.Debug(extendMess + " - " + Translations.Translate("Greška prilikom slanja računa"));
                         break;
                     case NumLog.EmptyXMLResponse:
-                        LogFile.LogToFile(Translations.Translate("XML odgovor je prazan"));
+                        log.Debug(Translations.Translate("XML odgovor je prazan"));
                         break;
                     case NumLog.XMLerror:
-                        LogFile.LogToFile(extendMess + " " + Translations.Translate("na računu") + " " + IDticket);
+                        log.Debug(extendMess + " " + Translations.Translate("na računu") + " " + IDticket);
                         break;
                     case NumLog.JirNodeNotFount:
-                        LogFile.LogToFile(Translations.Translate("Na odgovoru nije pronađen JIR"));
+                        log.Debug(Translations.Translate("Na odgovoru nije pronađen JIR"));
                         break;
                     case NumLog.NodeJirIsNull:
-                        LogFile.LogToFile(Translations.Translate("Čvor JIR na odgovoru nema sadržaja"));
+                        log.Debug(Translations.Translate("Čvor JIR na odgovoru nema sadržaja"));
                         break;
                     case NumLog.JirIsNull:
-                        LogFile.LogToFile(Translations.Translate("Element JIR na odgovoru nema sadržaja"));
+                        log.Debug(Translations.Translate("Element JIR na odgovoru nema sadržaja"));
                         break;
                     case NumLog.NextBill:
-                        LogFile.LogToFile("-" + Translations.Translate("Slijedeći račun") + "-");
+                        log.Debug("-" + Translations.Translate("Slijedeći račun") + "-");
                         break;
                     case NumLog.StartSearchJir:
-                        LogFile.LogToFile(Translations.Translate("Započinje traženje JIR-a"));
+                        log.Debug(Translations.Translate("Započinje traženje JIR-a"));
                         break;
                     case NumLog.StartSearchError:
-                        LogFile.LogToFile(Translations.Translate("Započinje traženje greške"));
+                        log.Debug(Translations.Translate("Započinje traženje greške"));
                         break;
                     case NumLog.s001:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s001");
+                        log.Debug(Translations.Translate("Greška") + " s001");
                         break;
                     case NumLog.s002:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s002");
+                        log.Debug(Translations.Translate("Greška") + " s002");
                         break;
                     case NumLog.s003:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s003");
+                        log.Debug(Translations.Translate("Greška") + " s003");
                         break;
                     case NumLog.s004:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s004");
+                        log.Debug(Translations.Translate("Greška") + " s004");
                         break;
                     case NumLog.s005:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s005");
+                        log.Debug(Translations.Translate("Greška") + " s005");
                         break;
                     case NumLog.s006:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " s006");
+                        log.Debug(Translations.Translate("Greška") + " s006");
                         break;
                     case NumLog.sERR:
-                        LogFile.LogToFile(Translations.Translate("Greška") + " sERR");
+                        log.Debug(Translations.Translate("Greška") + " sERR");
                         break;
                     case NumLog.BillUpdateOK:
                         placeholders = new Dictionary<string, string>();
                         placeholders["{{%receipt_number%}}"] = IDticket.ToString();
                         placeholders["{{%jir_number%}}"] = extendMess;
-                        LogFile.LogToFile(Translations.Translate("Račun s brojem {{%receipt_number%}} uspiješno nadopunjen s {{%jir_number%}}", placeholders));
+                        log.Debug(Translations.Translate("Račun s brojem {{%receipt_number%}} uspiješno nadopunjen s {{%jir_number%}}", placeholders));
                         break;
                     case NumLog.ErrorHttp2:
-                        LogFile.LogToFile(extendMess + " " + Translations.Translate("Greška tokom slanja podataka o poslovnom prostoru"));
+                        log.Debug(extendMess + " " + Translations.Translate("Greška tokom slanja podataka o poslovnom prostoru"));
                         break;
                     case NumLog.SendBP:
-                        LogFile.LogToFile(">" + Translations.Translate("Slanje podataka o poslovnom prostoru"));
+                        log.Debug(">" + Translations.Translate("Slanje podataka o poslovnom prostoru"));
                         break;
                     case NumLog.CfgMissing:
-                        LogFile.LogToFile(">" + Translations.Translate("Nedostaje konfiguracijska datoteka"));
+                        log.Debug(">" + Translations.Translate("Nedostaje konfiguracijska datoteka"));
                         break;
                     case NumLog.SendingTest:
-                        LogFile.LogToFile(Translations.Translate("Slanje testnog računa s brojem: ") + IDticket);
+                        log.Debug(Translations.Translate("Slanje testnog računa s brojem: ") + IDticket);
                         break;
                     case NumLog.TestFailed:
-                        LogFile.LogToFile(Translations.Translate("Slanje testnog računa vratilo je grešku s brojem: ") + ErrorCode + " - " + ErrorMessage);
+                        log.Debug(Translations.Translate("Slanje testnog računa vratilo je grešku s brojem: ") + ErrorCode + " - " + ErrorMessage);
                         break;
                     case NumLog.TestSuccess:
-                        LogFile.LogToFile(Translations.Translate("Slanje testnog računa je bilo uspiješno"));
+                        log.Debug(Translations.Translate("Slanje testnog računa je bilo uspiješno"));
                         break;
                     case NumLog.WeirdTaxRatesWhenNotInVAT:
-                        LogFile.LogToFile(Translations.Translate("Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%"));
+                        log.Debug(Translations.Translate("Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%"));
                         break;
                 }
             }

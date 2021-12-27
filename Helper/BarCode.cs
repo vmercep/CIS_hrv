@@ -1,19 +1,20 @@
 ﻿using QRCoder;
 using System;
-using System.Collections.Generic;
+
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
+
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Helper
 {
     public static class BarCode
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         private static System.Drawing.Image ResizeImage(System.Drawing.Image image, int size)
         {
@@ -31,7 +32,7 @@ namespace Helper
         public static void GenerateQrCode(string zki, DateTime datVrijeme, string iznosUkupno, int idTicket)
         {
 
-            LogFile.LogToFile("Generate QR code for bill id "+idTicket,LogLevel.Debug);
+            log.Debug("Generate QR code for bill id "+idTicket);
             QRCodeGenerator.ECCLevel eccLevel = QRCodeGenerator.ECCLevel.L;
             int pixelsPerModule = 30;
             string foregroundColor = "#000000";
@@ -66,7 +67,7 @@ namespace Helper
                                     directoryInfo.Create();
                                 }
                                 resized.Save(AppLink.QrCodeLocation + "\\" + idTicket.ToString() + ".jpg", actualFormat);
-                                LogFile.LogToFile("QR code created "+ idTicket.ToString() + ".jpg and saved " + AppLink.QrCodeLocation, LogLevel.Debug);
+                                log.Debug("QR code created "+ idTicket.ToString() + ".jpg and saved " + AppLink.QrCodeLocation);
                             }
                         }
 
@@ -78,7 +79,7 @@ namespace Helper
             }
             catch(Exception e)
             {
-                LogFile.LogToFile("Greška u generiranju bar koda " + e.Message);
+                log.Error("Greška u generiranju bar koda ", e);
                 throw new Exception("Error ocured in QR generation " + e.Message);
             }
 

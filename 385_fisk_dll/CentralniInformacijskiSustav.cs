@@ -15,7 +15,9 @@ using System.Xml;
 public class CentralniInformacijskiSustav {
   private const string cisUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
 
-  public string NazivMapeZahtjev {
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+    public string NazivMapeZahtjev {
     get;
     set;
   }
@@ -54,34 +56,7 @@ public class CentralniInformacijskiSustav {
 
   public event EventHandler<EventArgs> SoapMessageSent;
 
-    public XmlDocument PosaljiPoslovniProstor(PoslovniProstorType poslovniProstor, string certificateSubject)
-    {
-        XmlDocument racunOdgovor = null;
-        PoslovniProstorZahtjev poslovniProstorZahtjev = XmlDokumenti.KreirajPoslovniProstorZahtjev(poslovniProstor);
-        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajPoslovniProstorZahtjev(poslovniProstorZahtjev);
-        PosaljiZahtjev(certificateSubject, ref racunOdgovor, zahtjevXml);
-        return racunOdgovor;
-    }
-
-    public XmlDocument PosaljiPoslovniProstor(PoslovniProstorType poslovniProstor, X509Certificate2 certifikat)
-    {
-        //XmlDocument xmlDocument = null;
-        PoslovniProstorZahtjev poslovniProstorZahtjev = XmlDokumenti.KreirajPoslovniProstorZahtjev(poslovniProstor);
-        XmlDocument dokument = XmlDokumenti.SerijalizirajPoslovniProstorZahtjev(poslovniProstorZahtjev);
-        Potpisivanje.PotpisiXmlDokument(dokument, certifikat);
-        XmlDokumenti.DodajSoapEnvelope(ref dokument);
-        return SendSoapMessage(dokument);
-    }
-
-    public XmlDocument PosaljiPoslovniProstor(PoslovniProstorType poslovniProstor, string certificateSubject, StoreLocation storeLocation, StoreName storeName)
-    {
-        XmlDocument racunOdgovor = null;
-        PoslovniProstorZahtjev poslovniProstorZahtjev = XmlDokumenti.KreirajPoslovniProstorZahtjev(poslovniProstor);
-        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajPoslovniProstorZahtjev(poslovniProstorZahtjev);
-        PosaljiZahtjev(certificateSubject, storeLocation, storeName, ref racunOdgovor, zahtjevXml);
-        return racunOdgovor;
-    }
-
+   
     public XmlDocument PosaljiRacun(RacunType racun, string certificateSubject)
     {
         XmlDocument racunOdgovor = null;
@@ -97,7 +72,8 @@ public class CentralniInformacijskiSustav {
         }
         return racunOdgovor;
     }
-
+    // remove in next releases since is not in use
+    /*
     public XmlDocument PosaljiRacun(RacunType racun, X509Certificate2 certifikat)
     {
         //XmlDocument xmlDocument = null;
@@ -125,6 +101,7 @@ public class CentralniInformacijskiSustav {
         PosaljiZahtjev("", ref racunOdgovor, zahtjevXml, useTestServer: false, useImportedCertificate: true);
         return racunOdgovor;
     }
+    */
 
     public XmlDocument PosaljiProvjeru(RacunType racun)
     {
@@ -190,6 +167,8 @@ public class CentralniInformacijskiSustav {
 
     public static void BypassCertificateError()
     {
+        log.Debug("BypassCertificateError in ON");
+
         ServicePointManager.ServerCertificateValidationCallback +=
 
             delegate (
@@ -207,7 +186,7 @@ public class CentralniInformacijskiSustav {
         XmlDocument xmlDocument = null;
         OdgovorGreska = null;
 
-        LogFile.LogToFile("Sending soap message "+ JsonConvert.SerializeObject(soapMessage), LogLevel.Debug);
+        log.Debug("Sending soap message " + JsonConvert.SerializeObject(soapMessage));
 
         if (AppLink.IgnoreSSLCertificates == "1") BypassCertificateError();
 
@@ -283,7 +262,8 @@ public class CentralniInformacijskiSustav {
                     xmlDocument = new XmlDocument();
                     xmlDocument.PreserveWhitespace = true;
                     xmlDocument.LoadXml(xml);
-                    LogFile.LogToFile("Response " + JsonConvert.SerializeObject(xmlDocument), LogLevel.Debug);
+                    //LogFile.LogToFile("Response " + JsonConvert.SerializeObject(xmlDocument), LogLevel.Debug);
+                    log.Debug("Response " + JsonConvert.SerializeObject(xmlDocument));
                     if (this.SoapMessageSent != null)
                     {
                         EventArgs e = new EventArgs();
@@ -294,13 +274,14 @@ public class CentralniInformacijskiSustav {
         }
         catch (WebException ex)
         {
-            LogFile.LogToFile("WebException Error in sending XML " + ex.Message, LogLevel.Debug);
-            LogFile.LogToFile("WebException Error in sending XML " + ex.InnerException, LogLevel.Debug);
+            //LogFile.LogToFile("WebException Error in sending XML " + ex.Message, LogLevel.Debug);
+            //LogFile.LogToFile("WebException Error in sending XML " + ex.InnerException, LogLevel.Debug);
+            log.Error("WebException Error in sending XML",ex);
             SimpleLog.Log(ex);
             OdgovorGreskaStatus = ex.Status;
             WebResponse response = ex.Response;
 
-            LogFile.LogToFile("WebException Error in sending XML "+ JsonConvert.SerializeObject(response), LogLevel.Debug);
+            //LogFile.LogToFile("WebException Error in sending XML "+ JsonConvert.SerializeObject(response), LogLevel.Debug);
             if (response != null)
             {
                 using (Stream stream2 = response.GetResponseStream())
@@ -309,7 +290,8 @@ public class CentralniInformacijskiSustav {
                     OdgovorGreska = new XmlDocument();
                     OdgovorGreska.Load(txtReader);
                     SimpleLog.Log(OdgovorGreska.OuterXml);
-                    LogFile.LogToFile("WebException Error in sending XML " + OdgovorGreska.OuterXml, LogLevel.Debug);
+                    //LogFile.LogToFile("WebException Error in sending XML " + OdgovorGreska.OuterXml, LogLevel.Debug);
+                    log.Debug("WebException Error in sending XML " + OdgovorGreska.OuterXml);
                     return OdgovorGreska;
                 }
             }
@@ -318,7 +300,8 @@ public class CentralniInformacijskiSustav {
         }
         catch (Exception ex2)
         {
-            LogFile.LogToFile("Exception ex2 Error in sending XML " + ex2.Message, LogLevel.Debug);
+            //LogFile.LogToFile("Exception ex2 Error in sending XML " + ex2.Message, LogLevel.Debug);
+            log.Error("Exception ex2 Error in sending XML", ex2);
             SimpleLog.Log(ex2);
             Trace.TraceError($"Greška kod slanja SOAP poruke: {ex2.Message}");
             throw;
@@ -397,7 +380,8 @@ public class CentralniInformacijskiSustav {
 
     public static void SaveFile(XmlDocument request, XmlDocument response)
     {
-        LogFile.LogToFile("SaveFile for XML messages ", LogLevel.Debug);
+        //LogFile.LogToFile("SaveFile for XML messages ", LogLevel.Debug);
+        log.Debug("SaveFile for XML messages ");
         TipDokumentaEnum tipDokumentaEnum = XmlDokumenti.OdrediTipDokumenta(request);
         if (tipDokumentaEnum != 0)
         {
@@ -407,7 +391,8 @@ public class CentralniInformacijskiSustav {
             switch (tipDokumentaEnum)
             {
                 case TipDokumentaEnum.RacunZahtjev:
-                    LogFile.LogToFile("SaveFile for XML messages in folder ", LogLevel.Debug);
+                    //LogFile.LogToFile("SaveFile for XML messages in folder ", LogLevel.Debug);
+                    log.Debug("SaveFile for XML messages in folder ");
                     text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
                     request.Save(text);
                     text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
@@ -421,8 +406,7 @@ public class CentralniInformacijskiSustav {
     {
         try
         {
-            LogFile.LogToFile("Create directories for XML messages start ", LogLevel.Debug);
-
+            log.Debug("Create directories for XML messages start ");
             DirectoryInfo directoryInfo = null;
             if (string.IsNullOrEmpty(AppLink.XMLSavePath))
             {
@@ -450,12 +434,13 @@ public class CentralniInformacijskiSustav {
                     directoryInfo.Create();
                 }
             }
-            LogFile.LogToFile("Create directories for XML messages end ", LogLevel.Debug);
-
+            
+            log.Debug("Create directories for XML messages end ");
         }
         catch (Exception e)
         {
-            LogFile.LogToFile("Error ocured in directory creation " + e.Message, LogLevel.Debug);
+            log.Error("Error ocured in directory creation ",e);
+
         }
 
     }

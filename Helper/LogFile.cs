@@ -8,16 +8,7 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-
-    public static class LogLevel
-    {
-        public static string Info = "INFO";
-        public static string Error = "ERROR";
-        public static string Debug = "DEBUG";
-    }
-
-
-    public static class LogFile
+     public static class LogFile
     {
 
 
@@ -32,39 +23,6 @@ namespace Helper
             SimpleLog.Prefix = "CISLogFile_";
         }
 
-        public static void LogToFile(string textToLog)
-        {
-            LogToFileFinal(textToLog, LogLevel.Info);
-        }
-        public static void LogToFile(string textToLog, string logLevel)
-        {
-
-
-            if (AppLink.LogLevel == logLevel)
-            {
-                LogToFileFinal(textToLog, logLevel);
-            }
-
-        }
-
-        private static void LogToFileFinal(string textToLog, string loglevel)
-        {
-
-            string logFile = Helper.Globals.Name.Substring(0, Helper.Globals.Name.Length - 4);
-            logFile = logFile + "Log.log";
-            string directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string path = Path.Combine(directoryName, logFile);
-            StreamWriter streamWriter = File.AppendText(path);
-            try
-            {
-                string value = $"{DateTime.Now} : [{loglevel}] : {textToLog}";
-                streamWriter.WriteLine(value);
-            }
-            finally
-            {
-                streamWriter.Close();
-            }
-        }
 
         public static void InitConfig()
         {
