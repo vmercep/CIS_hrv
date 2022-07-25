@@ -85,7 +85,10 @@ public static class AppLink {
     return date.Subtract(new DateTime(1990, 1, 1)).Days * 100000;
   }
 
-  public static bool TestFileCfg () {
+
+
+
+    public static bool TestFileCfg () {
     FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
     string directoryName = fileInfo.DirectoryName;
     return File.Exists(Path.Combine(directoryName, Helper.Globals.Name));
@@ -106,4 +109,23 @@ public static class AppLink {
     string directoryName = fileInfo.DirectoryName;
     return directoryName + "/Certificates/demo.p12";
   }
+
+    public static string GetPayementType(int typpai)
+    {
+        switch (typpai)
+        {
+            case 0:
+                return "G";              
+            case 1:
+                return "C";
+            case 2:
+                return "K";
+            case 3:
+                return "C";
+            case 12:
+                return "T";
+            default:
+                return "O";
+        }
+    }
 }

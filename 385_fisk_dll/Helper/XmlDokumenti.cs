@@ -7,12 +7,12 @@ public static class XmlDokumenti {
   public static XmlDocument SerijalizirajRacunZahtjev (RacunZahtjev racunZahtjev) {
     string text = "";
     try {
-      text = racunZahtjev.Serialize();
-      text = text.Replace("<tns:Pdv />", "");
-      text = text.Replace("<tns:Pnp />", "");
-      text = text.Replace("<tns:OstaliPor />", "");
-      text = text.Replace("<tns:Naknade />", "");
-    } catch (Exception ex) {
+              text = racunZahtjev.Serialize();
+              text = text.Replace("<tns:Pdv />", "");
+              text = text.Replace("<tns:Pnp />", "");
+              text = text.Replace("<tns:OstaliPor />", "");
+              text = text.Replace("<tns:Naknade />", "");
+        } catch (Exception ex) {
       SimpleLog.Log(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
       throw;
@@ -20,18 +20,7 @@ public static class XmlDokumenti {
     return UcitajXml(text);
   }
 
-  public static XmlDocument SerijalizirajRacun (RacunType racun) {
-    string text = "";
-    try {
-      text = racun.Serialize();
-    } catch (Exception ex) {
-      SimpleLog.Log(ex);
-      Trace.TraceError($"Greška kod serijalizacije računa: {ex.Message}");
-      throw;
-    }
-    return UcitajXml(text);
-  }
-
+  
   public static RacunZahtjev KreirajRacunZahtjev (RacunType racun) {
     RacunZahtjev racunZahtjev = new RacunZahtjev {
       Id = "signXmlId",
@@ -44,19 +33,40 @@ public static class XmlDokumenti {
     return racunZahtjev;
   }
 
-  public static RacunZahtjev KreirajRacunZahtjev (string ID, RacunType racun) {
-    RacunZahtjev racunZahtjev = new RacunZahtjev {
-      Id = ID,
-      Racun = racun
-    };
-    ZaglavljeType zaglavljeType2 = racunZahtjev.Zaglavlje = new ZaglavljeType {
-      DatumVrijeme = Razno.DohvatiFormatiranoTrenutnoDatumVrijeme(),
-      IdPoruke = Guid.NewGuid().ToString()
-    };
-    return racunZahtjev;
-  }
+    public static PromijeniNacPlacZahtjev KreirajPromjeniNacinPlacanjazahtjev(RacunPNPType racun)
+    {
+        PromijeniNacPlacZahtjev promjeniNacinPlacanjaZahtjev = new PromijeniNacPlacZahtjev { Id = "signXmlId", Racun = racun };
+        ZaglavljeType zaglavljeType2 = promjeniNacinPlacanjaZahtjev.Zaglavlje = new ZaglavljeType
+        {
+            DatumVrijeme = Razno.DohvatiFormatiranoTrenutnoDatumVrijeme(),
+            IdPoruke = Guid.NewGuid().ToString()
+        };
+        
 
-  public static string DohvatiJir (XmlDocument dokument) {
+        return promjeniNacinPlacanjaZahtjev;
+    }
+
+    internal static XmlDocument SerijalizirajPromjenuNacinaPlacanjaZahtjev(PromijeniNacPlacZahtjev promjenaNacinaPlacanjaZahtjev)
+    {
+        string text = "";
+        try
+        {
+            text = promjenaNacinaPlacanjaZahtjev.Serialize();
+            text = text.Replace("<tns:Pdv />", "");
+            text = text.Replace("<tns:Pnp />", "");
+            text = text.Replace("<tns:OstaliPor />", "");
+            text = text.Replace("<tns:Naknade />", "");
+        }
+        catch (Exception ex)
+        {
+            SimpleLog.Log(ex);
+            Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
+            throw;
+        }
+        return UcitajXml(text);
+    }
+
+    public static string DohvatiJir (XmlDocument dokument) {
     string result = "";
     if (dokument != null) {
       DodajNamespace(dokument, out XmlNamespaceManager nsmgr);
@@ -69,30 +79,7 @@ public static class XmlDokumenti {
     return result;
   }
 
-    /*
-  public static Tuple<string, string> DohvatiStatusProvjere (XmlDocument dokument) {
-    Tuple<string, string> result = null;
-    if (dokument != null) {
-      DodajNamespace(dokument, out XmlNamespaceManager nsmgr);
-      XmlElement documentElement = dokument.DocumentElement;
-      XmlNodeList xmlNodeList = documentElement.SelectNodes("soap:Body/tns:ProvjeraOdgovor/f73:Greske", nsmgr);
-      foreach (XmlNode item3 in xmlNodeList) {
-        string item = "";
-        string item2 = "";
-        XmlNode xmlNode2 = item3.SelectSingleNode("f73:Greska/f73:SifraGreske", nsmgr);
-        if (xmlNode2 != null) {
-          item = xmlNode2.InnerText.Trim();
-        }
-        XmlNode xmlNode3 = item3.SelectSingleNode("f73:Greska/f73:PorukaGreske", nsmgr);
-        if (xmlNode3 != null) {
-          item2 = xmlNode3.InnerText.Trim();
-        }
-        result = new Tuple<string, string>(item, item2);
-      }
-    }
-    return result;
-  }
-    */
+  
 
   public static Tuple<string, string> DohvatiStatusGreške (XmlDocument dokument, bool provjera) {
     Tuple<string, string> result = null;
@@ -200,54 +187,6 @@ public static class XmlDokumenti {
     }
   }
 
-  public static XmlDocument SerijalizirajPoslovniProstorZahtjev (PoslovniProstorZahtjev poslovniProstorZahtjev) {
-    string text = "";
-    try {
-      text = poslovniProstorZahtjev.Serialize();
-    } catch (Exception ex) {
-      SimpleLog.Log(ex);
-      Trace.TraceError($"Greška kod serijalizacije zahtjeva za poslovni prostor: {ex.Message}");
-      throw;
-    }
-    return UcitajXml(text);
-  }
-
-  public static XmlDocument SerijalizirajPoslovniProstor (PoslovniProstorType poslovniProstor) {
-    string text = "";
-    try {
-      text = poslovniProstor.Serialize();
-    } catch (Exception ex) {
-      SimpleLog.Log(ex);
-      Trace.TraceError($"Greška kod serijalizacije poslovnog prostora: {ex.Message}");
-      throw;
-    }
-    return UcitajXml(text);
-  }
-
-  public static PoslovniProstorZahtjev KreirajPoslovniProstorZahtjev (PoslovniProstorType poslovniProstor) {
-    PoslovniProstorZahtjev poslovniProstorZahtjev = new PoslovniProstorZahtjev {
-      Id = "signXmlId",
-      PoslovniProstor = poslovniProstor
-    };
-    ZaglavljeType zaglavljeType2 = poslovniProstorZahtjev.Zaglavlje = new ZaglavljeType {
-      DatumVrijeme = Razno.DohvatiFormatiranoTrenutnoDatumVrijeme(),
-      IdPoruke = Guid.NewGuid().ToString()
-    };
-    return poslovniProstorZahtjev;
-  }
-
-  public static PoslovniProstorZahtjev KreirajPoslovniProstorZahtjev (string ID, PoslovniProstorType poslovniProstor) {
-    PoslovniProstorZahtjev poslovniProstorZahtjev = new PoslovniProstorZahtjev {
-      Id = ID,
-      PoslovniProstor = poslovniProstor
-    };
-    ZaglavljeType zaglavljeType2 = poslovniProstorZahtjev.Zaglavlje = new ZaglavljeType {
-      DatumVrijeme = Razno.DohvatiFormatiranoTrenutnoDatumVrijeme(),
-      IdPoruke = Guid.NewGuid().ToString()
-    };
-    return poslovniProstorZahtjev;
-  }
-
   public static XmlDocument DohvatiPorukuEchoZahtjev (string poruka) {
     XmlDocument xmlDocument = null;
     Razno.FormatirajEchoPoruku(ref poruka);
@@ -351,11 +290,11 @@ public static class XmlDokumenti {
     string text = "";
     try {
       text = provjeraZahtjev.Serialize();
-      text = text.Replace("<tns:Pdv />", "");
-      text = text.Replace("<tns:Pnp />", "");
-      text = text.Replace("<tns:OstaliPor />", "");
-      text = text.Replace("<tns:Naknade />", "");
-    } catch (Exception ex) {
+              text = text.Replace("<tns:Pdv />", "");
+              text = text.Replace("<tns:Pnp />", "");
+              text = text.Replace("<tns:OstaliPor />", "");
+              text = text.Replace("<tns:Naknade />", "");
+        } catch (Exception ex) {
       SimpleLog.Log(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
       throw;

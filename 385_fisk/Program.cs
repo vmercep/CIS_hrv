@@ -1,5 +1,6 @@
 ﻿using _385_fisk.Exceptions;
 using AutoUpdaterDotNET;
+using CisDal;
 using System;
 using System.Diagnostics;
 using System.Management;
@@ -44,12 +45,18 @@ internal static class Program {
         }
         
         Helper.LogFile.InitConfig();
+        Helper.LogFile.createFileForSysLog();
         CentralniInformacijskiSustav.CreateDirectories();
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         string[] commandLineArgs = Environment.GetCommandLineArgs();
         //Console.WriteLine(commandLineArgs.Length);
         log.Debug("Command line arguments "+commandLineArgs.Length);
+
+        log.Debug("Altering table :)");
+        IMerlinData dalMerlin = new MerlinData();
+        dalMerlin.AlterMerlinTable();
+        log.Debug("Table altered");
 
         if (commandLineArgs.Length > 1)
         {

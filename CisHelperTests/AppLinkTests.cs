@@ -13,8 +13,13 @@ namespace Tests
         [TestMethod()]
         public void LongFromDateTest()
         {
-            long date=AppLink.LongFromDate(DateTime.Now.AddDays(-3));
+            long date = AppLink.LongFromDate(DateTime.Now.AddDays(-3));
+            long date1 = AppLink.LongFromDate(DateTime.Now.AddDays(-2));
+            long date2 = AppLink.LongFromDate(DateTime.Now.AddDays(-1));
+            long date3 = AppLink.LongFromDate(DateTime.Now);
             Assert.AreEqual(1126900000, date);
         }
+
+
     }
 }

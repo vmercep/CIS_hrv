@@ -45,6 +45,8 @@ namespace DataObjects
 
         public List<DataTax> TaxList;
 
+        public string Payment_After;
+
         public string DateTimeIssue_Bill(DateTime MyBillDate)
         {
             return string.Format("{0:dd.MM.yyyy}T{1}", MyBillDate, MyBillDate.ToString("HH:mm:ss"));
@@ -74,6 +76,7 @@ namespace DataObjects
             Notes = string.Empty;
             TypeTik = 1;
             TaxList = new List<DataTax>();
+            Payment_After = string.Empty;
         }
     }
 }

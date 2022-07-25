@@ -232,12 +232,114 @@ public class MainForm : Form
 
             FlushBillsWithNoJir(dalMerlin);
             lblInfo.Text = Translations.Translate("Zatvaranje aplikacije");
-            
+            /*
+            #region for change payement type
+
+            try
+            {
+                log.Debug("Change Payement Type START");
+
+                var sysLogs = dalMerlin.FetchSyslogWithDate(AppLink.LongFromDate(DateTime.Now));
+
+                log.Debug("Fetched syslogs count " + sysLogs.Count);
+
+                foreach (var sysLog in sysLogs)
+                {
+                    log.Debug("Processing syslog " + sysLog.Id + " with comment " + sysLog.Comment);
+
+                    string payementTypeBefore = "";
+                    string payementTypeAfter = "";
+                    XmlDocument xmlBefore = new XmlDocument();
+                    XmlDocument xmlAfter = new XmlDocument();
+                    xmlBefore.LoadXml(sysLog.ObjBefore);
+                    xmlAfter.LoadXml(sysLog.ObjAfter);
+
+                    var memBefore = xmlBefore.SelectNodes("//s//e[@n='IdCaisseMoyPaiement']");
+                    if (memBefore.Count > 1) // ovo je pod ostalo
+                    {
+                        payementTypeBefore = "O";
+                    }
+                    else
+                    {
+                        foreach (XmlNode llist in memBefore)
+                        {
+
+                            payementTypeBefore = AppLink.GetPayementType(Convert.ToInt32(llist.Attributes["v"].Value));
+
+                        }
+                    }
 
 
-            
-            
-            
+                    var memAfter = xmlAfter.SelectNodes("//s//e[@n='IdCaisseMoyPaiement']");
+                    if (memAfter.Count > 1) // ovo je pod ostalo
+                    {
+                        payementTypeAfter = "O";
+                    }
+                    else
+                    {
+                        foreach (XmlNode llist in memAfter)
+                        {
+
+                            payementTypeAfter = AppLink.GetPayementType(Convert.ToInt32(llist.Attributes["v"].Value));
+
+                        }
+                    }
+                    if (payementTypeAfter != payementTypeBefore)//radim ponovnu fiskalizaciju za promjenu načina plaćanja
+                    {
+                        log.Debug(String.Format("Payment is changed in bill no {0}, new payement type is {1}", sysLog.ObjId, payementTypeAfter));
+                        var bill = dalMerlin.GetBillWithId(sysLog.ObjId, DataSalonToSend.VATNumber_Salon, vatActif);
+
+                        //provjera OIB-a zaposlenika. Ako je -1 onda stavljam defaultnog tj firmu
+                        if (bill.CashierVATNumber_Bill == "OIBPERSOERROR")
+                        {
+                            if (!AddCachierToTicket(dalMerlin, bill)) continue;
+
+                            //prepišem potake sa salona
+                            bill.CashierVATNumber_Bill = bill.VATNumber_Salon_Bill;
+                        }
+
+                        var billDetails = dalMerlin.GetBillFollow(bill);
+                        if (bill.BillDate_Bill < DateTime.Today)
+                        {
+                            log.Error("Error ocured in change payement type, date missmatched in bill id " + bill.IdTicket);
+                            MessageAlert("Nije moguće promjeniti način plaćanja na računu starijem od 24h.\nMolimo storinirajte račun i izdajte novi", "Greška kod promjene načina plaćanja");
+                            dalMerlin.UpdateSyslogStatus(sysLog.Id);
+                            continue;
+                        }
+                        billDetails.Payment_After = payementTypeAfter;
+
+                        billDetails.PaymentMethod_Bill = (NacinPlacanjaType)Enum.Parse(typeof(NacinPlacanjaType), payementTypeBefore);//TODO check this
+                        //šaljem na produkciju
+                        SendPaymentChangeToProdCis(billDetails, dalMerlin);
+
+                    }
+
+                    log.Debug("Processed and updated syslog " + sysLog.Id);
+
+
+
+                    dalMerlin.UpdateSyslogStatus(sysLog.Id);
+
+
+                }
+                log.Debug("Change Payement Type END");
+            }
+
+            catch (Exception e)
+            {
+                log.Error("Error ocured in change payement type", e);
+                throw new Exception(e.Message);
+            }
+
+
+
+
+            #endregion
+
+            */
+
+
+
             log.Debug("Closing application");
             CheckForUpdateEvent();
             Close();
@@ -247,11 +349,83 @@ public class MainForm : Form
         }
         catch (Exception e)
         {
-            log.Debug(String.Format("Error in principal {0}", e.Message));
+            log.Error("Error in principal ", e);
             MessageAlert("Kritična greška u principalu "+e.Message +" izlazim iz aplikacije","Greška u principalu");
             Close();
 
         }
+    }
+
+    private void SendPaymentChangeToProdCis(DataBill listBill, IMerlinData dalMerlin)
+    {
+        try
+        {
+            CisBussines cisBl = new CisBussines(DataSalonToSend);
+            log.Debug(String.Format("Sending change payment type to production CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)));
+            Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
+            lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
+            log.Debug("Connectiong with CIS please stand by");
+            XmlDocument xmlDocument = cisBl.SendPaymentChange(listBill, dalMerlin, CertificateName, false); //sendBill(listBill, dalMerlin);
+            /*
+            if (xmlDocument == null)
+            {
+                throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja testnog računa"));
+            }
+            string message = "";
+
+            if (!cisBl.CheckBillAnswer(xmlDocument, false, out message))
+            {
+                MessageAlert(message, Translations.Translate("Greška"));
+                SaveErrorOnBill(listBill.IdTicket, "ERROR_CIS       " + message.Substring(0, 10), dalMerlin);
+                log.Debug(String.Format("Error in sending to prod CIS {0} : {1}", listBill.IdTicket, message));
+                throw new Exception("Error on CIS " + message);
+            }
+
+            txtResponse.Text = xmlDocument.OuterXml;
+            log.Debug(String.Format("Bill succesfully sent to CIS {0}, response: {1}", listBill.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
+
+            Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
+
+            if (string.IsNullOrEmpty(txtResponse.Text))
+            {
+                Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
+                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP Empty                        ", dalMerlin);
+            }
+            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+            }
+            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "SifraGreske", State: true, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+            }
+            else
+            {
+                log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
+                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP                             ", dalMerlin);
+            }
+            */
+        }
+        catch (Exception ex3)
+        {
+
+            SimpleLog.Log(ex3);
+
+            if (ex3.Message.ToLowerInvariant().Contains("network password"))
+            {
+
+                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
+            }
+            else
+            {
+                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
+            }
+
+            Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
+            //SaveErrorOnBill(listBill.IdTicket, "ERROR_eSJ", dalMerlin);
+
+        }
+
     }
 
     private bool SendBillToTestCis(DataBill billDetails, IMerlinData dalMerlin)
@@ -800,7 +974,18 @@ public class MainForm : Form
         try
         {          
             log.Debug("Flush database for bills without JIR");
-            dalMerlin.FlushBillsWithNoJir();
+            DateTime euroDate = new DateTime(2023, 1, 1);
+            if (DateTime.Now > euroDate)
+            {
+                log.Debug("Flush partial, euro date is in place");
+                dalMerlin.FlushBillsWithNoJirPartial();
+            }
+            else
+            {
+                log.Debug("Flush full, no euro date set");
+                dalMerlin.FlushBillsWithNoJir();
+            }
+                
         }
         catch(Exception e)
         {

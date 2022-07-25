@@ -56,6 +56,22 @@ public class CentralniInformacijskiSustav {
 
   public event EventHandler<EventArgs> SoapMessageSent;
 
+    public XmlDocument PosaljiPromjenuNacinaplacanja(RacunPNPType racun, string certificateSubject)
+    {
+        XmlDocument racunOdgovor = null;
+        PromijeniNacPlacZahtjev promjenaNacinaPlacanjaZahtjev = XmlDokumenti.KreirajPromjeniNacinPlacanjazahtjev(racun);
+        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajPromjenuNacinaPlacanjaZahtjev(promjenaNacinaPlacanjaZahtjev);
+        if (AppLink.UseCertificateFile == "1")
+        {
+            PosaljiZahtjev(certificateSubject, ref racunOdgovor, zahtjevXml, useTestServer: false, useImportedCertificate: true);
+        }
+        else
+        {
+            PosaljiZahtjev(certificateSubject, ref racunOdgovor, zahtjevXml);
+        }
+        return racunOdgovor;
+    }
+
    
     public XmlDocument PosaljiRacun(RacunType racun, string certificateSubject)
     {

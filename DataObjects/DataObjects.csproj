@@ -54,6 +54,7 @@
     <Compile Include="DataSalon.cs" />
     <Compile Include="DataTax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SysLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FiskHelper\FiskHelper.csproj">

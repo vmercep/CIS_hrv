@@ -29,5 +29,17 @@ namespace CisDal
 
         List<DataQrCode> GetBillForQrCodeRegen(DateTime datetime);
         int CountQrCodeRegen(DateTime fromDate);
+
+        List<SysLog> FetchSyslogWithDate(long id);
+
+        void AlterMerlinTable();
+
+        void UpdateSyslogStatus(int id);
+        DataBill GetBillWithId(int objId, string vATNumber_Salon, bool vatActif);
+
+        /// <summary>
+        /// pobriši račune polije uvođenja eura...
+        /// </summary>
+        void FlushBillsWithNoJirPartial();
     }
 }

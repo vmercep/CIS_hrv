@@ -8,8 +8,45 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
-     public static class LogFile
+    public static class LogFile
     {
+
+        public static void createFileForSysLog()
+        {
+            FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
+            string directoryName = fileInfo.DirectoryName;
+            string path = directoryName + "//PaymentChangeInfo";
+            if (!File.Exists(path))
+            {
+                File.Create(path).Dispose();
+                File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.Hidden);
+                
+                using (var tw = new StreamWriter(path, true))
+                {
+                    tw.WriteLine(DateTime.Now);
+                }
+            }
+        }
+
+        public static DateTime ReturnDateFromFile()
+        {
+            DateTime today = new DateTime();
+            FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
+            string directoryName = fileInfo.DirectoryName;
+            string path = directoryName + "//PaymentChangeInfo";
+            const Int32 BufferSize = 128;
+            using (var fileStream = File.OpenRead(path))
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
+            {
+                String line;
+                while ((line = streamReader.ReadLine()) != null) {
+                    today = Convert.ToDateTime(line);
+                }
+ 
+            }
+
+            return today;
+        }
 
 
 

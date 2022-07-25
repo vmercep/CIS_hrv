@@ -66,10 +66,13 @@
     <Compile Include="Schema\PoslovniProstorOdgovor.cs" />
     <Compile Include="Schema\PoslovniProstorType.cs" />
     <Compile Include="Schema\PoslovniProstorZahtjev.cs" />
+    <Compile Include="Schema\PrateciDokumentType.cs" />
     <Compile Include="Schema\ProvjeraOdgovor.cs" />
     <Compile Include="Schema\ProvjeraZahtjev.cs" />
     <Compile Include="Schema\RacunOdgovor.cs" />
+    <Compile Include="Schema\RacunPNPType.cs" />
     <Compile Include="Schema\RacunType.cs" />
+    <Compile Include="Schema\PromijeniNacPlacZahtjev.cs" />
     <Compile Include="Schema\RacunZahtjev.cs" />
     <Compile Include="Schema\ReferenceType.cs" />
     <Compile Include="Schema\RetrievalMethodType.cs" />
