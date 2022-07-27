@@ -207,7 +207,7 @@ public class Config : Form {
         lblConnectionEncryption.Text = Translations.Translate("Connection encryption");
         lbloglevel.Text = Translations.Translate("Log level");
         lblURL.Text= Translations.Translate("Server URL");
-        lblURL.Text = Translations.Translate("Date active");
+        lblDateActive.Text = Translations.Translate("Date active");
 
 
 
