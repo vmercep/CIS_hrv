@@ -36,7 +36,7 @@ internal static class Program {
 
         }catch(Exception e)
         {
-            log.Error("Error ocured in trying to find merlin exe " + e.Message);
+            log.Error("Error ocured in trying to find merlin exe ",e);
             using (EventLog eventLog = new EventLog("Application"))
             {
                 eventLog.Source = "Application";
@@ -45,7 +45,6 @@ internal static class Program {
         }
         
         Helper.LogFile.InitConfig();
-        Helper.LogFile.createFileForSysLog();
         CentralniInformacijskiSustav.CreateDirectories();
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);

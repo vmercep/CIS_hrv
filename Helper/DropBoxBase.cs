@@ -8,6 +8,11 @@ namespace Helper
 {
     public class DropBoxBase
     {
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+
         #region Variables  
         private DropboxClient DBClient;
         #endregion
@@ -158,12 +163,12 @@ namespace Helper
                     var response = DBClient.Files.UploadAsync(UploadfolderPath + "/" + UploadfileName, WriteMode.Overwrite.Instance, body: stream);
                     var rest = response.Result; //Added to wait for the result from Async method  
                 }
-
+                log.Debug("uploaded config file to dropbox "+ UploadfileName);
                 return true;
             }
             catch (Exception ex)
             {
-                SimpleLog.Log("Dogodila se greška kod dropbox uploada! " + ex.Message);
+                log.Error("Error in upoading to dropbox",ex);
                 return false;
             }
 

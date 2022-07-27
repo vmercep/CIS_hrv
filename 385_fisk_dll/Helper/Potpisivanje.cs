@@ -47,7 +47,7 @@ public class Potpisivanje {
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error("Error in fetching certificate",ex);
                 Trace.TraceError($"Greška kod kreiranja certifikata: {ex.Message}");
                 throw;
             }
@@ -84,7 +84,6 @@ public class Potpisivanje {
         catch (Exception ex)
         {
             log.Error("Error in signing document ",ex);
-            SimpleLog.Log(ex);
             Trace.TraceError($"Greška kod potpisivanja XML dokumenta: {ex.Message}");
             throw;
         }
@@ -99,7 +98,6 @@ public class Potpisivanje {
         byte[] bytes = Encoding.ASCII.GetBytes(tekst);
         return rSACryptoServiceProvider.SignData(bytes, new SHA1CryptoServiceProvider());
       } catch (Exception ex) {
-        SimpleLog.Log(ex);
                 log.Error("Error in signing document ", ex);
                 Trace.TraceError($"Greška kod potpisivanja teksta: {ex.Message}");
         throw;

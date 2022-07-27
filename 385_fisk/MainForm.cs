@@ -97,34 +97,15 @@ public class MainForm : Form
     private void ErrorMessVerifData(string myMessage)
     {
         MessageAlert(Translations.Translate(myMessage), Translations.Translate("Greška"));
-        Log.WriteLog(NumLog.MissingSetting, 0, "", placeholders, ErrorCode, ErrorMessage);
         log.Error("Error in config data verification " + myMessage);
     }
-    // remove in future since is not in use
-    /*
-    private void cis_SoapMessageSent(object sender, EventArgs e)
-    {
-        stopWatch.Stop();
-        string text = Translations.Translate("Vrijeme izvršenja :") + string.Format("{0} s", stopWatch.Elapsed.TotalSeconds.ToString("0.00"));
-        lblExecutionTime.Text = text;
-        Application.DoEvents();
-        stopWatch.Reset();
-        Cursor.Current = Cursors.Default;
-    }
-
-    private void cis_SoapMessageSending(object sender, CentralniInformacijskiSustavEventArgs e)
-    {
-        Cursor.Current = Cursors.WaitCursor;
-        stopWatch.Start();
-        Application.DoEvents();
-    }
-    */ 
+  
     private void Principal()
     {
         IMerlinData dalMerlin = new MerlinData();
         
 
-        LogFile.createSimpleLog();
+        
         progressBar1.Value = 0;
         log.Debug("------------Starting with principal check----------------");
 
@@ -156,6 +137,7 @@ public class MainForm : Form
             if (!Helper.DataVerification.VerifDataOk(DataSalonToSend, out vatActif, out errorMessage))
             {
                 ErrorMessVerifData(errorMessage);
+                log.Debug("Closing application");
                 Close();
             }
             
@@ -409,7 +391,7 @@ public class MainForm : Form
         catch (Exception ex3)
         {
 
-            SimpleLog.Log(ex3);
+            log.Error("Error ocured in fisc",ex3);
 
             if (ex3.Message.ToLowerInvariant().Contains("network password"))
             {
@@ -551,7 +533,7 @@ public class MainForm : Form
         catch (Exception ex3)
         {
 
-            SimpleLog.Log(ex3);
+            log.Error(ex3);
 
             if (ex3.Message.ToLowerInvariant().Contains("network password"))
             {
@@ -695,6 +677,7 @@ public class MainForm : Form
     #region AutoUpdater
     private void CheckForUpdateEvent()
     {
+        log.Debug("Checking for update of CIS application");
         if (!lastCheck.Equals(now.ToString("d.M.y")))
         {
             
@@ -725,7 +708,7 @@ public class MainForm : Form
                     }
                     catch (Exception ex)
                     {
-                        SimpleLog.Log(ex);
+                        log.Error(ex);
                         MessageAlert(ex.Message + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
                         Close();
                     }
@@ -832,7 +815,6 @@ public class MainForm : Form
         }
         catch (Exception ex)
         {
-            SimpleLog.Log(ex);
             MessageAlert(ex.Message + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
             Log.WriteLog(NumLog.XMLerror, IDticket, ex.Message, placeholders, ErrorCode, ErrorMessage);
             log.Error("Error ocured in line 670",ex);

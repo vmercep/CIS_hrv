@@ -95,7 +95,8 @@ public static class AppLink {
   }
 
   public static string GetTechCode () {
-    return (DateTime.Now.Year - 1900 + DateTime.Now.Month).ToString() + DateTime.Now.Day;
+        //return (DateTime.Now.Year - 1900 + DateTime.Now.Month).ToString() + DateTime.Now.Day;
+        return "Merlinka1994";
   }
 
   public static string DatotekaCertifikata () {

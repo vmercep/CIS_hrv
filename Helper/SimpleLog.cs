@@ -11,8 +11,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-
+/*
 public static class SimpleLog {
+
   public enum Severity {
     Info,
     Warning,
@@ -551,3 +552,4 @@ public static class SimpleLog {
     return result;
   }
 }
+*/

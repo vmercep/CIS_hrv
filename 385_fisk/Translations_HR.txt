@@ -124,3 +124,9 @@ OIB iz poruke nije jednak OIB-u iz certifikata.////OIB iz poruke nije jednak OIB
 Sistemska pogreška prilikom obrade zahtjeva.////Sistemska pogreška prilikom obrade zahtjeva.
 Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!////Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!
 Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%////Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%
+Dodatne opcije:////Dodatne opcije:
+Poveznica s Merlin bazom////Poveznica s Merlin bazom :
+Connection encryption////Enkripcija veze :
+Server URL////Server porezne uprave :
+Log level////Log razina :
+Date active//// Datum aktiviranja :

@@ -186,3 +186,18 @@ Slanje testnog računa vratilo je grešku s brojem: ////Sending of test receipt 
 Slanje testnog računa je bilo uspiješno////Sending of test receipt was successful
 Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%. Molimo vas da ispravite porezne stope prije fiskaliziranja računa!////Value of field "In VAT System" is set to false, but tax rates different than 0% exist. Please modify the tax rates before fiscalisating the receipt!
 Označena je postavka da je korisnik izvan sustava PDV-a no postoje uneseni porezne stope koje su različite od 0%////Value of field "In VAT System" is set to false, but tax rates different than 0% exist
+Dodatne opcije:////Extra options:
+Fiskaliziraj ponude////Offer fiscalization
+Certifikat iz datoteke :////Certificate from file:
+Koristi certifikat iz datoteke:////Use certificate from file:
+Putanja datoteke s certifikatom :////Chose certificate location :
+Lozinka certifikata :////Certificate password :
+Ignoriraj SSL certifikate////Ignore SSL certificates
+QR poruka////QR code message
+QR lokacija spremanja////QR code save location
+QR Velicina////QR code size
+QR generiranje////Regenerate QR
+QR postavke////QR code settings
+Verzija programa: CIS_HRV_ ////Application version: CIS_HRV_ 
+Preuzmi najnoviju verziju CIS-a////Download latest CIS
+Pokreni fiskalizaciju////Start fiscalization

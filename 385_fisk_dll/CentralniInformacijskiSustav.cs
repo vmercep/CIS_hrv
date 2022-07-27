@@ -290,14 +290,12 @@ public class CentralniInformacijskiSustav {
         }
         catch (WebException ex)
         {
-            //LogFile.LogToFile("WebException Error in sending XML " + ex.Message, LogLevel.Debug);
-            //LogFile.LogToFile("WebException Error in sending XML " + ex.InnerException, LogLevel.Debug);
             log.Error("WebException Error in sending XML",ex);
-            SimpleLog.Log(ex);
+
             OdgovorGreskaStatus = ex.Status;
             WebResponse response = ex.Response;
 
-            //LogFile.LogToFile("WebException Error in sending XML "+ JsonConvert.SerializeObject(response), LogLevel.Debug);
+
             if (response != null)
             {
                 using (Stream stream2 = response.GetResponseStream())
@@ -305,8 +303,8 @@ public class CentralniInformacijskiSustav {
                     StreamReader txtReader = new StreamReader(stream2);
                     OdgovorGreska = new XmlDocument();
                     OdgovorGreska.Load(txtReader);
-                    SimpleLog.Log(OdgovorGreska.OuterXml);
-                    //LogFile.LogToFile("WebException Error in sending XML " + OdgovorGreska.OuterXml, LogLevel.Debug);
+                    log.Error(OdgovorGreska.OuterXml);
+
                     log.Debug("WebException Error in sending XML " + OdgovorGreska.OuterXml);
                     return OdgovorGreska;
                 }
@@ -316,9 +314,7 @@ public class CentralniInformacijskiSustav {
         }
         catch (Exception ex2)
         {
-            //LogFile.LogToFile("Exception ex2 Error in sending XML " + ex2.Message, LogLevel.Debug);
             log.Error("Exception ex2 Error in sending XML", ex2);
-            SimpleLog.Log(ex2);
             Trace.TraceError($"Greška kod slanja SOAP poruke: {ex2.Message}");
             throw;
         }
@@ -396,7 +392,6 @@ public class CentralniInformacijskiSustav {
 
     public static void SaveFile(XmlDocument request, XmlDocument response)
     {
-        //LogFile.LogToFile("SaveFile for XML messages ", LogLevel.Debug);
         log.Debug("SaveFile for XML messages ");
         TipDokumentaEnum tipDokumentaEnum = XmlDokumenti.OdrediTipDokumenta(request);
         if (tipDokumentaEnum != 0)
@@ -407,7 +402,6 @@ public class CentralniInformacijskiSustav {
             switch (tipDokumentaEnum)
             {
                 case TipDokumentaEnum.RacunZahtjev:
-                    //LogFile.LogToFile("SaveFile for XML messages in folder ", LogLevel.Debug);
                     log.Debug("SaveFile for XML messages in folder ");
                     text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
                     request.Save(text);

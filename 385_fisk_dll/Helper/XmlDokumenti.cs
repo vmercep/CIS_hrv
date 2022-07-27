@@ -4,7 +4,9 @@ using System.Text;
 using System.Xml;
 
 public static class XmlDokumenti {
-  public static XmlDocument SerijalizirajRacunZahtjev (RacunZahtjev racunZahtjev) {
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+    public static XmlDocument SerijalizirajRacunZahtjev (RacunZahtjev racunZahtjev) {
     string text = "";
     try {
               text = racunZahtjev.Serialize();
@@ -13,7 +15,7 @@ public static class XmlDokumenti {
               text = text.Replace("<tns:OstaliPor />", "");
               text = text.Replace("<tns:Naknade />", "");
         } catch (Exception ex) {
-      SimpleLog.Log(ex);
+      log.Error(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
       throw;
     }
@@ -59,7 +61,7 @@ public static class XmlDokumenti {
         }
         catch (Exception ex)
         {
-            SimpleLog.Log(ex);
+            log.Error(ex);
             Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
             throw;
         }
@@ -180,7 +182,7 @@ public static class XmlDokumenti {
       try {
         dokument.Save(nazivDatoteke);
       } catch (Exception ex) {
-        SimpleLog.Log(ex);
+                log.Error(ex);
         Trace.TraceError($"Greška kod snimanja XML dokumenta u datoteku: {ex.Message}");
         throw;
       }
@@ -196,7 +198,7 @@ public static class XmlDokumenti {
       xmlDocument.LoadXml(xml);
       DodajSoapEnvelope(ref xmlDocument);
     } catch (Exception ex) {
-      SimpleLog.Log(ex);
+            log.Error(ex);
       Trace.TraceError($"Greška kod kreiranja poruke za ECHO zahtjev: {ex.Message}");
       throw;
     }
@@ -210,7 +212,7 @@ public static class XmlDokumenti {
         xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(xml);
       } catch (Exception ex) {
-        SimpleLog.Log(ex);
+                log.Error(ex);
         Trace.TraceError($"Greška kod učitavanja XML dokumenta: {ex.Message}");
         throw;
       }
@@ -238,7 +240,7 @@ public static class XmlDokumenti {
       try {
         dokument.LoadXml(text);
       } catch (Exception ex) {
-        SimpleLog.Log(ex);
+                log.Error(ex);
         Trace.TraceError($"Greška kod dodavanja SOAP envelop-a: {ex.Message}");
         throw;
       }
@@ -295,7 +297,7 @@ public static class XmlDokumenti {
               text = text.Replace("<tns:OstaliPor />", "");
               text = text.Replace("<tns:Naknade />", "");
         } catch (Exception ex) {
-      SimpleLog.Log(ex);
+            log.Error(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
       throw;
     }

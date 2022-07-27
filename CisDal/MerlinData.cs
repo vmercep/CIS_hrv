@@ -10,6 +10,7 @@ namespace CisDal
 {
     public class MerlinData : IMerlinData, IDisposable
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private SqlConnection _sqlConnection;
 
@@ -78,7 +79,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in dal get bill method " + ex.Message);
             }
             return allBills;
@@ -146,7 +147,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in dal get bill method " + ex.Message);
             }
             return allBills;
@@ -168,7 +169,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in GetBillForQrCodeRegen method " + ex.Message);
             }
 
@@ -207,7 +208,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in GetBillForQrCodeRegen method " + ex.Message);
             }
             return allBills;
@@ -271,7 +272,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in GetBillFollow " + ex.Message);
             }
             try
@@ -309,7 +310,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in GetBillTotalAmount " + ex2.Message);
             }
 
@@ -376,7 +377,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in GetBillFollow " + ex.Message);
             }
             try
@@ -463,7 +464,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in GetBillFollow " + ex2.Message);
             }
         }
@@ -483,7 +484,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in SaveTicketJir " + ex2.Message);
             }
         }
@@ -503,7 +504,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in SaveNotes " + ex.Message);
             }
         }
@@ -533,7 +534,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in GetPerso " + ex.Message);
             }
             return allPerso;
@@ -576,7 +577,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in UpdatePerso " + ex.Message);
             }
         }
@@ -614,7 +615,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in UpdatePerso " + ex.Message);
             }
         }
@@ -829,7 +830,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in dal get bill method " + ex.Message);
             }
             return allBills;
@@ -855,7 +856,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 return -1;
             }
         }
@@ -875,7 +876,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in SaveTicketJir " + ex2.Message);
             }
         }
@@ -898,7 +899,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in AlterTable " + ex2.Message);
             }
         }
@@ -918,7 +919,7 @@ namespace CisDal
             }
             catch (Exception ex2)
             {
-                SimpleLog.Log(ex2);
+                log.Error(ex2);
                 throw new Exception("error ocured in UpdateSyslogStatus " + ex2.Message);
             }
 
@@ -956,7 +957,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in dal get bill method " + ex.Message);
             }
             return allLog;
@@ -1011,7 +1012,7 @@ namespace CisDal
             }
             catch (Exception ex)
             {
-                SimpleLog.Log(ex);
+                log.Error(ex);
                 throw new Exception("error ocured in dal get bill method " + ex.Message);
             }
             return dataBill;
@@ -1031,8 +1032,8 @@ namespace CisDal
                 }
                 catch (Exception ex)
                 {
-                    SimpleLog.Log(ex);
-                    throw new Exception("error ocured in flush bill with no jir " + ex.Message);
+                log.Error(ex);
+                throw new Exception("error ocured in flush bill with no jir " + ex.Message);
                 }
             
         }

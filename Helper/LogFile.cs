@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 
 namespace Helper
 {
+
+
+
     public static class LogFile
     {
+
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public static void createFileForSysLog()
         {
@@ -49,7 +55,7 @@ namespace Helper
         }
 
 
-
+        /*
         public static void createSimpleLog()
         {
             FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -59,14 +65,14 @@ namespace Helper
             SimpleLog.SetLogDir(directoryName, createIfNotExisting: true);
             SimpleLog.Prefix = "CISLogFile_";
         }
-
+        */
 
         public static void InitConfig()
         {
             try
             {
 
-                //LogToFile("Init cfg file for merlin", LogLevel.Debug);
+                log.Debug("Creating initial config file for MERLIN");
                 ConfigFile configFile = new ConfigFile();
                 configFile.ConnectionString = "server=(local); uid=sa; pwd=_PWD4sa_; Database=Merlin";
                 configFile.ServerUrl = "https://cis.porezna-uprava.hr:8449/FiskalizacijaService";
@@ -158,9 +164,10 @@ namespace Helper
 
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 //LogToFile("Error ocured in init cfg file " + e.Message);
+                log.Error("Error in creating initial config file",ex);
             }
 
 
@@ -172,6 +179,8 @@ namespace Helper
 
         public static bool CreateConfigFile(ConfigFile fConfig, bool isConfigMod)
         {
+            log.Debug("Creating config file");
+
             FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
             string directoryName = fileInfo.DirectoryName;
 
@@ -228,16 +237,17 @@ namespace Helper
                     DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
                     dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
                     bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
-
+                    log.Debug("Config file created");
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    SimpleLog.Log(ex);
+                   
+                    log.Error("Error in creating config file",ex);
                     return false;
                 }
             }
-
+            log.Debug("Config file created");
             return true;
 
 

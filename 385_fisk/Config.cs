@@ -102,7 +102,7 @@ public class Config : Form {
 
     private ComboBox cmbActiveLanguage;
 
-    private GroupBox grpTestCertificate;
+    private GroupBox grpExtraOptions;
 
     private CheckBox chkSendTest;
 
@@ -112,22 +112,22 @@ public class Config : Form {
 
     private CheckBox chkUseCertificateFile;
 
-    private Label label1;
+    private Label lbCertLocation;
 
     private Button btnCertificateFile;
 
-    private Label label2;
+    private Label lbCertPassword;
     private CheckBox cbCheckSSL;
     private Button btUpdate;
     private Label lbVerzija;
     private CheckBox cbFiskPonude;
     private TextBox txtQrMessage;
-    private Label label3;
-    private GroupBox groupBox1;
+    private Label lbQrMessage;
+    private GroupBox grpQrCode;
     private TextBox txtQrSaveLocation;
-    private Label label4;
+    private Label lbQrSaveLocation;
     private TextBox txtQrSize;
-    private Label label5;
+    private Label lbQrSize;
     private ComboBox cmbLogLevel;
     private Label lbloglevel;
     private Button btQrRegen;
@@ -135,13 +135,13 @@ public class Config : Form {
     private TextBox txtCertificatePassword;
 
     QrCodeRegen regen = new QrCodeRegen();
-    private TabControl tabControl1;
-    private TabPage tabPage1;
-    private TabPage tabPage2;
-    private TabPage tabPage3;
-    private TabPage tabPage4;
-    private TabPage tabPage5;
-    private TabPage tabPage6;
+    private TabControl tabControl;
+    private TabPage tabOsnovno;
+    private TabPage tabPostavke;
+    private TabPage tabSolo;
+    private TabPage tabExtraOpcije;
+    private TabPage tabCertifikati;
+    private TabPage tabQr;
     private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -154,9 +154,10 @@ public class Config : Form {
     {
         Text = Translations.Translate(Text);
         tooltip1.SetToolTip(btnUnlockSettings, Translations.Translate("Zaštićene postavke"));
-        //tooltip1.SetToolTip(btnSendData, Translations.Translate("Pošalji u poreznu upravu"));
+        tooltip1.SetToolTip(btnProcessBills, Translations.Translate("Pokreni fiskalizaciju"));
         tooltip1.SetToolTip(btnSaveAndQuit, Translations.Translate("Spremi / Izađi"));
         tooltip1.SetToolTip(btnQuit, Translations.Translate("Izađi bez spremanja"));
+        tooltip1.SetToolTip(btUpdate, Translations.Translate("Preuzmi najnoviju verziju CIS-a"));
         lblErrorMessage.Text = Translations.Translate(lblErrorMessage.Text);
         grpBasic.Text = Translations.Translate(grpBasic.Text);
         chkSaveXmlActive.Text = Translations.Translate(chkSaveXmlActive.Text);
@@ -176,9 +177,45 @@ public class Config : Form {
         lblCodeOperator.Text = Translations.Translate(lblCodeOperator.Text);
         grpCertificate.Text = Translations.Translate(grpCertificate.Text);
         lblCertificate.Text = Translations.Translate(lblCertificate.Text);
-        grpTestCertificate.Text = Translations.Translate(grpTestCertificate.Text);
+        grpExtraOptions.Text = Translations.Translate(grpExtraOptions.Text);
         chkSendTest.Text = Translations.Translate(chkSendTest.Text);
-        lbVerzija.Text = "Verzija programa: CIS_HRV_ " + Assembly.GetEntryAssembly().GetName().Version;
+
+        //tab translate
+        tabOsnovno.Text= Translations.Translate(grpBasic.Text);
+        tabSolo.Text = Translations.Translate(grpSolo.Text);
+        tabPostavke.Text = Translations.Translate(grpPremise.Text);
+        tabExtraOpcije.Text= Translations.Translate("Dodatne opcije:");
+        tabCertifikati.Text= Translations.Translate(grpCertificate.Text);
+        
+
+        //extras missing translation
+        grpExtraOptions.Text = Translations.Translate("Dodatne opcije:");
+        cbFiskPonude.Text= Translations.Translate("Fiskaliziraj ponude");
+        grpCertificateFile.Text= Translations.Translate("Certifikat iz datoteke :");
+        chkUseCertificateFile.Text = Translations.Translate("Koristi certifikat iz datoteke:");
+        lbCertLocation.Text = Translations.Translate("Putanja datoteke s certifikatom :");
+        lbCertPassword.Text= Translations.Translate("Lozinka certifikata :");
+        btnCertificateFile.Text= Translations.Translate("Odabir");
+        cbCheckSSL.Text= Translations.Translate("Ignoriraj SSL certifikate");
+
+        lbQrMessage.Text = Translations.Translate("QR poruka");
+        lbQrSaveLocation.Text = Translations.Translate("QR lokacija spremanja");
+        lbQrSize.Text = Translations.Translate("QR Velicina");
+        btQrRegen.Text = Translations.Translate("QR generiranje");
+        grpQrCode.Text= Translations.Translate("QR postavke");
+        lblConnectionString.Text= Translations.Translate("Poveznica s Merlin bazom");
+        lblConnectionEncryption.Text = Translations.Translate("Connection encryption");
+        lbloglevel.Text = Translations.Translate("Log level");
+        lblURL.Text= Translations.Translate("Server URL");
+        lblURL.Text = Translations.Translate("Date active");
+
+
+
+
+
+
+
+        lbVerzija.Text = Translations.Translate("Verzija programa: CIS_HRV_ ") + Assembly.GetEntryAssembly().GetName().Version;
 
     }
 
@@ -829,7 +866,7 @@ public class Config : Form {
             this.lblXmlPath = new System.Windows.Forms.Label();
             this.chkSaveXmlActive = new System.Windows.Forms.CheckBox();
             this.txtQrMessage = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lbQrMessage = new System.Windows.Forms.Label();
             this.grpPremise = new System.Windows.Forms.GroupBox();
             this.lblOibSoftware = new System.Windows.Forms.Label();
             this.txtOibSoftware = new System.Windows.Forms.TextBox();
@@ -852,48 +889,48 @@ public class Config : Form {
             this.lblCertificate = new System.Windows.Forms.Label();
             this.txtCertificate = new System.Windows.Forms.TextBox();
             this.lblErrorMessage = new System.Windows.Forms.Label();
-            this.grpTestCertificate = new System.Windows.Forms.GroupBox();
+            this.grpExtraOptions = new System.Windows.Forms.GroupBox();
             this.cbFiskPonude = new System.Windows.Forms.CheckBox();
             this.chkSendTest = new System.Windows.Forms.CheckBox();
             this.btnProcessBills = new System.Windows.Forms.Button();
             this.grpCertificateFile = new System.Windows.Forms.GroupBox();
             this.cbCheckSSL = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbCertPassword = new System.Windows.Forms.Label();
             this.txtCertificatePassword = new System.Windows.Forms.TextBox();
             this.btnCertificateFile = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lbCertLocation = new System.Windows.Forms.Label();
             this.chkUseCertificateFile = new System.Windows.Forms.CheckBox();
             this.btUpdate = new System.Windows.Forms.Button();
             this.lbVerzija = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpQrCode = new System.Windows.Forms.GroupBox();
             this.pgBarQr = new System.Windows.Forms.ProgressBar();
             this.btQrRegen = new System.Windows.Forms.Button();
             this.txtQrSize = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lbQrSize = new System.Windows.Forms.Label();
             this.txtQrSaveLocation = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.lbQrSaveLocation = new System.Windows.Forms.Label();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabOsnovno = new System.Windows.Forms.TabPage();
+            this.tabPostavke = new System.Windows.Forms.TabPage();
+            this.tabSolo = new System.Windows.Forms.TabPage();
+            this.tabExtraOpcije = new System.Windows.Forms.TabPage();
+            this.tabCertifikati = new System.Windows.Forms.TabPage();
+            this.tabQr = new System.Windows.Forms.TabPage();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpCertificate.SuspendLayout();
-            this.grpTestCertificate.SuspendLayout();
+            this.grpExtraOptions.SuspendLayout();
             this.grpCertificateFile.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage5.SuspendLayout();
-            this.tabPage6.SuspendLayout();
+            this.grpQrCode.SuspendLayout();
+            this.tabControl.SuspendLayout();
+            this.tabOsnovno.SuspendLayout();
+            this.tabPostavke.SuspendLayout();
+            this.tabSolo.SuspendLayout();
+            this.tabExtraOpcije.SuspendLayout();
+            this.tabCertifikati.SuspendLayout();
+            this.tabQr.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSaveAndQuit
@@ -903,7 +940,7 @@ public class Config : Form {
             this.btnSaveAndQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSaveAndQuit.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveAndQuit.Image")));
             this.btnSaveAndQuit.Location = new System.Drawing.Point(681, 2);
-            this.btnSaveAndQuit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSaveAndQuit.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveAndQuit.Name = "btnSaveAndQuit";
             this.btnSaveAndQuit.Size = new System.Drawing.Size(55, 50);
             this.btnSaveAndQuit.TabIndex = 0;
@@ -927,7 +964,7 @@ public class Config : Form {
             this.txtConnectString.Enabled = false;
             this.txtConnectString.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtConnectString.Location = new System.Drawing.Point(331, 22);
-            this.txtConnectString.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtConnectString.Margin = new System.Windows.Forms.Padding(4);
             this.txtConnectString.Name = "txtConnectString";
             this.txtConnectString.Size = new System.Drawing.Size(399, 23);
             this.txtConnectString.TabIndex = 2;
@@ -938,7 +975,7 @@ public class Config : Form {
             this.txtURL.Enabled = false;
             this.txtURL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtURL.Location = new System.Drawing.Point(331, 90);
-            this.txtURL.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtURL.Margin = new System.Windows.Forms.Padding(4);
             this.txtURL.Name = "txtURL";
             this.txtURL.Size = new System.Drawing.Size(399, 23);
             this.txtURL.TabIndex = 4;
@@ -963,7 +1000,7 @@ public class Config : Form {
             this.chkLogFileActive.Enabled = false;
             this.chkLogFileActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkLogFileActive.Location = new System.Drawing.Point(12, 126);
-            this.chkLogFileActive.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkLogFileActive.Margin = new System.Windows.Forms.Padding(4);
             this.chkLogFileActive.Name = "chkLogFileActive";
             this.chkLogFileActive.Size = new System.Drawing.Size(336, 20);
             this.chkLogFileActive.TabIndex = 5;
@@ -977,7 +1014,7 @@ public class Config : Form {
             this.dtpDateActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpDateActive.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpDateActive.Location = new System.Drawing.Point(331, 245);
-            this.dtpDateActive.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpDateActive.Margin = new System.Windows.Forms.Padding(4);
             this.dtpDateActive.Name = "dtpDateActive";
             this.dtpDateActive.Size = new System.Drawing.Size(148, 23);
             this.dtpDateActive.TabIndex = 6;
@@ -1015,9 +1052,9 @@ public class Config : Form {
             this.grpBasic.Controls.Add(this.lblURL);
             this.grpBasic.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpBasic.Location = new System.Drawing.Point(7, 7);
-            this.grpBasic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpBasic.Margin = new System.Windows.Forms.Padding(4);
             this.grpBasic.Name = "grpBasic";
-            this.grpBasic.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpBasic.Padding = new System.Windows.Forms.Padding(4);
             this.grpBasic.Size = new System.Drawing.Size(740, 325);
             this.grpBasic.TabIndex = 8;
             this.grpBasic.TabStop = false;
@@ -1033,7 +1070,7 @@ public class Config : Form {
             "DEBUG",
             "ERROR"});
             this.cmbLogLevel.Location = new System.Drawing.Point(329, 150);
-            this.cmbLogLevel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbLogLevel.Margin = new System.Windows.Forms.Padding(4);
             this.cmbLogLevel.Name = "cmbLogLevel";
             this.cmbLogLevel.Size = new System.Drawing.Size(148, 24);
             this.cmbLogLevel.TabIndex = 17;
@@ -1058,7 +1095,7 @@ public class Config : Form {
             "HR",
             "EN"});
             this.cmbActiveLanguage.Location = new System.Drawing.Point(331, 276);
-            this.cmbActiveLanguage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbActiveLanguage.Margin = new System.Windows.Forms.Padding(4);
             this.cmbActiveLanguage.Name = "cmbActiveLanguage";
             this.cmbActiveLanguage.Size = new System.Drawing.Size(148, 24);
             this.cmbActiveLanguage.TabIndex = 15;
@@ -1085,7 +1122,7 @@ public class Config : Form {
             "TLS 1.1",
             "TLS 1.2"});
             this.cmbConnectionEncryption.Location = new System.Drawing.Point(331, 55);
-            this.cmbConnectionEncryption.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbConnectionEncryption.Margin = new System.Windows.Forms.Padding(4);
             this.cmbConnectionEncryption.Name = "cmbConnectionEncryption";
             this.cmbConnectionEncryption.Size = new System.Drawing.Size(148, 24);
             this.cmbConnectionEncryption.TabIndex = 13;
@@ -1147,21 +1184,21 @@ public class Config : Form {
             this.txtQrMessage.Enabled = false;
             this.txtQrMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtQrMessage.Location = new System.Drawing.Point(329, 26);
-            this.txtQrMessage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtQrMessage.Margin = new System.Windows.Forms.Padding(4);
             this.txtQrMessage.Name = "txtQrMessage";
             this.txtQrMessage.Size = new System.Drawing.Size(349, 23);
             this.txtQrMessage.TabIndex = 17;
             // 
-            // label3
+            // lbQrMessage
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 30);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(311, 16);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "QR poruka :";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbQrMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbQrMessage.Location = new System.Drawing.Point(12, 30);
+            this.lbQrMessage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbQrMessage.Name = "lbQrMessage";
+            this.lbQrMessage.Size = new System.Drawing.Size(311, 16);
+            this.lbQrMessage.TabIndex = 16;
+            this.lbQrMessage.Text = "QR poruka :";
+            this.lbQrMessage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // grpPremise
             // 
@@ -1177,9 +1214,9 @@ public class Config : Form {
             this.grpPremise.Controls.Add(this.txtVatNumber);
             this.grpPremise.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpPremise.Location = new System.Drawing.Point(7, 12);
-            this.grpPremise.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpPremise.Margin = new System.Windows.Forms.Padding(4);
             this.grpPremise.Name = "grpPremise";
-            this.grpPremise.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpPremise.Padding = new System.Windows.Forms.Padding(4);
             this.grpPremise.Size = new System.Drawing.Size(740, 197);
             this.grpPremise.TabIndex = 9;
             this.grpPremise.TabStop = false;
@@ -1201,7 +1238,7 @@ public class Config : Form {
             this.txtOibSoftware.Enabled = false;
             this.txtOibSoftware.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOibSoftware.Location = new System.Drawing.Point(331, 156);
-            this.txtOibSoftware.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtOibSoftware.Margin = new System.Windows.Forms.Padding(4);
             this.txtOibSoftware.Name = "txtOibSoftware";
             this.txtOibSoftware.Size = new System.Drawing.Size(399, 23);
             this.txtOibSoftware.TabIndex = 28;
@@ -1222,7 +1259,7 @@ public class Config : Form {
             this.txtBillingDeviceMark.Enabled = false;
             this.txtBillingDeviceMark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtBillingDeviceMark.Location = new System.Drawing.Point(331, 126);
-            this.txtBillingDeviceMark.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtBillingDeviceMark.Margin = new System.Windows.Forms.Padding(4);
             this.txtBillingDeviceMark.Name = "txtBillingDeviceMark";
             this.txtBillingDeviceMark.Size = new System.Drawing.Size(399, 23);
             this.txtBillingDeviceMark.TabIndex = 26;
@@ -1243,7 +1280,7 @@ public class Config : Form {
             this.txtPremiseMark.Enabled = false;
             this.txtPremiseMark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPremiseMark.Location = new System.Drawing.Point(331, 98);
-            this.txtPremiseMark.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtPremiseMark.Margin = new System.Windows.Forms.Padding(4);
             this.txtPremiseMark.Name = "txtPremiseMark";
             this.txtPremiseMark.Size = new System.Drawing.Size(399, 23);
             this.txtPremiseMark.TabIndex = 24;
@@ -1257,7 +1294,7 @@ public class Config : Form {
             this.chkVatActive.Enabled = false;
             this.chkVatActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkVatActive.Location = new System.Drawing.Point(16, 71);
-            this.chkVatActive.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkVatActive.Margin = new System.Windows.Forms.Padding(4);
             this.chkVatActive.Name = "chkVatActive";
             this.chkVatActive.Size = new System.Drawing.Size(332, 18);
             this.chkVatActive.TabIndex = 6;
@@ -1281,7 +1318,7 @@ public class Config : Form {
             this.txtVatNumber.Enabled = false;
             this.txtVatNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtVatNumber.Location = new System.Drawing.Point(331, 38);
-            this.txtVatNumber.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtVatNumber.Margin = new System.Windows.Forms.Padding(4);
             this.txtVatNumber.Name = "txtVatNumber";
             this.txtVatNumber.Size = new System.Drawing.Size(399, 23);
             this.txtVatNumber.TabIndex = 4;
@@ -1293,7 +1330,7 @@ public class Config : Form {
             this.btnUnlockSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnUnlockSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnUnlockSettings.Image")));
             this.btnUnlockSettings.Location = new System.Drawing.Point(494, 2);
-            this.btnUnlockSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUnlockSettings.Margin = new System.Windows.Forms.Padding(4);
             this.btnUnlockSettings.Name = "btnUnlockSettings";
             this.btnUnlockSettings.Size = new System.Drawing.Size(55, 50);
             this.btnUnlockSettings.TabIndex = 0;
@@ -1309,9 +1346,9 @@ public class Config : Form {
             this.grpSolo.Controls.Add(this.txtOibOperator);
             this.grpSolo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpSolo.Location = new System.Drawing.Point(7, 12);
-            this.grpSolo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSolo.Margin = new System.Windows.Forms.Padding(4);
             this.grpSolo.Name = "grpSolo";
-            this.grpSolo.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSolo.Padding = new System.Windows.Forms.Padding(4);
             this.grpSolo.Size = new System.Drawing.Size(740, 98);
             this.grpSolo.TabIndex = 10;
             this.grpSolo.TabStop = false;
@@ -1334,7 +1371,7 @@ public class Config : Form {
             this.txtCodeOperator.Enabled = false;
             this.txtCodeOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCodeOperator.Location = new System.Drawing.Point(329, 59);
-            this.txtCodeOperator.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtCodeOperator.Margin = new System.Windows.Forms.Padding(4);
             this.txtCodeOperator.Name = "txtCodeOperator";
             this.txtCodeOperator.Size = new System.Drawing.Size(400, 23);
             this.txtCodeOperator.TabIndex = 8;
@@ -1356,7 +1393,7 @@ public class Config : Form {
             this.txtOibOperator.Enabled = false;
             this.txtOibOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtOibOperator.Location = new System.Drawing.Point(329, 23);
-            this.txtOibOperator.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtOibOperator.Margin = new System.Windows.Forms.Padding(4);
             this.txtOibOperator.Name = "txtOibOperator";
             this.txtOibOperator.Size = new System.Drawing.Size(400, 23);
             this.txtOibOperator.TabIndex = 6;
@@ -1366,7 +1403,7 @@ public class Config : Form {
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(0, 4);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(44, 12);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1381,7 +1418,7 @@ public class Config : Form {
             this.btnQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnQuit.Image = ((System.Drawing.Image)(resources.GetObject("btnQuit.Image")));
             this.btnQuit.Location = new System.Drawing.Point(618, 2);
-            this.btnQuit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnQuit.Margin = new System.Windows.Forms.Padding(4);
             this.btnQuit.Name = "btnQuit";
             this.btnQuit.Size = new System.Drawing.Size(55, 50);
             this.btnQuit.TabIndex = 202;
@@ -1395,9 +1432,9 @@ public class Config : Form {
             this.grpCertificate.Controls.Add(this.txtCertificate);
             this.grpCertificate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpCertificate.Location = new System.Drawing.Point(10, 171);
-            this.grpCertificate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCertificate.Margin = new System.Windows.Forms.Padding(4);
             this.grpCertificate.Name = "grpCertificate";
-            this.grpCertificate.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCertificate.Padding = new System.Windows.Forms.Padding(4);
             this.grpCertificate.Size = new System.Drawing.Size(688, 71);
             this.grpCertificate.TabIndex = 203;
             this.grpCertificate.TabStop = false;
@@ -1420,7 +1457,7 @@ public class Config : Form {
             this.txtCertificate.Enabled = false;
             this.txtCertificate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCertificate.Location = new System.Drawing.Point(329, 28);
-            this.txtCertificate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtCertificate.Margin = new System.Windows.Forms.Padding(4);
             this.txtCertificate.Name = "txtCertificate";
             this.txtCertificate.Size = new System.Drawing.Size(349, 23);
             this.txtCertificate.TabIndex = 6;
@@ -1439,20 +1476,20 @@ public class Config : Form {
             this.lblErrorMessage.Text = "Neke postavke su prazne ili neispravne!";
             this.lblErrorMessage.Visible = false;
             // 
-            // grpTestCertificate
+            // grpExtraOptions
             // 
-            this.grpTestCertificate.BackColor = System.Drawing.Color.Transparent;
-            this.grpTestCertificate.Controls.Add(this.cbFiskPonude);
-            this.grpTestCertificate.Controls.Add(this.chkSendTest);
-            this.grpTestCertificate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpTestCertificate.Location = new System.Drawing.Point(7, 7);
-            this.grpTestCertificate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.grpTestCertificate.Name = "grpTestCertificate";
-            this.grpTestCertificate.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.grpTestCertificate.Size = new System.Drawing.Size(691, 106);
-            this.grpTestCertificate.TabIndex = 205;
-            this.grpTestCertificate.TabStop = false;
-            this.grpTestCertificate.Text = "Dodatne opcije :";
+            this.grpExtraOptions.BackColor = System.Drawing.Color.Transparent;
+            this.grpExtraOptions.Controls.Add(this.cbFiskPonude);
+            this.grpExtraOptions.Controls.Add(this.chkSendTest);
+            this.grpExtraOptions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpExtraOptions.Location = new System.Drawing.Point(7, 7);
+            this.grpExtraOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpExtraOptions.Name = "grpExtraOptions";
+            this.grpExtraOptions.Padding = new System.Windows.Forms.Padding(4);
+            this.grpExtraOptions.Size = new System.Drawing.Size(691, 106);
+            this.grpExtraOptions.TabIndex = 205;
+            this.grpExtraOptions.TabStop = false;
+            this.grpExtraOptions.Text = "Dodatne opcije :";
             // 
             // cbFiskPonude
             // 
@@ -1463,7 +1500,7 @@ public class Config : Form {
             this.cbFiskPonude.Enabled = false;
             this.cbFiskPonude.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbFiskPonude.Location = new System.Drawing.Point(16, 64);
-            this.cbFiskPonude.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbFiskPonude.Margin = new System.Windows.Forms.Padding(4);
             this.cbFiskPonude.Name = "cbFiskPonude";
             this.cbFiskPonude.Size = new System.Drawing.Size(332, 30);
             this.cbFiskPonude.TabIndex = 31;
@@ -1480,7 +1517,7 @@ public class Config : Form {
             this.chkSendTest.Enabled = false;
             this.chkSendTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkSendTest.Location = new System.Drawing.Point(16, 26);
-            this.chkSendTest.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkSendTest.Margin = new System.Windows.Forms.Padding(4);
             this.chkSendTest.Name = "chkSendTest";
             this.chkSendTest.Size = new System.Drawing.Size(332, 30);
             this.chkSendTest.TabIndex = 30;
@@ -1495,7 +1532,7 @@ public class Config : Form {
             this.btnProcessBills.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnProcessBills.Image = ((System.Drawing.Image)(resources.GetObject("btnProcessBills.Image")));
             this.btnProcessBills.Location = new System.Drawing.Point(555, 2);
-            this.btnProcessBills.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnProcessBills.Margin = new System.Windows.Forms.Padding(4);
             this.btnProcessBills.Name = "btnProcessBills";
             this.btnProcessBills.Size = new System.Drawing.Size(55, 50);
             this.btnProcessBills.TabIndex = 206;
@@ -1506,16 +1543,16 @@ public class Config : Form {
             // 
             this.grpCertificateFile.BackColor = System.Drawing.Color.Transparent;
             this.grpCertificateFile.Controls.Add(this.cbCheckSSL);
-            this.grpCertificateFile.Controls.Add(this.label2);
+            this.grpCertificateFile.Controls.Add(this.lbCertPassword);
             this.grpCertificateFile.Controls.Add(this.txtCertificatePassword);
             this.grpCertificateFile.Controls.Add(this.btnCertificateFile);
-            this.grpCertificateFile.Controls.Add(this.label1);
+            this.grpCertificateFile.Controls.Add(this.lbCertLocation);
             this.grpCertificateFile.Controls.Add(this.chkUseCertificateFile);
             this.grpCertificateFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.grpCertificateFile.Location = new System.Drawing.Point(7, 7);
-            this.grpCertificateFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCertificateFile.Margin = new System.Windows.Forms.Padding(4);
             this.grpCertificateFile.Name = "grpCertificateFile";
-            this.grpCertificateFile.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCertificateFile.Padding = new System.Windows.Forms.Padding(4);
             this.grpCertificateFile.Size = new System.Drawing.Size(691, 156);
             this.grpCertificateFile.TabIndex = 207;
             this.grpCertificateFile.TabStop = false;
@@ -1530,7 +1567,7 @@ public class Config : Form {
             this.cbCheckSSL.Enabled = false;
             this.cbCheckSSL.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbCheckSSL.Location = new System.Drawing.Point(14, 112);
-            this.cbCheckSSL.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbCheckSSL.Margin = new System.Windows.Forms.Padding(4);
             this.cbCheckSSL.Name = "cbCheckSSL";
             this.cbCheckSSL.Size = new System.Drawing.Size(332, 44);
             this.cbCheckSSL.TabIndex = 16;
@@ -1538,24 +1575,23 @@ public class Config : Form {
             this.cbCheckSSL.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbCheckSSL.UseVisualStyleBackColor = false;
             // 
-            // label2
+            // lbCertPassword
             // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(20, 92);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(302, 16);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Lozinka certifikata :";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbCertPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbCertPassword.Location = new System.Drawing.Point(20, 92);
+            this.lbCertPassword.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbCertPassword.Name = "lbCertPassword";
+            this.lbCertPassword.Size = new System.Drawing.Size(302, 16);
+            this.lbCertPassword.TabIndex = 14;
+            this.lbCertPassword.Text = "Lozinka certifikata :";
+            this.lbCertPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtCertificatePassword
             // 
             this.txtCertificatePassword.BackColor = System.Drawing.SystemColors.Window;
-            this.txtCertificatePassword.Enabled = false;
             this.txtCertificatePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCertificatePassword.Location = new System.Drawing.Point(329, 89);
-            this.txtCertificatePassword.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtCertificatePassword.Margin = new System.Windows.Forms.Padding(4);
             this.txtCertificatePassword.Name = "txtCertificatePassword";
             this.txtCertificatePassword.PasswordChar = 'x';
             this.txtCertificatePassword.Size = new System.Drawing.Size(352, 23);
@@ -1564,7 +1600,6 @@ public class Config : Form {
             // btnCertificateFile
             // 
             this.btnCertificateFile.AutoSize = true;
-            this.btnCertificateFile.Enabled = false;
             this.btnCertificateFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             this.btnCertificateFile.Location = new System.Drawing.Point(329, 53);
             this.btnCertificateFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1575,16 +1610,16 @@ public class Config : Form {
             this.btnCertificateFile.UseVisualStyleBackColor = true;
             this.btnCertificateFile.Click += new System.EventHandler(this.btnCertificateFile_Click);
             // 
-            // label1
+            // lbCertLocation
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 59);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(311, 16);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Putanja datoteke s certifikatom :";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbCertLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbCertLocation.Location = new System.Drawing.Point(12, 59);
+            this.lbCertLocation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbCertLocation.Name = "lbCertLocation";
+            this.lbCertLocation.Size = new System.Drawing.Size(311, 16);
+            this.lbCertLocation.TabIndex = 12;
+            this.lbCertLocation.Text = "Putanja datoteke s certifikatom :";
+            this.lbCertLocation.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // chkUseCertificateFile
             // 
@@ -1592,10 +1627,9 @@ public class Config : Form {
             | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUseCertificateFile.BackColor = System.Drawing.Color.Transparent;
             this.chkUseCertificateFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkUseCertificateFile.Enabled = false;
             this.chkUseCertificateFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkUseCertificateFile.Location = new System.Drawing.Point(16, 14);
-            this.chkUseCertificateFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkUseCertificateFile.Margin = new System.Windows.Forms.Padding(4);
             this.chkUseCertificateFile.Name = "chkUseCertificateFile";
             this.chkUseCertificateFile.Size = new System.Drawing.Size(332, 44);
             this.chkUseCertificateFile.TabIndex = 7;
@@ -1612,7 +1646,7 @@ public class Config : Form {
             this.btUpdate.ForeColor = System.Drawing.Color.Transparent;
             this.btUpdate.Image = ((System.Drawing.Image)(resources.GetObject("btUpdate.Image")));
             this.btUpdate.Location = new System.Drawing.Point(741, 2);
-            this.btUpdate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btUpdate.Margin = new System.Windows.Forms.Padding(4);
             this.btUpdate.Name = "btUpdate";
             this.btUpdate.Size = new System.Drawing.Size(55, 50);
             this.btUpdate.TabIndex = 208;
@@ -1632,26 +1666,26 @@ public class Config : Form {
             this.lbVerzija.TabIndex = 209;
             this.lbVerzija.Text = "Verzija";
             // 
-            // groupBox1
+            // grpQrCode
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.Transparent;
-            this.groupBox1.Controls.Add(this.pgBarQr);
-            this.groupBox1.Controls.Add(this.btQrRegen);
-            this.groupBox1.Controls.Add(this.txtQrSize);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.txtQrSaveLocation);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.txtQrMessage);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(7, 7);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(688, 254);
-            this.groupBox1.TabIndex = 29;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Postavke QR Coda :";
+            this.grpQrCode.BackColor = System.Drawing.Color.Transparent;
+            this.grpQrCode.Controls.Add(this.pgBarQr);
+            this.grpQrCode.Controls.Add(this.btQrRegen);
+            this.grpQrCode.Controls.Add(this.txtQrSize);
+            this.grpQrCode.Controls.Add(this.lbQrSize);
+            this.grpQrCode.Controls.Add(this.txtQrSaveLocation);
+            this.grpQrCode.Controls.Add(this.lbQrSaveLocation);
+            this.grpQrCode.Controls.Add(this.txtQrMessage);
+            this.grpQrCode.Controls.Add(this.lbQrMessage);
+            this.grpQrCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grpQrCode.Location = new System.Drawing.Point(7, 7);
+            this.grpQrCode.Margin = new System.Windows.Forms.Padding(4);
+            this.grpQrCode.Name = "grpQrCode";
+            this.grpQrCode.Padding = new System.Windows.Forms.Padding(4);
+            this.grpQrCode.Size = new System.Drawing.Size(688, 254);
+            this.grpQrCode.TabIndex = 29;
+            this.grpQrCode.TabStop = false;
+            this.grpQrCode.Text = "Postavke QR Coda :";
             // 
             // pgBarQr
             // 
@@ -1682,21 +1716,21 @@ public class Config : Form {
             this.txtQrSize.Enabled = false;
             this.txtQrSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtQrSize.Location = new System.Drawing.Point(328, 86);
-            this.txtQrSize.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtQrSize.Margin = new System.Windows.Forms.Padding(4);
             this.txtQrSize.Name = "txtQrSize";
             this.txtQrSize.Size = new System.Drawing.Size(72, 23);
             this.txtQrSize.TabIndex = 21;
             // 
-            // label5
+            // lbQrSize
             // 
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(11, 90);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(311, 16);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "Veličina QR koda :";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbQrSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbQrSize.Location = new System.Drawing.Point(11, 90);
+            this.lbQrSize.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbQrSize.Name = "lbQrSize";
+            this.lbQrSize.Size = new System.Drawing.Size(311, 16);
+            this.lbQrSize.TabIndex = 20;
+            this.lbQrSize.Text = "Veličina QR koda :";
+            this.lbQrSize.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtQrSaveLocation
             // 
@@ -1704,102 +1738,102 @@ public class Config : Form {
             this.txtQrSaveLocation.Enabled = false;
             this.txtQrSaveLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtQrSaveLocation.Location = new System.Drawing.Point(329, 55);
-            this.txtQrSaveLocation.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtQrSaveLocation.Margin = new System.Windows.Forms.Padding(4);
             this.txtQrSaveLocation.Name = "txtQrSaveLocation";
             this.txtQrSaveLocation.Size = new System.Drawing.Size(349, 23);
             this.txtQrSaveLocation.TabIndex = 19;
             // 
-            // label4
+            // lbQrSaveLocation
             // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(12, 59);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(311, 16);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "Putanja spremanja kodova :";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbQrSaveLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbQrSaveLocation.Location = new System.Drawing.Point(12, 59);
+            this.lbQrSaveLocation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbQrSaveLocation.Name = "lbQrSaveLocation";
+            this.lbQrSaveLocation.Size = new System.Drawing.Size(311, 16);
+            this.lbQrSaveLocation.TabIndex = 18;
+            this.lbQrSaveLocation.Text = "Putanja spremanja kodova :";
+            this.lbQrSaveLocation.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // tabControl1
+            // tabControl
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage5);
-            this.tabControl1.Controls.Add(this.tabPage6);
-            this.tabControl1.Location = new System.Drawing.Point(6, 62);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(800, 493);
-            this.tabControl1.TabIndex = 210;
+            this.tabControl.Controls.Add(this.tabOsnovno);
+            this.tabControl.Controls.Add(this.tabPostavke);
+            this.tabControl.Controls.Add(this.tabSolo);
+            this.tabControl.Controls.Add(this.tabExtraOpcije);
+            this.tabControl.Controls.Add(this.tabCertifikati);
+            this.tabControl.Controls.Add(this.tabQr);
+            this.tabControl.Location = new System.Drawing.Point(6, 62);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(800, 493);
+            this.tabControl.TabIndex = 210;
             // 
-            // tabPage1
+            // tabOsnovno
             // 
-            this.tabPage1.Controls.Add(this.grpBasic);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(792, 571);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Osnovno";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabOsnovno.Controls.Add(this.grpBasic);
+            this.tabOsnovno.Location = new System.Drawing.Point(4, 25);
+            this.tabOsnovno.Name = "tabOsnovno";
+            this.tabOsnovno.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOsnovno.Size = new System.Drawing.Size(792, 464);
+            this.tabOsnovno.TabIndex = 0;
+            this.tabOsnovno.Text = "Osnovno";
+            this.tabOsnovno.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tabPostavke
             // 
-            this.tabPage2.Controls.Add(this.grpPremise);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(792, 571);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Postavke salona";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPostavke.Controls.Add(this.grpPremise);
+            this.tabPostavke.Location = new System.Drawing.Point(4, 25);
+            this.tabPostavke.Name = "tabPostavke";
+            this.tabPostavke.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPostavke.Size = new System.Drawing.Size(792, 464);
+            this.tabPostavke.TabIndex = 1;
+            this.tabPostavke.Text = "Postavke salona";
+            this.tabPostavke.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // tabSolo
             // 
-            this.tabPage3.Controls.Add(this.grpSolo);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(792, 571);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Solo postavke";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabSolo.Controls.Add(this.grpSolo);
+            this.tabSolo.Location = new System.Drawing.Point(4, 25);
+            this.tabSolo.Name = "tabSolo";
+            this.tabSolo.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSolo.Size = new System.Drawing.Size(792, 464);
+            this.tabSolo.TabIndex = 2;
+            this.tabSolo.Text = "Solo postavke";
+            this.tabSolo.UseVisualStyleBackColor = true;
             // 
-            // tabPage4
+            // tabExtraOpcije
             // 
-            this.tabPage4.Controls.Add(this.grpTestCertificate);
-            this.tabPage4.Location = new System.Drawing.Point(4, 25);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(792, 571);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Dodatne opcije";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tabExtraOpcije.Controls.Add(this.grpExtraOptions);
+            this.tabExtraOpcije.Location = new System.Drawing.Point(4, 25);
+            this.tabExtraOpcije.Name = "tabExtraOpcije";
+            this.tabExtraOpcije.Padding = new System.Windows.Forms.Padding(3);
+            this.tabExtraOpcije.Size = new System.Drawing.Size(792, 464);
+            this.tabExtraOpcije.TabIndex = 3;
+            this.tabExtraOpcije.Text = "Dodatne opcije";
+            this.tabExtraOpcije.UseVisualStyleBackColor = true;
             // 
-            // tabPage5
+            // tabCertifikati
             // 
-            this.tabPage5.Controls.Add(this.grpCertificateFile);
-            this.tabPage5.Controls.Add(this.grpCertificate);
-            this.tabPage5.Location = new System.Drawing.Point(4, 25);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(792, 571);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "Certifikati";
-            this.tabPage5.UseVisualStyleBackColor = true;
+            this.tabCertifikati.Controls.Add(this.grpCertificateFile);
+            this.tabCertifikati.Controls.Add(this.grpCertificate);
+            this.tabCertifikati.Location = new System.Drawing.Point(4, 25);
+            this.tabCertifikati.Name = "tabCertifikati";
+            this.tabCertifikati.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCertifikati.Size = new System.Drawing.Size(792, 464);
+            this.tabCertifikati.TabIndex = 4;
+            this.tabCertifikati.Text = "Certifikati";
+            this.tabCertifikati.UseVisualStyleBackColor = true;
             // 
-            // tabPage6
+            // tabQr
             // 
-            this.tabPage6.Controls.Add(this.groupBox1);
-            this.tabPage6.Location = new System.Drawing.Point(4, 25);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(792, 464);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "QR code";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            this.tabQr.Controls.Add(this.grpQrCode);
+            this.tabQr.Location = new System.Drawing.Point(4, 25);
+            this.tabQr.Name = "tabQr";
+            this.tabQr.Padding = new System.Windows.Forms.Padding(3);
+            this.tabQr.Size = new System.Drawing.Size(792, 464);
+            this.tabQr.TabIndex = 5;
+            this.tabQr.Text = "QR code";
+            this.tabQr.UseVisualStyleBackColor = true;
             // 
             // Config
             // 
@@ -1809,7 +1843,7 @@ public class Config : Form {
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(827, 653);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.lbVerzija);
             this.Controls.Add(this.btUpdate);
             this.Controls.Add(this.btnProcessBills);
@@ -1822,7 +1856,7 @@ public class Config : Form {
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "Config";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1837,18 +1871,18 @@ public class Config : Form {
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.grpCertificate.ResumeLayout(false);
             this.grpCertificate.PerformLayout();
-            this.grpTestCertificate.ResumeLayout(false);
+            this.grpExtraOptions.ResumeLayout(false);
             this.grpCertificateFile.ResumeLayout(false);
             this.grpCertificateFile.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage6.ResumeLayout(false);
+            this.grpQrCode.ResumeLayout(false);
+            this.grpQrCode.PerformLayout();
+            this.tabControl.ResumeLayout(false);
+            this.tabOsnovno.ResumeLayout(false);
+            this.tabPostavke.ResumeLayout(false);
+            this.tabSolo.ResumeLayout(false);
+            this.tabExtraOpcije.ResumeLayout(false);
+            this.tabCertifikati.ResumeLayout(false);
+            this.tabQr.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
