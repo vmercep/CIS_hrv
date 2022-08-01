@@ -70,56 +70,74 @@ public class InputBoxDialog : Form {
   }
 
   private void InitializeComponent () {
-    lblPrompt = new System.Windows.Forms.Label();
-    txtInput = new System.Windows.Forms.TextBox();
-    btnOK = new System.Windows.Forms.Button();
-    btnCancel = new System.Windows.Forms.Button();
-    SuspendLayout();
-    lblPrompt.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right);
-    lblPrompt.BackColor = System.Drawing.SystemColors.Control;
-    lblPrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-    lblPrompt.Location = new System.Drawing.Point(12, 9);
-    lblPrompt.Name = "lblPrompt";
-    lblPrompt.Size = new System.Drawing.Size(302, 83);
-    lblPrompt.TabIndex = 3;
-    txtInput.Location = new System.Drawing.Point(8, 100);
-    txtInput.Name = "txtInput";
-    txtInput.Size = new System.Drawing.Size(379, 20);
-    txtInput.TabIndex = 0;
-    btnOK.Location = new System.Drawing.Point(320, 10);
-    btnOK.Name = "btnOK";
-    btnOK.Size = new System.Drawing.Size(75, 25);
-    btnOK.TabIndex = 4;
-    btnOK.Text = "&OK";
-    btnOK.UseVisualStyleBackColor = true;
-    btnOK.Click += new System.EventHandler(BtnOKClick);
-    btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-    btnCancel.Location = new System.Drawing.Point(320, 41);
-    btnCancel.Name = "btnCancel";
-    btnCancel.Size = new System.Drawing.Size(75, 25);
-    btnCancel.TabIndex = 5;
-    btnCancel.Text = "&Cancel";
-    btnCancel.UseVisualStyleBackColor = true;
-    btnCancel.Click += new System.EventHandler(BtnCancelClick);
-    base.AcceptButton = btnOK;
-    AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-    BackColor = System.Drawing.SystemColors.Control;
-    base.CancelButton = btnCancel;
-    base.ClientSize = new System.Drawing.Size(398, 128);
-    base.Controls.Add(btnCancel);
-    base.Controls.Add(btnOK);
-    base.Controls.Add(txtInput);
-    base.Controls.Add(lblPrompt);
-    base.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-    base.MaximizeBox = false;
-    base.MinimizeBox = false;
-    base.Name = "InputBoxDialog";
-    base.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-    Text = "InputBox";
-    base.TopMost = true;
-    base.Load += new System.EventHandler(InputBox_Load);
-    ResumeLayout(performLayout: false);
-    PerformLayout();
+            this.lblPrompt = new System.Windows.Forms.Label();
+            this.txtInput = new System.Windows.Forms.TextBox();
+            this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // lblPrompt
+            // 
+            this.lblPrompt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPrompt.BackColor = System.Drawing.SystemColors.Control;
+            this.lblPrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrompt.Location = new System.Drawing.Point(14, 10);
+            this.lblPrompt.Name = "lblPrompt";
+            this.lblPrompt.Size = new System.Drawing.Size(373, 114);
+            this.lblPrompt.TabIndex = 3;
+            // 
+            // txtInput
+            // 
+            this.txtInput.Location = new System.Drawing.Point(10, 115);
+            this.txtInput.Name = "txtInput";
+            this.txtInput.Size = new System.Drawing.Size(454, 22);
+            this.txtInput.TabIndex = 0;
+            // 
+            // btnOK
+            // 
+            this.btnOK.Location = new System.Drawing.Point(384, 12);
+            this.btnOK.Name = "btnOK";
+            this.btnOK.Size = new System.Drawing.Size(90, 28);
+            this.btnOK.TabIndex = 4;
+            this.btnOK.Text = "&OK";
+            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.BtnOKClick);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(384, 47);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(90, 29);
+            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Text = "&Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancelClick);
+            // 
+            // InputBoxDialog
+            // 
+            this.AcceptButton = this.btnOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(488, 166);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.txtInput);
+            this.Controls.Add(this.lblPrompt);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "InputBoxDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "InputBox";
+            this.TopMost = true;
+            this.Load += new System.EventHandler(this.InputBox_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
   }
 
   private void InputBox_Load (object sender, EventArgs e) {

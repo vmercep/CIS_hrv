@@ -877,7 +877,7 @@ public class MainForm : Form
         //MessageBox.Show(content, title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
         ErrorMessageBox errorMessageBox = new ErrorMessageBox();
         errorMessageBox.lbMessageText.Text = title;
-        errorMessageBox.lbMessageDetails.Text = content;
+        errorMessageBox.tbMessage.Text = content;
         errorMessageBox.ShowDialog();
 
         Log.WriteLog(logerror, ticket, extendmessage, placeholders, ErrorCode, ErrorMessage);

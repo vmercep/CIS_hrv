@@ -41,7 +41,7 @@ namespace _385_fisk.Exceptions
                 mail.From = new MailAddress("info@ikosoft.com.hr");
                 mail.To.Add("info@ikosoft.com.hr");
                 mail.Subject = "Greška na CIS aplikaciji "+AppLink.VATNumber;
-                mail.Body = lbMessageText.Text + "\r\n" + lbMessageDetails.Text;
+                mail.Body = lbMessageText.Text + "\r\n" + tbMessage.Text;
 
                 //SmtpServer.Port = 465;
                 SmtpServer.Credentials = new System.Net.NetworkCredential("info@ikosoft.com.hr", "1J7dTROd0u");

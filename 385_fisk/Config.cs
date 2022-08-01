@@ -788,7 +788,8 @@ public class Config : Form {
         //MessageBox.Show(content, title, MessageBoxButtons.OK, MessageBoxIcon.Hand);
         ErrorMessageBox errorMessageBox = new ErrorMessageBox();
         errorMessageBox.lbMessageText.Text = title;
-        errorMessageBox.lbMessageDetails.Text = content;
+        //errorMessageBox.lbMessageDetails.Text = content;
+        errorMessageBox.tbMessage.Text = content;
         errorMessageBox.ShowDialog();
 
         log.Debug("Error in QR code regen " + content);
