@@ -4,6 +4,7 @@ using CisDal;
 using System;
 using System.Diagnostics;
 using System.Management;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -52,10 +53,13 @@ internal static class Program {
         //Console.WriteLine(commandLineArgs.Length);
         log.Debug("Command line arguments "+commandLineArgs.Length);
 
-        log.Debug("Altering table :)");
+        log.Debug("Altering table");
         IMerlinData dalMerlin = new MerlinData();
         dalMerlin.AlterMerlinTable();
         log.Debug("Table altered");
+        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        log.Info("Starting CIS application version "+version);
+
 
         if (commandLineArgs.Length > 1)
         {

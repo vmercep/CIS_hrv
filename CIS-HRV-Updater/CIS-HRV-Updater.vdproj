@@ -225,6 +225,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F9A763AD96CB484AA3CDD3E2F9B9FCBC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FB25A134FCE538B81116ACE1561709C1"
         "OwnerKey" = "8:_0775DD0EB6134648FEFC449F6E544221"
         "MsmSig" = "8:_UNDEFINED"
@@ -841,6 +847,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F9A763AD96CB484AA3CDD3E2F9B9FCBC"
+            {
+            "SourcePath" = "8:..\\385_fisk\\log4net.config"
+            "TargetName" = "8:log4net.config"
+            "Tag" = "8:"
+            "Folder" = "8:_17AC40C37DCE4C7FB5445C6F42E34A3D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FB25A134FCE538B81116ACE1561709C1"
             {
             "AssemblyRegister" = "3:1"
@@ -939,15 +965,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CIS-HRV"
-        "ProductCode" = "8:{FF5975DB-3706-4BF3-BE62-AC5A18914723}"
-        "PackageCode" = "8:{1D0687A9-5BF1-40A8-9CA2-6DCC5A78CC70}"
+        "ProductCode" = "8:{797C68C8-77D5-45CF-AB1D-BDCDBFA074C4}"
+        "PackageCode" = "8:{A7116080-02E4-4F1C-824A-896FF70185DC}"
         "UpgradeCode" = "8:{A6946A89-83C7-426B-8CD1-E86B11B89118}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.7"
+        "ProductVersion" = "8:1.1.8"
         "Manufacturer" = "8:CIS-HRV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
