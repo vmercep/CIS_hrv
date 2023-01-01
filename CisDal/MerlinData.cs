@@ -104,7 +104,7 @@ namespace CisDal
                 {
                     SqlCommand sqlCommand = sqlConnection.CreateCommand();
                     sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, idsysmachine, typetik, notes, \r\n                    (select top 1 taux from systauxtva where flagarchive=0 order by taux desc) TauxTva, \r\n                    (select count(idcaisseticket) from caisseligpaiement where idcaisseticket=caisseticket.id) CountLigPay, \r\n                    (select numerosecu from perso where id=caisseticket.idpersoencaiss) OIBPerso from caisseticket\r\n                    where (Hash like @HashE or Hash like @Hash0 or Hash like @Hash1 or Hash is null or datalength(Hash) > 36) and typetik in(1,2) and id>=@Date";
-                    sqlCommand.Parameters.Add(new SqlParameter("@HashE", "ERROR_%"));
+                    sqlCommand.Parameters.Add(new SqlParameter("@HashE", "GRESKA_%"));
                     sqlCommand.Parameters.Add(new SqlParameter("@Hash0", "0"));
                     sqlCommand.Parameters.Add(new SqlParameter("@Hash1", ""));
                     sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(dataSalon.DateIsActive)));

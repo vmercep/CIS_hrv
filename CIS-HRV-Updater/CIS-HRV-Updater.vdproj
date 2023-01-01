@@ -430,7 +430,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Helper, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Helper, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_0775DD0EB6134648FEFC449F6E544221"
@@ -665,7 +665,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CisDal, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:CisDal, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_BA9567C6BF1B153AD6FBF2C3DEEB1ACD"
@@ -820,7 +820,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:385_fisk_dll, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:385_fisk_dll, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_F5C5FCD9B06757A062B6D6290B0E0DF4"
@@ -965,15 +965,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CIS-HRV"
-        "ProductCode" = "8:{797C68C8-77D5-45CF-AB1D-BDCDBFA074C4}"
-        "PackageCode" = "8:{A7116080-02E4-4F1C-824A-896FF70185DC}"
+        "ProductCode" = "8:{35B5B2A4-8134-4258-9251-D23B64DC91E0}"
+        "PackageCode" = "8:{A0848714-8676-48BF-AE3B-5E486331E7D9}"
         "UpgradeCode" = "8:{A6946A89-83C7-426B-8CD1-E86B11B89118}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.8"
+        "ProductVersion" = "8:1.1.9"
         "Manufacturer" = "8:CIS-HRV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

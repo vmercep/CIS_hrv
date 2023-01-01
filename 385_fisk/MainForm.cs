@@ -445,7 +445,7 @@ public class MainForm : Form
                     log.Debug(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message));
                     AddBillToFailedAttempts(billDetails.IdTicket);
                 }
-                SaveErrorOnBill(billDetails.IdTicket, "ERROR_CIS       "+message.Substring(0,10), dalMerlin);
+                SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS      "+message.Substring(0,10), dalMerlin);
                 return false;
             }
 
@@ -455,7 +455,7 @@ public class MainForm : Form
         {
             log.Error(String.Format("Error for sending bill id to test CIS {0} ", billDetails.IdTicket), e);
             AddBillToFailedAttempts(billDetails.IdTicket);
-            SaveErrorOnBill(billDetails.IdTicket, "ERROR_OIB                              ", dalMerlin);
+            SaveErrorOnBill(billDetails.IdTicket, "GRESKA_OIB                             ", dalMerlin);
             MessageAlert(Translations.Translate("Nedostaje OIB zaposlenika!"), Translations.Translate("Greška"));
             return false;
         }
@@ -472,7 +472,7 @@ public class MainForm : Form
                 return true;
             }
             MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-            SaveErrorOnBill(billDetails.IdTicket, "ERROR_CIS                              ", dalMerlin);
+            SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS                             ", dalMerlin);
             log.Error(String.Format("General error for bill id {0} ", billDetails.IdTicket), ex2);
             Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex2.Message, placeholders, ErrorCode, ErrorMessage);
             return false;
@@ -500,7 +500,7 @@ public class MainForm : Form
             if(!cisBl.CheckBillAnswer(xmlDocument, false, out message))
             {
                 MessageAlert(message, Translations.Translate("Greška"));
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_CIS       " + message.Substring(0, 10), dalMerlin);
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_CIS      " + message.Substring(0, 10), dalMerlin);
                 log.Debug(String.Format("Error in sending to prod CIS {0} : {1}", listBill.IdTicket, message));
                 throw new Exception("Error on CIS "+message);
             }
@@ -513,7 +513,7 @@ public class MainForm : Form
             if (string.IsNullOrEmpty(txtResponse.Text))
             {
                 Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP Empty                        ", dalMerlin);
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP Empty                       ", dalMerlin);
             }
             else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
             {
@@ -526,7 +526,7 @@ public class MainForm : Form
             else
             {
                 log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP                             ", dalMerlin);
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP                            ", dalMerlin);
             }
 
         }
@@ -546,7 +546,7 @@ public class MainForm : Form
             }
 
             Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
-            SaveErrorOnBill(listBill.IdTicket, "ERROR_eSJ", dalMerlin);
+            SaveErrorOnBill(listBill.IdTicket, "GRESKA_eSJ", dalMerlin);
 
         }
 
@@ -678,17 +678,17 @@ public class MainForm : Form
     private void CheckForUpdateEvent()
     {
         log.Debug("Checking for update of CIS application");
-        if (!lastCheck.Equals(now.ToString("d.M.y")))
-        {
+        //if (!lastCheck.Equals(now.ToString("d.M.y")))
+        //{
             
-            log.Debug("Checking for new version of CIS application");
-            _385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
-            _385_fisk.Properties.Settings.Default.Save();
+            //log.Debug("Checking for new version of CIS application");
+            //_385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
+           // _385_fisk.Properties.Settings.Default.Save();
             base.TopMost = false;
             AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
             AutoUpdater.DownloadPath = Environment.CurrentDirectory;
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
-        }
+        //}
     }
 
     private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)

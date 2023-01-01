@@ -53,10 +53,12 @@ internal static class Program {
         //Console.WriteLine(commandLineArgs.Length);
         log.Debug("Command line arguments "+commandLineArgs.Length);
 
+        /*
         log.Debug("Altering table");
         IMerlinData dalMerlin = new MerlinData();
         dalMerlin.AlterMerlinTable();
         log.Debug("Table altered");
+        */
         string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         log.Info("Starting CIS application version "+version);
 

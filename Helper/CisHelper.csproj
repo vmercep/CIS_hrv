@@ -65,6 +65,7 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DataVerification.cs" />
     <Compile Include="DropBoxBase.cs" />
+    <Compile Include="DropBoxCloudOperations.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="LogEnum.cs" />
     <Compile Include="LogFile.cs" />

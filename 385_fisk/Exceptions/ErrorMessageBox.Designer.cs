@@ -54,18 +54,18 @@
             this.btCancel.Location = new System.Drawing.Point(16, 198);
             this.btCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(100, 28);
+            this.btCancel.Size = new System.Drawing.Size(172, 63);
             this.btCancel.TabIndex = 1;
-            this.btCancel.Text = "Otkaži";
+            this.btCancel.Text = "Nastavi s izdavanjem računa";
             this.btCancel.UseVisualStyleBackColor = false;
             this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
             // 
             // btSendToSupport
             // 
-            this.btSendToSupport.Location = new System.Drawing.Point(382, 198);
+            this.btSendToSupport.Location = new System.Drawing.Point(394, 198);
             this.btSendToSupport.Margin = new System.Windows.Forms.Padding(4);
             this.btSendToSupport.Name = "btSendToSupport";
-            this.btSendToSupport.Size = new System.Drawing.Size(181, 28);
+            this.btSendToSupport.Size = new System.Drawing.Size(169, 63);
             this.btSendToSupport.TabIndex = 4;
             this.btSendToSupport.Text = "Pošalji grešku podršci";
             this.btSendToSupport.UseVisualStyleBackColor = true;
@@ -91,6 +91,7 @@
             this.tbMessage.Location = new System.Drawing.Point(16, 70);
             this.tbMessage.Multiline = true;
             this.tbMessage.Name = "tbMessage";
+            this.tbMessage.ReadOnly = true;
             this.tbMessage.Size = new System.Drawing.Size(547, 121);
             this.tbMessage.TabIndex = 6;
             // 
@@ -100,7 +101,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackgroundImage = global::_385_fisk.Properties.Resources.background2;
-            this.ClientSize = new System.Drawing.Size(576, 244);
+            this.ClientSize = new System.Drawing.Size(576, 274);
             this.Controls.Add(this.tbMessage);
             this.Controls.Add(this.pbErrorBox);
             this.Controls.Add(this.btSendToSupport);

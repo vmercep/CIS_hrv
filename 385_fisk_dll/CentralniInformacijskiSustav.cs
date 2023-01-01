@@ -348,18 +348,22 @@ public class CentralniInformacijskiSustav {
     private void PosaljiZahtjev(string certificateSubject, ref XmlDocument racunOdgovor, XmlDocument zahtjevXml, bool useTestServer = false, bool useImportedCertificate = false)
     {
         SaveFile(zahtjevXml, zahtjevXml);
+        log.Debug("File saved, fetching certificate!");
         if (zahtjevXml != null && !string.IsNullOrEmpty(zahtjevXml.InnerXml))
         {
             X509Certificate2 x509Certificate = null;
             if (useTestServer)
             {
+                log.Debug("Fetching test certificate for bill check");
                 x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaDemoCertifikata(), "Demo02");
+                log.Debug("Fetched test certificate "+ x509Certificate.Subject);
             }
             else if (useImportedCertificate)
             {
                 try
                 {
                     x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword);
+                    log.Debug("Fetched certificate from file " + x509Certificate.Subject);
                 }
                 catch (Exception ex)
                 {
@@ -369,12 +373,15 @@ public class CentralniInformacijskiSustav {
             else
             {
                 x509Certificate = Potpisivanje.DohvatiCertifikat(certificateSubject);
+                log.Debug("Fetched certificate from certificate store " + x509Certificate.Subject);
             }
             if (x509Certificate != null)
             {
+                log.Debug("Starting with document signing and sending");
                 Potpisivanje.PotpisiXmlDokument(zahtjevXml, x509Certificate);
                 XmlDokumenti.DodajSoapEnvelope(ref zahtjevXml);
                 racunOdgovor = SendSoapMessage(zahtjevXml, useTestServer);
+                log.Debug("Done!");
             }
         }
     }
@@ -410,6 +417,7 @@ public class CentralniInformacijskiSustav {
                     break;
             }
         }
+        log.Debug("File saved");
     }
 
     public static void CreateDirectories()

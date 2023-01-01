@@ -43,6 +43,7 @@ public class Potpisivanje {
         {
             try
             {
+                log.Debug("Loading certificate into X509 object");
                 result = new X509Certificate2(certifikatDatoteka, zaporka);
             }
             catch (Exception ex)
@@ -57,11 +58,12 @@ public class Potpisivanje {
 
     public static XmlDocument PotpisiXmlDokument(XmlDocument dokument, X509Certificate2 certifikat)
     {
+        log.Debug("Signing document using certificate " + certifikat.Subject + " START");
         RSACryptoServiceProvider signingKey = (RSACryptoServiceProvider)certifikat.PrivateKey;
         SignedXml signedXml = null;
         try
         {
-            log.Debug("Signing document using certificate "+certifikat.Subject + " START");
+            
             signedXml = new SignedXml(dokument);
             signedXml.SigningKey = signingKey;
             signedXml.SignedInfo.CanonicalizationMethod = "http://www.w3.org/2001/10/xml-exc-c14n#";

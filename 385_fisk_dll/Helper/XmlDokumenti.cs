@@ -221,6 +221,7 @@ public static class XmlDokumenti {
   }
 
   public static void DodajSoapEnvelope (ref XmlDocument dokument) {
+        log.Debug("Adding envelope");
     if (dokument != null && !string.IsNullOrEmpty(dokument.InnerXml) && dokument.DocumentElement != null) {
       StringBuilder stringBuilder = new StringBuilder();
       stringBuilder.Append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchemainstance\">");

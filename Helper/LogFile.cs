@@ -233,10 +233,11 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.LogLevel);
                     streamWriter.Close();
 
-
-                    DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                    dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
-                    bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
+                    string filename = fConfig.VATNumber.Replace('=', '_') + ".txt";
+                    //DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
+                    //dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
+                    //bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
+                    DropBoxCloudOperations.CreateFile(filename, filePath);
                     log.Debug("Config file created");
                     return true;
                 }
