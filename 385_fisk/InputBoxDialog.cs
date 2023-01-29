@@ -85,7 +85,7 @@ public class InputBoxDialog : Form {
             this.lblPrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPrompt.Location = new System.Drawing.Point(14, 10);
             this.lblPrompt.Name = "lblPrompt";
-            this.lblPrompt.Size = new System.Drawing.Size(373, 114);
+            this.lblPrompt.Size = new System.Drawing.Size(372, 113);
             this.lblPrompt.TabIndex = 3;
             // 
             // txtInput
