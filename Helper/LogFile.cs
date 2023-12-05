@@ -201,6 +201,7 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.SaveXMLActive);
                     streamWriter.WriteLine(fConfig.XMLSavePath);
                     streamWriter.WriteLine(fConfig.DateIsActive);
+                    streamWriter.WriteLine(fConfig.DateTipIsActive);
                     streamWriter.WriteLine(fConfig.ActiveLanguage);
                     streamWriter.WriteLine(fConfig.Lvide);
                     streamWriter.WriteLine(fConfig.SecSalon);

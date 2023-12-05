@@ -5,5 +5,7 @@
   RacunZahtjev,
   RacunOdgovor,
   PoslovniProstorZahtjev,
-  PoslovniProstorOdgovor
+  PoslovniProstorOdgovor,
+  NapojnicaZahtjev,
+  NapojnicaOdgovor
 }

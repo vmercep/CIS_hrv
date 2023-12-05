@@ -66,7 +66,10 @@ public class RacunType : EntityBase<RacunType> {
   [EditorBrowsable(EditorBrowsableState.Never)]
   private string _specNamj;
 
-  public string Oib {
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    private NapojnicaType _napojnica;
+
+    public string Oib {
     get {
       return _oib;
     }
@@ -241,11 +244,24 @@ public class RacunType : EntityBase<RacunType> {
     }
   }
 
-  public RacunType () {
+    public NapojnicaType Napojnica
+    {
+        get
+        {
+            return _napojnica;
+        }
+        set
+        {
+            _napojnica = value;
+        }
+    }
+
+    public RacunType () {
     _naknade = new List<NaknadaType>();
     _ostaliPor = new List<PorezOstaloType>();
     _pnp = new List<PorezType>();
     _pdv = new List<PorezType>();
     _brRac = new BrojRacunaType();
+        _napojnica = new NapojnicaType();
   }
 }

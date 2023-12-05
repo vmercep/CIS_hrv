@@ -76,6 +76,8 @@
 
         private string _LogLevel;
 
+        private string _DateTipIsActive;
+
         public string ConnectionString
         {
             get
@@ -171,6 +173,18 @@
             set
             {
                 _DateIsActive = "DateIsActive=" + value;
+            }
+        }
+
+        public string DateTipIsActive
+        {
+            get
+            {
+                return _DateTipIsActive;
+            }
+            set
+            {
+                _DateTipIsActive = "DateTipIsActive=" + value;
             }
         }
 

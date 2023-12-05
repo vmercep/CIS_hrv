@@ -142,6 +142,8 @@ public class Config : Form {
     private TabPage tabExtraOpcije;
     private TabPage tabCertifikati;
     private TabPage tabQr;
+    private Label label1;
+    private DateTimePicker dtpTip;
     private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -396,6 +398,11 @@ public class Config : Form {
         string dateIsActive = AppLink.DateIsActive;
         DateTime value = (!string.IsNullOrEmpty(dateIsActive)) ? Convert.ToDateTime(dateIsActive) : DateTime.Now;
         dtpDateActive.Value = value;
+
+        string dateIsActiveTip = AppLink.DateTipIsActive;
+        DateTime valueTip = (!string.IsNullOrEmpty(dateIsActiveTip)) ? Convert.ToDateTime(dateIsActiveTip) : DateTime.Now;
+        dtpTip.Value = valueTip;
+
         string activeLanguage = AppLink.ActiveLanguage;
         if (!string.IsNullOrEmpty(activeLanguage))
         {
@@ -566,7 +573,8 @@ public class Config : Form {
         {
 
             log.Debug("Settings unlocked!");          
-            dtpDateActive.Enabled = true;            
+            dtpDateActive.Enabled = true;
+            dtpTip.Enabled = true;
             cmbActiveLanguage.Enabled = true;
             chkVatActive.Enabled = true;
             txtConnectString.Enabled = true;
@@ -692,6 +700,7 @@ public class Config : Form {
         configFile.SaveXMLActive = Convert.ToString(chkSaveXmlActive.Checked);
         configFile.XMLSavePath = folderPath;
         configFile.DateIsActive = $"{dtpDateActive.Value:yyyy/MM/dd}";
+        configFile.DateTipIsActive = $"{dtpTip.Value:yyyy/MM/dd}";
         configFile.ActiveLanguage = cmbActiveLanguage.SelectedItem.ToString();
         configFile.VATNumber = txtVatNumber.Text;
         configFile.InVATsystem = Convert.ToString(chkVatActive.Checked);
@@ -857,6 +866,8 @@ public class Config : Form {
             this.dtpDateActive = new System.Windows.Forms.DateTimePicker();
             this.lblDateActive = new System.Windows.Forms.Label();
             this.grpBasic = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.dtpTip = new System.Windows.Forms.DateTimePicker();
             this.cmbLogLevel = new System.Windows.Forms.ComboBox();
             this.lbloglevel = new System.Windows.Forms.Label();
             this.cmbActiveLanguage = new System.Windows.Forms.ComboBox();
@@ -1000,10 +1011,10 @@ public class Config : Form {
             this.chkLogFileActive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkLogFileActive.Enabled = false;
             this.chkLogFileActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkLogFileActive.Location = new System.Drawing.Point(12, 126);
+            this.chkLogFileActive.Location = new System.Drawing.Point(8, 109);
             this.chkLogFileActive.Margin = new System.Windows.Forms.Padding(4);
             this.chkLogFileActive.Name = "chkLogFileActive";
-            this.chkLogFileActive.Size = new System.Drawing.Size(336, 20);
+            this.chkLogFileActive.Size = new System.Drawing.Size(336, 51);
             this.chkLogFileActive.TabIndex = 5;
             this.chkLogFileActive.Text = "Log datoteka :";
             this.chkLogFileActive.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1035,6 +1046,8 @@ public class Config : Form {
             // grpBasic
             // 
             this.grpBasic.BackColor = System.Drawing.Color.Transparent;
+            this.grpBasic.Controls.Add(this.label1);
+            this.grpBasic.Controls.Add(this.dtpTip);
             this.grpBasic.Controls.Add(this.cmbLogLevel);
             this.grpBasic.Controls.Add(this.lbloglevel);
             this.grpBasic.Controls.Add(this.cmbActiveLanguage);
@@ -1056,10 +1069,34 @@ public class Config : Form {
             this.grpBasic.Margin = new System.Windows.Forms.Padding(4);
             this.grpBasic.Name = "grpBasic";
             this.grpBasic.Padding = new System.Windows.Forms.Padding(4);
-            this.grpBasic.Size = new System.Drawing.Size(740, 325);
+            this.grpBasic.Size = new System.Drawing.Size(740, 356);
             this.grpBasic.TabIndex = 8;
             this.grpBasic.TabStop = false;
             this.grpBasic.Text = "Osnovno :";
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(12, 281);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(311, 16);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "Datum početka primjene napojnica:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // dtpTip
+            // 
+            this.dtpTip.Enabled = false;
+            this.dtpTip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpTip.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpTip.Location = new System.Drawing.Point(331, 277);
+            this.dtpTip.Margin = new System.Windows.Forms.Padding(4);
+            this.dtpTip.Name = "dtpTip";
+            this.dtpTip.Size = new System.Drawing.Size(148, 23);
+            this.dtpTip.TabIndex = 18;
+            this.dtpTip.Value = new System.DateTime(2024, 1, 1, 0, 0, 0, 0);
+            this.dtpTip.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
             // cmbLogLevel
             // 
@@ -1095,7 +1132,7 @@ public class Config : Form {
             this.cmbActiveLanguage.Items.AddRange(new object[] {
             "HR",
             "EN"});
-            this.cmbActiveLanguage.Location = new System.Drawing.Point(331, 276);
+            this.cmbActiveLanguage.Location = new System.Drawing.Point(331, 308);
             this.cmbActiveLanguage.Margin = new System.Windows.Forms.Padding(4);
             this.cmbActiveLanguage.Name = "cmbActiveLanguage";
             this.cmbActiveLanguage.Size = new System.Drawing.Size(148, 24);
@@ -1106,10 +1143,10 @@ public class Config : Form {
             this.lblActiveLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblActiveLanguage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblActiveLanguage.Location = new System.Drawing.Point(12, 277);
+            this.lblActiveLanguage.Location = new System.Drawing.Point(12, 296);
             this.lblActiveLanguage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblActiveLanguage.Name = "lblActiveLanguage";
-            this.lblActiveLanguage.Size = new System.Drawing.Size(311, 20);
+            this.lblActiveLanguage.Size = new System.Drawing.Size(311, 51);
             this.lblActiveLanguage.TabIndex = 14;
             this.lblActiveLanguage.Text = "Aktivan jezik :";
             this.lblActiveLanguage.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1169,7 +1206,7 @@ public class Config : Form {
             this.chkSaveXmlActive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkSaveXmlActive.Enabled = false;
             this.chkSaveXmlActive.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-            this.chkSaveXmlActive.Location = new System.Drawing.Point(12, 180);
+            this.chkSaveXmlActive.Location = new System.Drawing.Point(8, 180);
             this.chkSaveXmlActive.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.chkSaveXmlActive.Name = "chkSaveXmlActive";
             this.chkSaveXmlActive.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -1891,7 +1928,12 @@ public class Config : Form {
 
 
 
+
     #endregion
 
-   
+
+    private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
 }

@@ -154,6 +154,70 @@ namespace CisDal
         }
 
 
+        /// <summary>
+        /// metoda za dohvat računa
+        /// </summary>
+        /// <param name="OIB"></param>
+        /// <param name="vatIsActive"></param>
+        /// <returns></returns>
+        public DataBill GetOneBill(string OIB, bool vatIsActive, int billId)
+        {
+            DataBill dataBill = new DataBill();
+            DataSalon dataSalon = new DataSalon();
+            //dataSalon.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
+            dataSalon.DateIsActive = DateTime.Now.AddDays(-60);
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, idsysmachine, typetik, notes, \r\n                    (select top 1 taux from systauxtva where flagarchive=0 order by taux desc) TauxTva, \r\n                    (select count(idcaisseticket) from caisseligpaiement where idcaisseticket=caisseticket.id) CountLigPay, \r\n                    (select numerosecu from perso where id=caisseticket.idpersoencaiss) OIBPerso from caisseticket\r\n                    where typetik in(1,2) and id=@Date";
+ 
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", billId));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            //DataBill dataBill = new DataBill();
+                            dataBill.VATNumber_Salon_Bill = OIB;
+                            dataBill.TaxPayer_Bill = vatIsActive;
+                            dataBill.BillDate_Bill = AppLink.DateFromLong((int)sqlDataReader["DateHeure"]);
+                            dataBill.SequenceMark_Bill = OznakaSlijednostiType.P;
+                            dataBill.PremiseMark_Bill = AppLink.PremiseMark;
+                            dataBill.BillingDeviceMark_Bill = AppLink.BillingDeviceMark;
+                            dataBill.BillNumberMark_Bill = Convert.ToString(sqlDataReader["Code"]);
+                            if (vatIsActive)
+                            {
+                                dataBill.VATTaxRate_Bill = ((int)sqlDataReader["TauxTVA"] / 100).ToString("0.00");
+                                dataBill.VATBase_Bill = ((decimal)sqlDataReader["MontantHT"] / 100m).ToString("0.00");
+                            }
+                            else
+                            {
+                                dataBill.VATTaxRate_Bill = "0.00";
+                                dataBill.VATBase_Bill = "0.00";
+                            }
+                            dataBill.TypeTik = (short)sqlDataReader["typetik"];
+                            dataBill.CashierVATNumber_Bill = ((sqlDataReader["OIBPerso"] == DBNull.Value) ? "OIBPERSOERROR" : Convert.ToString(sqlDataReader["OIBPerso"]));
+                            dataBill.CountLigPay_Bill = (int)sqlDataReader["CountLigPay"];
+                            dataBill.IdTicket = (int)sqlDataReader["Id"];
+                            dataBill.HashStatus = ((sqlDataReader["Hash"] == DBNull.Value) ? "0" : ((string)sqlDataReader["Hash"]));
+                            dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw new Exception("error ocured in dal get bill method " + ex.Message);
+            }
+            return dataBill;
+        }
+
+
+
+
         public int CountQrCodeRegen(DateTime fromDate)
         {
             try
@@ -1036,6 +1100,104 @@ namespace CisDal
                 throw new Exception("error ocured in flush bill with no jir " + ex.Message);
                 }
             
+        }
+
+        public List<DataTip> GetFailedTips()
+        {
+            List<DataTip> allTips = new List<DataTip>();
+            DateTime twoDays = DateTime.Now.AddDays(-2);
+            DateTime tipsActiveDate = Convert.ToDateTime(AppLink.DateTipIsActive);
+
+
+
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "SELECT sum(Amount) as Amount,IdCaisseTicket,Comment FROM persotips where Comment<>'p002' and Comment not like '%s009%' and IdCaisseTicket>@Date and IdCaisseTicket>@DateActive  group by IdCaisseTicket,Comment";
+                    sqlCommand.Parameters.Add(new SqlParameter("@Date", AppLink.LongFromDate(twoDays)));
+                    sqlCommand.Parameters.Add(new SqlParameter("@DateActive", AppLink.LongFromDate(tipsActiveDate)));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DataTip dataTip = new DataTip();                            
+                            dataTip.IdTicket = (int)sqlDataReader["idCaisseTicket"];
+                            dataTip.Comment = ((sqlDataReader["Comment"] == DBNull.Value) ? "" : ((string)sqlDataReader["Comment"]));
+                            dataTip.Amount = ((decimal)sqlDataReader["Amount"] / 100m);
+
+                            allTips.Add(dataTip);
+
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw new Exception("error ocured in dal get bill method " + ex.Message);
+            }
+            return allTips;
+        }
+
+        public DataTip GetTip(int idTicket)
+        {
+            DataTip dataTip = new DataTip();
+            DateTime tipsActiveDate = Convert.ToDateTime(AppLink.DateTipIsActive);
+  
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    //sqlCommand.CommandText = "SELECT id, Amount, idCaisseTicket,Comment from persotips where idCaisseTicket=" + idTicket;
+                    sqlCommand.CommandText = "SELECT sum(Amount) as Amount,IdCaisseTicket,Comment FROM persotips where IdCaisseTicket=@ticket and IdCaisseTicket>@DateActive  group by IdCaisseTicket,Comment";
+                    sqlCommand.Parameters.Add(new SqlParameter("@DateActive", AppLink.LongFromDate(tipsActiveDate)));
+                    sqlCommand.Parameters.Add(new SqlParameter("@ticket", idTicket));
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        while (sqlDataReader.Read())
+                        { 
+                            dataTip.IdTicket = (int)sqlDataReader["idCaisseTicket"];
+                            dataTip.Comment = ((sqlDataReader["Comment"] == DBNull.Value) ? "" : ((string)sqlDataReader["Comment"]));
+                            dataTip.Amount = ((decimal)sqlDataReader["Amount"] / 100m);
+
+                        }
+                        sqlDataReader.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                throw new Exception("error ocured in dal get bill method " + ex.Message);
+            }
+            return dataTip;
+        }
+
+
+        public void UpdateTip(int idTicket, string comment)
+        {
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
+                {
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "UPDATE persotips set Comment=@comment where idCaisseTicket=@Id";
+                    sqlCommand.Parameters.Add(new SqlParameter("@Id", idTicket));
+                    sqlCommand.Parameters.Add(new SqlParameter("@comment", comment));
+                    sqlCommand.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex2)
+            {
+                log.Error(ex2);
+                throw new Exception("error ocured in UpdateSyslogStatus " + ex2.Message);
+            }
+
+
         }
     }
 }

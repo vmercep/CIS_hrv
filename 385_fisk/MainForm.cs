@@ -207,119 +207,43 @@ public class MainForm : Form
                     if (!SendBillToTestCis(billDetails, dalMerlin)) continue;                  
                 }
                 
-                //šaljem na produkciju
-                SendBillToProdCis(billDetails, dalMerlin);
+                //šaljem na produkciju 
+                int ret=SendBillToProdCis(billDetails, dalMerlin);
+                if(ret==0) //sve je OK fiskaliziram napojnice
+                {
+                    var tip=dalMerlin.GetTip(billDetails.IdTicket);
+     
+                        
+                    log.Debug(String.Format("Tip for {0} ticket fetched ", billDetails.IdTicket));
+                    log.Debug(String.Format("Total tip amount {0}", tip.Amount.ToString("F")));
+                    if(tip.Amount>0) SendTipToProdCis(billDetails, tip, dalMerlin);   //TODO spremanje requesta za napojnicu                 
+                    else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
 
+                }
+
+            }
+
+            var tipsFailed= dalMerlin.GetFailedTips();  //TODO provjeri dali je račun fiskaliziran?
+            if (tipsFailed.Count != 0)
+            {
+                DataTip dataTip = new DataTip();
+                log.Debug(String.Format("Tip failed fetched in total {0}", tipsFailed.Count));
+                foreach (var tip in tipsFailed)
+                {
+                    if(tip.Amount>0)
+                    {
+                        log.Debug(String.Format("Reprocessing tip {0} with previous comment {1}", tip.IdTicket, tip.Comment));
+                        var oneBill = dalMerlin.GetOneBill(DataSalonToSend.VATNumber_Salon, vatActif, tip.IdTicket);
+                        var billDetails = dalMerlin.GetBillFollow(oneBill);
+                        SendTipToProdCis(billDetails, tip, dalMerlin);
+                    
+                    }
+                    else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
+                }   
             }
 
             FlushBillsWithNoJir(dalMerlin);
             lblInfo.Text = Translations.Translate("Zatvaranje aplikacije");
-            /*
-            #region for change payement type
-
-            try
-            {
-                log.Debug("Change Payement Type START");
-
-                var sysLogs = dalMerlin.FetchSyslogWithDate(AppLink.LongFromDate(DateTime.Now));
-
-                log.Debug("Fetched syslogs count " + sysLogs.Count);
-
-                foreach (var sysLog in sysLogs)
-                {
-                    log.Debug("Processing syslog " + sysLog.Id + " with comment " + sysLog.Comment);
-
-                    string payementTypeBefore = "";
-                    string payementTypeAfter = "";
-                    XmlDocument xmlBefore = new XmlDocument();
-                    XmlDocument xmlAfter = new XmlDocument();
-                    xmlBefore.LoadXml(sysLog.ObjBefore);
-                    xmlAfter.LoadXml(sysLog.ObjAfter);
-
-                    var memBefore = xmlBefore.SelectNodes("//s//e[@n='IdCaisseMoyPaiement']");
-                    if (memBefore.Count > 1) // ovo je pod ostalo
-                    {
-                        payementTypeBefore = "O";
-                    }
-                    else
-                    {
-                        foreach (XmlNode llist in memBefore)
-                        {
-
-                            payementTypeBefore = AppLink.GetPayementType(Convert.ToInt32(llist.Attributes["v"].Value));
-
-                        }
-                    }
-
-
-                    var memAfter = xmlAfter.SelectNodes("//s//e[@n='IdCaisseMoyPaiement']");
-                    if (memAfter.Count > 1) // ovo je pod ostalo
-                    {
-                        payementTypeAfter = "O";
-                    }
-                    else
-                    {
-                        foreach (XmlNode llist in memAfter)
-                        {
-
-                            payementTypeAfter = AppLink.GetPayementType(Convert.ToInt32(llist.Attributes["v"].Value));
-
-                        }
-                    }
-                    if (payementTypeAfter != payementTypeBefore)//radim ponovnu fiskalizaciju za promjenu načina plaćanja
-                    {
-                        log.Debug(String.Format("Payment is changed in bill no {0}, new payement type is {1}", sysLog.ObjId, payementTypeAfter));
-                        var bill = dalMerlin.GetBillWithId(sysLog.ObjId, DataSalonToSend.VATNumber_Salon, vatActif);
-
-                        //provjera OIB-a zaposlenika. Ako je -1 onda stavljam defaultnog tj firmu
-                        if (bill.CashierVATNumber_Bill == "OIBPERSOERROR")
-                        {
-                            if (!AddCachierToTicket(dalMerlin, bill)) continue;
-
-                            //prepišem potake sa salona
-                            bill.CashierVATNumber_Bill = bill.VATNumber_Salon_Bill;
-                        }
-
-                        var billDetails = dalMerlin.GetBillFollow(bill);
-                        if (bill.BillDate_Bill < DateTime.Today)
-                        {
-                            log.Error("Error ocured in change payement type, date missmatched in bill id " + bill.IdTicket);
-                            MessageAlert("Nije moguće promjeniti način plaćanja na računu starijem od 24h.\nMolimo storinirajte račun i izdajte novi", "Greška kod promjene načina plaćanja");
-                            dalMerlin.UpdateSyslogStatus(sysLog.Id);
-                            continue;
-                        }
-                        billDetails.Payment_After = payementTypeAfter;
-
-                        billDetails.PaymentMethod_Bill = (NacinPlacanjaType)Enum.Parse(typeof(NacinPlacanjaType), payementTypeBefore);//TODO check this
-                        //šaljem na produkciju
-                        SendPaymentChangeToProdCis(billDetails, dalMerlin);
-
-                    }
-
-                    log.Debug("Processed and updated syslog " + sysLog.Id);
-
-
-
-                    dalMerlin.UpdateSyslogStatus(sysLog.Id);
-
-
-                }
-                log.Debug("Change Payement Type END");
-            }
-
-            catch (Exception e)
-            {
-                log.Error("Error ocured in change payement type", e);
-                throw new Exception(e.Message);
-            }
-
-
-
-
-            #endregion
-
-            */
-
 
 
             log.Debug("Closing application");
@@ -334,6 +258,101 @@ public class MainForm : Form
             log.Error("Error in principal ", e);
             MessageAlert("Kritična greška u principalu "+e.Message +" izlazim iz aplikacije","Greška u principalu");
             Close();
+
+        }
+    }
+
+    private void SendTipToProdCis(DataBill billDetails, DataTip dataTip, IMerlinData dalMerlin)
+    {
+        log.Debug(String.Format("Bill id {0} sending tip to prod CIS", billDetails.IdTicket));
+        try
+        {
+
+            CisBussines cisBl = new CisBussines(DataSalonToSend);
+            log.Debug(String.Format("Slanje tip na prod CIS {0} {1}", billDetails.IdTicket, JsonConvert.SerializeObject(billDetails)));
+            lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
+            log.Debug("Connectiong with CIS please stand by");
+            XmlDocument xmlDocument = cisBl.SendTip(billDetails, dataTip, dalMerlin, CertificateName, true);
+            if (xmlDocument == null)
+            {
+                throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja napojnice"));
+            }
+            string message = "";
+
+            if (!cisBl.CheckTipAnswer(xmlDocument, out message))
+            {
+                MessageAlert(message, Translations.Translate("Greška"));
+                SaveErrorOnTip(dataTip, "GRESKA "+message.Substring(0, 10), dalMerlin);
+                log.Error(String.Format("Error in sending to prod CIS {0} : {1}", dataTip.IdTicket, message));
+                throw new Exception("Error on CIS " + message);
+            }
+
+            txtResponse.Text = xmlDocument.OuterXml;
+            log.Debug(String.Format("Tip succesfully sent to CIS {0}, response: {1}", dataTip.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
+
+            Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
+
+            if (string.IsNullOrEmpty(txtResponse.Text))
+            {
+                Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
+                SaveErrorOnTip(dataTip, "GRESKA Empty", dalMerlin);
+                
+            }
+            else if (VerifAndSaveTip(txtResponse.Text, dataTip.IdTicket, "SifraPoruke", State: false, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+               
+            }
+            else if (VerifAndSaveTip(txtResponse.Text, dataTip.IdTicket, "SifraGreske", State: true, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+               
+            }
+            else
+            {
+                log.Debug(String.Format("Shit hit the fan  {0}", dataTip.IdTicket));
+                SaveErrorOnTip(dataTip, "GRESKA Unknown", dalMerlin);
+    
+            }
+
+
+
+        }
+        catch (Exception ex3)
+        {
+
+            log.Error(ex3);
+
+            if (ex3.Message.ToLowerInvariant().Contains("network password"))
+            {
+                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
+
+            }
+            else
+            {
+                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
+
+            }
+
+            Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
+
+
+
+        }
+    }
+
+    private void SaveErrorOnTip(DataTip dataTip, string m_Text, IMerlinData dalMerlin)
+    {
+        try
+        {
+            log.Debug(String.Format("Adding error on ticket id {0}  error: {1}", dataTip, m_Text));
+            dalMerlin.UpdateTip(dataTip.IdTicket, m_Text);
+            log.Debug(String.Format("Updated ticket id {0} done", dataTip.IdTicket));
+            Log.WriteLog(NumLog.BillUpdateOK, dataTip.IdTicket, m_Text, placeholders, ErrorCode, ErrorMessage);
+        }
+        catch (Exception e)
+        {
+            log.Error("Error ocured in SaveErrorOnBill", e);
 
         }
     }
@@ -480,8 +499,9 @@ public class MainForm : Form
         
     }
 
-    private void SendBillToProdCis(DataBill listBill, IMerlinData dalMerlin)
+    private int SendBillToProdCis(DataBill listBill, IMerlinData dalMerlin)
     {
+        int returnValue = 0;//return in case if no error ocured
         try
         {
             CisBussines cisBl = new CisBussines(DataSalonToSend);
@@ -514,20 +534,25 @@ public class MainForm : Form
             {
                 Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
                 SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP Empty                       ", dalMerlin);
+                returnValue = 1;
             }
             else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
             {
                 Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+                returnValue = 0;
             }
             else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "SifraGreske", State: true, dalMerlin))
             {
                 Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+                returnValue = 1;
             }
             else
             {
                 log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
                 SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP                            ", dalMerlin);
+                returnValue = 1;
             }
+            return returnValue;
 
         }
         catch (Exception ex3)
@@ -537,16 +562,21 @@ public class MainForm : Form
 
             if (ex3.Message.ToLowerInvariant().Contains("network password"))
             {
-
+                returnValue = 2;
                 MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
+                
             }
             else
             {
+                returnValue = 3;
                 MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
+                
             }
 
             Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
+            returnValue = 4;
             SaveErrorOnBill(listBill.IdTicket, "GRESKA_eSJ", dalMerlin);
+            return returnValue;
 
         }
 
@@ -701,7 +731,7 @@ public class MainForm : Form
                 {
                     try
                     {
-                        if (AutoUpdater.DownloadUpdate())
+                        if (AutoUpdater.DownloadUpdate(args))
                         {
                             Close();
                         }
@@ -831,6 +861,129 @@ public class MainForm : Form
 
         log.Debug("Number of Ticket fetched from database " + ticket.Count);
         log.Debug("Ticket fetched from database " + JsonConvert.SerializeObject(ticket));
+
+
+
+
+        Log.WriteLog(NumLog.BillUpdateOK, IDticket, text, placeholders, ErrorCode, ErrorMessage);
+        if (State)
+        {
+            string str = Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!");
+            switch (text)
+            {
+                case "s001":
+                    MessageAlert(Translations.Translate("Poruka nije u skladu s XML shemom: #element ili lista elemenata koji nisu ispravni po shemi.") + str, Translations.Translate("Greška") + " s001", NumLog.s001, IDticket, "");
+
+                    break;
+                case "s002":
+                    MessageAlert(Translations.Translate("Certifikat nije izdan od strane FINA-e.") + str, Translations.Translate("Greška") + " s002", NumLog.s002, IDticket, "");
+
+                    break;
+                case "s003":
+                    MessageAlert(Translations.Translate("Certifikat ne sadrži naziv 'FISKAL'.") + str, Translations.Translate("Greška") + " s003", NumLog.s003, IDticket, "");
+
+                    break;
+                case "s004":
+                    MessageAlert(Translations.Translate("Neispravan digitalni potpis.") + str, Translations.Translate("Greška") + " s004", NumLog.s004, IDticket, "");
+
+                    break;
+                case "s005":
+                    MessageAlert(Translations.Translate("OIB iz poruke nije jednak OIB-u iz certifikata.") + str, Translations.Translate("Greška") + " s005", NumLog.s005, IDticket, "");
+
+                    break;
+                case "s006":
+                    MessageAlert(Translations.Translate("Sistemska pogreška prilikom obrade zahtjeva.") + str, Translations.Translate("Greška") + " s006", NumLog.s006, IDticket, "");
+
+                    break;
+            }
+        }
+        return true;
+    }
+
+
+    public bool VerifAndSaveTip(string XmlText, int IDticket, string XmlTag, bool State, IMerlinData dalMerlin)
+    {
+        string text = "";
+        bool flag = false;
+        if (!State)
+        {
+            Log.WriteLog(NumLog.StartSearchJir, 0, "", placeholders, ErrorCode, ErrorMessage);
+        }
+        else
+        {
+            Log.WriteLog(NumLog.StartSearchError, 0, "", placeholders, ErrorCode, ErrorMessage);
+        }
+        try
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(XmlText);
+            XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName(XmlTag, "http://www.apis-it.hr/fin/2012/types/f73");
+            string text2 = "";
+            if (elementsByTagName.Count != 1)
+            {
+                flag = false;
+                Log.WriteLog(NumLog.JirNodeNotFount, 0, "", placeholders, ErrorCode, ErrorMessage);
+                return false;
+            }
+            IEnumerator enumerator = elementsByTagName.GetEnumerator();
+            try
+            {
+                if (enumerator.MoveNext())
+                {
+                    XmlNode xmlNode = (XmlNode)enumerator.Current;
+                    if (xmlNode.FirstChild == null)
+                    {
+                        flag = false;
+                        Log.WriteLog(NumLog.NodeJirIsNull, 0, "", placeholders, ErrorCode, ErrorMessage);
+                    }
+                    else
+                    {
+                        text2 = xmlNode.FirstChild.Value;
+                        if (State)
+                        {
+                            text = "ERROR_" + text2;
+                            flag = true;
+                        }
+                        else
+                        {
+                            text = text2;
+                            flag = true;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                IDisposable disposable = enumerator as IDisposable;
+                if (disposable != null)
+                {
+                    disposable.Dispose();
+                }
+            }
+            if (string.IsNullOrEmpty(text2))
+            {
+                flag = false;
+                Log.WriteLog(NumLog.JirIsNull, 0, "", placeholders, ErrorCode, ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageAlert(ex.Message + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
+            Log.WriteLog(NumLog.XMLerror, IDticket, ex.Message, placeholders, ErrorCode, ErrorMessage);
+            log.Error("Error ocured in line 670", ex);
+            flag = false;
+        }
+        if (!flag)
+        {
+            return false;
+        }
+        dalMerlin.UpdateTip(IDticket, text);
+
+        log.Debug(String.Format("TIP updated {0} ", IDticket));
+        //var ticket = dalMerlin.GetTicket(IDticket);
+
+        //log.Debug("Number of Ticket fetched from database " + ticket.Count);
+        //log.Debug("Ticket fetched from database " + JsonConvert.SerializeObject(ticket));
 
 
 

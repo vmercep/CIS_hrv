@@ -206,8 +206,63 @@ namespace CisBl
             return false;
         }
 
-       
+        public bool CheckTipAnswer(XmlDocument xmlDocument, out string message)
+        {
+            Tuple<string, string> tuple = XmlDokumenti.DohvatiStatusGreškeTip(xmlDocument);
 
+            if (tuple == null)
+            {
+                log.Debug("Test OK! sending to production CIS");
+                message = null;
+                return true;
+            }
+
+
+            log.Error(String.Format("Error in sending bill to cis {0}", JsonConvert.SerializeObject(xmlDocument)));
+            string ErrorCode = tuple.Item1;
+            string ErrorMessage = Translations.Translate(tuple.Item2);
+            message = ErrorCode + " " + ErrorMessage;
+            return false;
+        }
+
+        public XmlDocument SendTip(DataBill billDetails, DataTip dataTip, IMerlinData dalMerlin, string certificateName, bool test)
+        {
+            log.Debug(String.Format("Bill id {0} sending to CIS, method SendTip", billDetails.IdTicket));
+            log.Debug(String.Format("SendTip content {0}", JsonConvert.SerializeObject(dataTip)));
+            try
+            {
+                var racunType = GetRacun(billDetails, dalMerlin);
+
+                log.Debug(String.Format("Created bill to send content {0}", JsonConvert.SerializeObject(racunType)));
+
+                string text = (!(AppLink.UseCertificateFile == "1")) ? Razno.ZastitniKodIzracun(certificateName, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString()) : Razno.ZastitniKodIzracun(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword, racunType.Oib, racunType.DatVrijeme.Replace('T', ' '), racunType.BrRac.BrOznRac, racunType.BrRac.OznPosPr, racunType.BrRac.OznNapUr, racunType.IznosUkupno.ToString());
+
+                racunType.ZastKod = text;
+                racunType.NakDost = billDetails.MarkSubseqBillDelivery_Bill;
+                CentralniInformacijskiSustav centralniInformacijskiSustav = new CentralniInformacijskiSustav();
+                
+
+                racunType.Napojnica.iznosNapojnice = dataTip.Amount.ToString("F").Replace(",",".");
+                racunType.Napojnica.nacinPlacanjaNapojnice = billDetails.PaymentMethod_Bill.ToString();
+                XmlDocument xmlDocument = centralniInformacijskiSustav.PosaljiTip(racunType, certificateName);
+                if (xmlDocument != null)
+                {
+                    bool flag2 = Potpisivanje.ProvjeriPotpis(xmlDocument);
+                }
+
+                return xmlDocument;
+
+            }
+
+            catch (Exception e)
+            {
+                log.Error("Error in CIS bussines part", e);
+
+                throw new Exception(e.Message);
+            }
+
+
+        }
 
         public XmlDocument SendBill(DataBill dataBillToSend, IMerlinData dalMerlin, string CertificateName, bool test)
         {

@@ -14,6 +14,7 @@ public static class XmlDokumenti {
               text = text.Replace("<tns:Pnp />", "");
               text = text.Replace("<tns:OstaliPor />", "");
               text = text.Replace("<tns:Naknade />", "");
+              text = text.Replace("<tns:Napojnica />", "");
         } catch (Exception ex) {
       log.Error(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");
@@ -22,8 +23,29 @@ public static class XmlDokumenti {
     return UcitajXml(text);
   }
 
-  
-  public static RacunZahtjev KreirajRacunZahtjev (RacunType racun) {
+    public static XmlDocument SerijalizirajNapojnicuZahtjev(NapojnicaZahtjev napojnicaZahtjev)
+    {
+        string text = "";
+        try
+        {
+            text = napojnicaZahtjev.Serialize();
+            text = text.Replace("<tns:Pdv />", "");
+            text = text.Replace("<tns:Pnp />", "");
+            text = text.Replace("<tns:OstaliPor />", "");
+            text = text.Replace("<tns:Naknade />", "");
+            text = text.Replace("<tns:Napojnica />", "");
+        }
+        catch (Exception ex)
+        {
+            log.Error(ex);
+            Trace.TraceError($"Greška kod serijalizacije zahtjeva za napojnicu: {ex.Message}");
+            throw;
+        }
+        return UcitajXml(text);
+    }
+
+
+    public static RacunZahtjev KreirajRacunZahtjev (RacunType racun) {
     RacunZahtjev racunZahtjev = new RacunZahtjev {
       Id = "signXmlId",
       Racun = racun
@@ -34,6 +56,22 @@ public static class XmlDokumenti {
     };
     return racunZahtjev;
   }
+
+    public static NapojnicaZahtjev KreirajNapojnicuZahtjev(RacunType racun)
+    {
+        NapojnicaZahtjev napojnicaZahtjev = new NapojnicaZahtjev
+        {
+            Id = "signXmlId",
+            Racun = racun
+
+        };
+        ZaglavljeType zaglavljeType2 = napojnicaZahtjev.Zaglavlje = new ZaglavljeType
+        {
+            DatumVrijeme = Razno.DohvatiFormatiranoTrenutnoDatumVrijeme(),
+            IdPoruke = Guid.NewGuid().ToString()
+        };
+        return napojnicaZahtjev;
+    }
 
     public static PromijeniNacPlacZahtjev KreirajPromjeniNacinPlacanjazahtjev(RacunPNPType racun)
     {
@@ -108,7 +146,37 @@ public static class XmlDokumenti {
     return result;
   }
 
-  public static string DohvatiUuid (XmlDocument dokument, TipDokumentaEnum tipDokumenta) {
+    public static Tuple<string, string> DohvatiStatusGreškeTip(XmlDocument dokument)
+    {
+        Tuple<string, string> result = null;
+        if (dokument != null)
+        {
+            DodajNamespace(dokument, out XmlNamespaceManager nsmgr);
+            XmlElement documentElement = dokument.DocumentElement;
+            XmlNodeList xmlNodeList = documentElement.SelectNodes("soap:Body/tns:NapojnicaOdgovor/f73:Greske", nsmgr);
+            
+
+            foreach (XmlNode item3 in xmlNodeList)
+            {
+                string item = "";
+                string item2 = "";
+                XmlNode xmlNode2 = item3.SelectSingleNode("f73:Greska/f73:SifraGreske", nsmgr);
+                if (xmlNode2 != null)
+                {
+                    item = xmlNode2.InnerText.Trim();
+                }
+                XmlNode xmlNode3 = item3.SelectSingleNode("f73:Greska/f73:PorukaGreske", nsmgr);
+                if (xmlNode3 != null)
+                {
+                    item2 = xmlNode3.InnerText.Trim();
+                }
+                result = new Tuple<string, string>(item, item2);
+            }
+        }
+        return result;
+    }
+
+    public static string DohvatiUuid (XmlDocument dokument, TipDokumentaEnum tipDokumenta) {
     string result = "";
     if (dokument != null) {
       DodajNamespace(dokument, out XmlNamespaceManager nsmgr);
@@ -282,7 +350,13 @@ public static class XmlDokumenti {
             case "tns:PoslovniProstorOdgovor":
               result = TipDokumentaEnum.PoslovniProstorOdgovor;
               break;
-          }
+            case "tns:NapojnicaZahtjev":
+               result = TipDokumentaEnum.NapojnicaZahtjev;
+               break;
+            case "tns:NapojnicaOdgovor":
+               result = TipDokumentaEnum.NapojnicaOdgovor;
+               break;
+                    }
         }
       }
     }
@@ -297,6 +371,7 @@ public static class XmlDokumenti {
               text = text.Replace("<tns:Pnp />", "");
               text = text.Replace("<tns:OstaliPor />", "");
               text = text.Replace("<tns:Naknade />", "");
+            text = text.Replace("<tns:Napojnica />", "");
         } catch (Exception ex) {
             log.Error(ex);
       Trace.TraceError($"Greška kod serijalizacije zahtjeva za račun: {ex.Message}");

@@ -41,5 +41,10 @@ namespace CisDal
         /// pobriši račune polije uvođenja eura...
         /// </summary>
         void FlushBillsWithNoJirPartial();
+        DataTip GetTip(int idTicket);
+        void UpdateTip(int idTicket, string m_Text);
+        List<DataTip> GetFailedTips();
+
+        DataBill GetOneBill(string OIB, bool vatIsActive, int billId);
     }
 }

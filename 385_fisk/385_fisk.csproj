@@ -135,7 +135,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Certificates\demo.p12" />
+    <None Include="Certificates\demo.p12">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="CisConfig.cfg" />
     <None Include="CisConfigTest.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

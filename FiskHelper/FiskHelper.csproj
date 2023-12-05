@@ -57,6 +57,8 @@
     <Compile Include="Schema\KeyValueType.cs" />
     <Compile Include="Schema\NacinPlacanjaType.cs" />
     <Compile Include="Schema\NaknadaType.cs" />
+    <Compile Include="Schema\NapojnicaType.cs" />
+    <Compile Include="Schema\NapojnicaZahtjev.cs" />
     <Compile Include="Schema\ObjectType.cs" />
     <Compile Include="Schema\OznakaSlijednostiType.cs" />
     <Compile Include="Schema\OznakaZatvaranjaType.cs" />

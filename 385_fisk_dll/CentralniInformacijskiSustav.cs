@@ -72,7 +72,23 @@ public class CentralniInformacijskiSustav {
         return racunOdgovor;
     }
 
-   
+
+    public XmlDocument PosaljiTip(RacunType racun, string certificateSubject)
+    {
+        XmlDocument racunOdgovor = null;
+        NapojnicaZahtjev racunZahtjev = XmlDokumenti.KreirajNapojnicuZahtjev(racun);
+        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajNapojnicuZahtjev(racunZahtjev);
+        if (AppLink.UseCertificateFile == "1")
+        {
+            PosaljiZahtjev(certificateSubject, ref racunOdgovor, zahtjevXml, useTestServer: false, useImportedCertificate: true);
+        }
+        else
+        {
+            PosaljiZahtjev(certificateSubject, ref racunOdgovor, zahtjevXml);
+        }
+        return racunOdgovor;
+    }
+
     public XmlDocument PosaljiRacun(RacunType racun, string certificateSubject)
     {
         XmlDocument racunOdgovor = null;
@@ -409,10 +425,17 @@ public class CentralniInformacijskiSustav {
             switch (tipDokumentaEnum)
             {
                 case TipDokumentaEnum.RacunZahtjev:
-                    log.Debug("SaveFile for XML messages in folder ");
+                    log.Debug("SaveFile Bill for XML messages in folder ");
                     text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
                     request.Save(text);
                     text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
+                    response?.Save(text);
+                    break;
+                case TipDokumentaEnum.NapojnicaZahtjev:
+                    log.Debug("SaveFile Tip for XML messages in folder ");
+                    text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Tip\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
+                    request.Save(text);
+                    text = ((!string.IsNullOrEmpty(AppLink.XMLSavePath)) ? Path.Combine(AppLink.XMLSavePath + "\\FiskXMLMessages\\Tip\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml") : Path.Combine(Environment.CurrentDirectory + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\", str + ".xml"));
                     response?.Save(text);
                     break;
             }
@@ -438,6 +461,16 @@ public class CentralniInformacijskiSustav {
                 {
                     directoryInfo.Create();
                 }
+                directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Tip\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\");
+                if (!directoryInfo.Exists)
+                {
+                    directoryInfo.Create();
+                }
+                directoryInfo = new DirectoryInfo(Environment.CurrentDirectory + "\\FiskXMLMessages\\Tip\\Response\\" + (DateTime.Today.Year.ToString()) + "\\");
+                if (!directoryInfo.Exists)
+                {
+                    directoryInfo.Create();
+                }
             }
             else
             {
@@ -447,6 +480,16 @@ public class CentralniInformacijskiSustav {
                     directoryInfo.Create();
                 }
                 directoryInfo = new DirectoryInfo(AppLink.XMLSavePath + "\\FiskXMLMessages\\Invoice\\Response\\" + (DateTime.Today.Year.ToString()) + "\\");
+                if (!directoryInfo.Exists)
+                {
+                    directoryInfo.Create();
+                }
+                directoryInfo = new DirectoryInfo(AppLink.XMLSavePath + "\\FiskXMLMessages\\Tip\\Requests\\" + (DateTime.Today.Year.ToString()) + "\\");
+                if (!directoryInfo.Exists)
+                {
+                    directoryInfo.Create();
+                }
+                directoryInfo = new DirectoryInfo(AppLink.XMLSavePath + "\\FiskXMLMessages\\Tip\\Response\\" + (DateTime.Today.Year.ToString()) + "\\");
                 if (!directoryInfo.Exists)
                 {
                     directoryInfo.Create();

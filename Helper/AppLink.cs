@@ -28,7 +28,9 @@ public static class AppLink {
 
   public static string DateIsActive => GetParams("DateIsActive", "2013/04/01");
 
-  public static string BillingDeviceMark => GetParams("BillingDeviceMark", "");
+    public static string DateTipIsActive => GetParams("DateTipIsActive", "2024/01/01");
+
+    public static string BillingDeviceMark => GetParams("BillingDeviceMark", "");
 
   public static string OIBSoftware => GetParams("OIBSoftware", "");
 
@@ -96,7 +98,7 @@ public static class AppLink {
 
   public static string GetTechCode () {
         //return (DateTime.Now.Year - 1900 + DateTime.Now.Month).ToString() + DateTime.Now.Day;
-        return "Merlinka1994";
+        return "MerlinX2";
   }
 
   public static string DatotekaCertifikata () {
