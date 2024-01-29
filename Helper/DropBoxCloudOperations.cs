@@ -18,7 +18,7 @@ namespace Helper
             try
             {
                 log.Debug("Upload file " + filename + " to DropBox");
-                DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
+                DropBoxBase dbbase = new DropBoxBase("4ne2tmaa3dnzpry", "4yw9hbnnjcp21ei");
                 dbbase.Delete("/" + filename);
                 bool ret = dbbase.Upload("", filename, filePath);
                 log.Debug("File " + filename + " uploaded");

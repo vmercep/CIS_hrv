@@ -144,6 +144,7 @@ public class Config : Form {
     private TabPage tabQr;
     private Label label1;
     private DateTimePicker dtpTip;
+    private CheckBox cbFiskNapojnice;
     private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -536,6 +537,23 @@ public class Config : Form {
             cbFiskPonude.CheckState = CheckState.Unchecked;
         }
 
+        string sendTip = AppLink.SendTip;
+        if (!(sendTip == "0"))
+        {
+            if (sendTip == "1")
+            {
+                cbFiskNapojnice.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                cbFiskNapojnice.CheckState = CheckState.Unchecked;
+            }
+        }
+        else
+        {
+            cbFiskNapojnice.CheckState = CheckState.Unchecked;
+        }
+
 
         string logLevel = AppLink.LogLevel;
         if (!string.IsNullOrEmpty(logLevel))
@@ -611,7 +629,8 @@ public class Config : Form {
             txtQrSaveLocation.BackColor = Color.White;            
             txtQrSize.Enabled = true;            
             txtQrSize.BackColor = Color.White;
-            cbFiskPonude.Enabled = true;                    
+            cbFiskPonude.Enabled = true;
+            cbFiskNapojnice.Enabled = true;
             cmbLogLevel.Enabled = true;
             btQrRegen.Enabled = true;
         } 
@@ -715,6 +734,7 @@ public class Config : Form {
         configFile.CertificatePassword = txtCertificatePassword.Text;
         configFile.IgnoreSSLCertificates = Convert.ToString(cbCheckSSL.Checked);
         configFile.SendPonudaToFisk = Convert.ToString(cbFiskPonude.Checked);
+        configFile.SendTip = Convert.ToString(cbFiskNapojnice.Checked);
         configFile.QrCodeMessage = txtQrMessage.Text;
         configFile.QrCodeLocation = txtQrSaveLocation.Text;
         configFile.QrCodeSize = txtQrSize.Text;
@@ -928,6 +948,7 @@ public class Config : Form {
             this.tabExtraOpcije = new System.Windows.Forms.TabPage();
             this.tabCertifikati = new System.Windows.Forms.TabPage();
             this.tabQr = new System.Windows.Forms.TabPage();
+            this.cbFiskNapojnice = new System.Windows.Forms.CheckBox();
             this.grpBasic.SuspendLayout();
             this.grpPremise.SuspendLayout();
             this.grpSolo.SuspendLayout();
@@ -1517,6 +1538,7 @@ public class Config : Form {
             // grpExtraOptions
             // 
             this.grpExtraOptions.BackColor = System.Drawing.Color.Transparent;
+            this.grpExtraOptions.Controls.Add(this.cbFiskNapojnice);
             this.grpExtraOptions.Controls.Add(this.cbFiskPonude);
             this.grpExtraOptions.Controls.Add(this.chkSendTest);
             this.grpExtraOptions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1524,7 +1546,7 @@ public class Config : Form {
             this.grpExtraOptions.Margin = new System.Windows.Forms.Padding(4);
             this.grpExtraOptions.Name = "grpExtraOptions";
             this.grpExtraOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpExtraOptions.Size = new System.Drawing.Size(691, 106);
+            this.grpExtraOptions.Size = new System.Drawing.Size(691, 149);
             this.grpExtraOptions.TabIndex = 205;
             this.grpExtraOptions.TabStop = false;
             this.grpExtraOptions.Text = "Dodatne opcije :";
@@ -1537,10 +1559,10 @@ public class Config : Form {
             this.cbFiskPonude.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.cbFiskPonude.Enabled = false;
             this.cbFiskPonude.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbFiskPonude.Location = new System.Drawing.Point(16, 64);
+            this.cbFiskPonude.Location = new System.Drawing.Point(16, 42);
             this.cbFiskPonude.Margin = new System.Windows.Forms.Padding(4);
             this.cbFiskPonude.Name = "cbFiskPonude";
-            this.cbFiskPonude.Size = new System.Drawing.Size(332, 30);
+            this.cbFiskPonude.Size = new System.Drawing.Size(332, 73);
             this.cbFiskPonude.TabIndex = 31;
             this.cbFiskPonude.Text = "Fiskaliziraj ponude :";
             this.cbFiskPonude.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1554,10 +1576,10 @@ public class Config : Form {
             this.chkSendTest.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkSendTest.Enabled = false;
             this.chkSendTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkSendTest.Location = new System.Drawing.Point(16, 26);
+            this.chkSendTest.Location = new System.Drawing.Point(16, 0);
             this.chkSendTest.Margin = new System.Windows.Forms.Padding(4);
             this.chkSendTest.Name = "chkSendTest";
-            this.chkSendTest.Size = new System.Drawing.Size(332, 30);
+            this.chkSendTest.Size = new System.Drawing.Size(332, 69);
             this.chkSendTest.TabIndex = 30;
             this.chkSendTest.Text = "Slanje testnih računa :";
             this.chkSendTest.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1872,6 +1894,23 @@ public class Config : Form {
             this.tabQr.TabIndex = 5;
             this.tabQr.Text = "QR code";
             this.tabQr.UseVisualStyleBackColor = true;
+            // 
+            // cbFiskNapojnice
+            // 
+            this.cbFiskNapojnice.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbFiskNapojnice.BackColor = System.Drawing.Color.Transparent;
+            this.cbFiskNapojnice.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbFiskNapojnice.Enabled = false;
+            this.cbFiskNapojnice.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbFiskNapojnice.Location = new System.Drawing.Point(16, 96);
+            this.cbFiskNapojnice.Margin = new System.Windows.Forms.Padding(4);
+            this.cbFiskNapojnice.Name = "cbFiskNapojnice";
+            this.cbFiskNapojnice.Size = new System.Drawing.Size(332, 53);
+            this.cbFiskNapojnice.TabIndex = 32;
+            this.cbFiskNapojnice.Text = "Fiskaliziraj napojnice :";
+            this.cbFiskNapojnice.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cbFiskNapojnice.UseVisualStyleBackColor = false;
             // 
             // Config
             // 

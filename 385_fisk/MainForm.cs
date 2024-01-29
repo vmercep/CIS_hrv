@@ -209,37 +209,46 @@ public class MainForm : Form
                 
                 //šaljem na produkciju 
                 int ret=SendBillToProdCis(billDetails, dalMerlin);
-                if(ret==0) //sve je OK fiskaliziram napojnice
+                if(AppLink.SendTip.Equals("1"))
                 {
-                    var tip=dalMerlin.GetTip(billDetails.IdTicket);
-     
-                        
-                    log.Debug(String.Format("Tip for {0} ticket fetched ", billDetails.IdTicket));
-                    log.Debug(String.Format("Total tip amount {0}", tip.Amount.ToString("F")));
-                    if(tip.Amount>0) SendTipToProdCis(billDetails, tip, dalMerlin);   //TODO spremanje requesta za napojnicu                 
-                    else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
+                    if (ret == 0) //sve je OK fiskaliziram napojnice
+                    {
 
+                        var tip = dalMerlin.GetTip(billDetails.IdTicket);
+
+
+                        log.Debug(String.Format("Tip for {0} ticket fetched ", billDetails.IdTicket));
+                        log.Debug(String.Format("Total tip amount {0}", tip.Amount.ToString("F")));
+                        if (tip.Amount != 0) SendTipToProdCis(billDetails, tip, dalMerlin);   //TODO spremanje requesta za napojnicu                 
+                        else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
+
+                    }
                 }
+
 
             }
 
-            var tipsFailed= dalMerlin.GetFailedTips();  //TODO provjeri dali je račun fiskaliziran?
-            if (tipsFailed.Count != 0)
+            if (AppLink.SendTip.Equals("1"))
             {
-                DataTip dataTip = new DataTip();
-                log.Debug(String.Format("Tip failed fetched in total {0}", tipsFailed.Count));
-                foreach (var tip in tipsFailed)
+
+                var tipsFailed = dalMerlin.GetFailedTips();  //TODO provjeri dali je račun fiskaliziran?
+                if (tipsFailed.Count != 0)
                 {
-                    if(tip.Amount>0)
+                    DataTip dataTip = new DataTip();
+                    log.Debug(String.Format("Tip failed fetched in total {0}", tipsFailed.Count));
+                    foreach (var tip in tipsFailed)
                     {
-                        log.Debug(String.Format("Reprocessing tip {0} with previous comment {1}", tip.IdTicket, tip.Comment));
-                        var oneBill = dalMerlin.GetOneBill(DataSalonToSend.VATNumber_Salon, vatActif, tip.IdTicket);
-                        var billDetails = dalMerlin.GetBillFollow(oneBill);
-                        SendTipToProdCis(billDetails, tip, dalMerlin);
-                    
+                        if (tip.Amount != 0)
+                        {
+                            log.Debug(String.Format("Reprocessing tip {0} with previous comment {1}", tip.IdTicket, tip.Comment));
+                            var oneBill = dalMerlin.GetOneBill(DataSalonToSend.VATNumber_Salon, vatActif, tip.IdTicket);
+                            var billDetails = dalMerlin.GetBillFollow(oneBill);
+                            SendTipToProdCis(billDetails, tip, dalMerlin);
+
+                        }
+                        else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
                     }
-                    else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
-                }   
+                }
             }
 
             FlushBillsWithNoJir(dalMerlin);

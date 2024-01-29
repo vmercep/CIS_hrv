@@ -64,6 +64,8 @@
 
         private string _SendPonudaToFisk;
 
+        private string _SendTip;
+
         private string _IgnoreSSLCertificates;
 
         private string _QrCodeMessage;
@@ -399,6 +401,25 @@
                 else
                 {
                     _SendPonudaToFisk = "SendPonudaToFisk=0";
+                }
+            }
+        }
+
+        public string SendTip
+        {
+            get
+            {
+                return _SendTip;
+            }
+            set
+            {
+                if (value == "True")
+                {
+                    _SendTip = "SendTip=1";
+                }
+                else
+                {
+                    _SendTip = "SendTip=0";
                 }
             }
         }

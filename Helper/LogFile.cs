@@ -232,12 +232,13 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.QrCodeLocation);
                     streamWriter.WriteLine(fConfig.QrCodeSize);
                     streamWriter.WriteLine(fConfig.LogLevel);
+                    streamWriter.WriteLine(fConfig.SendTip);
                     streamWriter.Close();
 
                     string filename = fConfig.VATNumber.Replace('=', '_') + ".txt";
-                    //DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                    //dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
-                    //bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
+                    DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
+                    dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
+                    bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
                     DropBoxCloudOperations.CreateFile(filename, filePath);
                     log.Debug("Config file created");
                     return true;

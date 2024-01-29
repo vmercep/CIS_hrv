@@ -25,7 +25,7 @@ namespace Helper
                 AppKey = ApiKey;
                 AppSecret = ApiSecret;
                 AppName = ApplicationName;
-                DBClient = new DropboxClient("YVKeYIOnleAAAAAAAAAAEgmcETOODgimIyseAZUvZ0bJSysxppUqbzhSeM3pN2Cj");
+                DBClient = new DropboxClient("sl.BueT67SQi7txpXTRrGltWOoIIM7ojb5YqFhnb7432ZNNZ9A1Mrtk90DUkw1TgX4YRzDT7aS5T7y8a7K0fz6P4yYUOqkr70fuL5HGrNwbhe6sv4LL2SRiH5HR_T26S2NaQ9fYGLyBkv3CDaU");
             }
             catch (Exception)
             {
