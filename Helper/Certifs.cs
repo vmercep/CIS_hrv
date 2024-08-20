@@ -9,7 +9,7 @@ public static class Certifs {
     X509Certificate2Enumerator enumerator = x509Store.Certificates.GetEnumerator();
     while (enumerator.MoveNext()) {
       X509Certificate2 current = enumerator.Current;
-      if (current.FriendlyName.StartsWith(certificateSubject)) {
+      if (current.FriendlyName.Contains(certificateSubject)) {
         num++;
       }
     }
@@ -29,7 +29,7 @@ public static class Certifs {
     X509Certificate2Enumerator enumerator = x509Store.Certificates.GetEnumerator();
     while (enumerator.MoveNext()) {
       X509Certificate2 current = enumerator.Current;
-      if (current.FriendlyName.StartsWith(certificateSubject)) {
+      if (current.FriendlyName.Contains(certificateSubject)) {
         return (DateTime.Parse(current.GetExpirationDateString()).Date - DateTime.Now.Date).Days;
       }
     }

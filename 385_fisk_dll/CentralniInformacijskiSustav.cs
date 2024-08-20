@@ -371,7 +371,7 @@ public class CentralniInformacijskiSustav {
             if (useTestServer)
             {
                 log.Debug("Fetching test certificate for bill check");
-                x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaDemoCertifikata(), "Demo02");
+                x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaDemoCertifikata(), "Demo03");
                 log.Debug("Fetched test certificate "+ x509Certificate.Subject);
             }
             else if (useImportedCertificate)

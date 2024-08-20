@@ -113,7 +113,7 @@ public static class AppLink {
   public static string DatotekaDemoCertifikata () {
     FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
     string directoryName = fileInfo.DirectoryName;
-    return directoryName + "/Certificates/demo.p12";
+    return directoryName + "/Certificates/Demo03.p12";
   }
 
     public static string GetPayementType(int typpai)

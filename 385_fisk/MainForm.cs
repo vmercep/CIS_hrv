@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Web.Management;
 using System.Web.Script.Serialization;
@@ -131,6 +132,7 @@ public class MainForm : Form
 
             int num2 = 0;
             CheckCertificate(ref num2);
+            //CheckDemoCertificate(true);
             log.Debug("Bussines unit data loaded");
 
 
@@ -654,6 +656,45 @@ public class MainForm : Form
         return 0;
     }
 
+    private void CheckDemoCertificate(bool useTestServer=true)
+    {
+        X509Certificate2 x509Certificate = null;
+        try
+        {
+            if (useTestServer)
+            {
+                log.Debug("Fetching demo certificate to check validity and etc.");
+                x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaDemoCertifikata(), "Demo03");
+                if (x509Certificate == null) throw new Exception("No demo certificate");
+                log.Debug("Fetched test certificate " + x509Certificate.Subject);
+                int num3 = (DateTime.Parse(x509Certificate.GetExpirationDateString()) - DateTime.Now.Date).Days;
+                int criticalCertDays = _385_fisk.Properties.Settings.Default.CriticalCertDays;
+                if (num3 <= 30)
+                {
+                    if (num3 < 0)
+                    {
+                        MessageAlert("Vaš certifikat je istekao prije " + Math.Abs(num3) + " dana. Obnovite ga!", "Upozorenje");
+                        _385_fisk.Properties.Settings.Default.CriticalCertDays = num3;
+                        _385_fisk.Properties.Settings.Default.Save();
+                    }
+                    else if (num3 != criticalCertDays)
+                    {
+                        MessageAlert("Vaš demo certifikat ističe za " + num3 + " dana. Podsjetite se obnoviti ga!", "Upozorenje");
+                        _385_fisk.Properties.Settings.Default.CriticalCertDays = num3;
+                        _385_fisk.Properties.Settings.Default.Save();
+                    }
+                }
+                
+            }
+        }
+        catch (Exception ex)
+        {
+            log.Error("Error in fetching demo certificate "+ex.Message);
+        }
+
+        
+    }
+
     private void CheckCertificate(ref int num2)
     {
         if (AppLink.UseCertificateFile == "0")
@@ -711,6 +752,37 @@ public class MainForm : Form
                     break;
             }
         }
+        if(AppLink.UseCertificateFile=="1")
+        {
+            X509Certificate2 x509Certificate = null;
+            if(string.IsNullOrEmpty(AppLink.DatotekaCertifikata()))
+            {
+                log.Debug("Certificate file path not defined!!!");
+                throw new Exception("Certificate file path not defined!!!");
+            }
+            log.Debug("Fetching certificate from file "+AppLink.DatotekaCertifikata());
+            x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword);
+            if (x509Certificate == null) throw new Exception("No certificate");
+            log.Debug("Fetched certificate " + x509Certificate.Subject);
+            int num3 = (DateTime.Parse(x509Certificate.GetExpirationDateString()) - DateTime.Now.Date).Days;
+            int criticalCertDays = _385_fisk.Properties.Settings.Default.CriticalCertDays;
+            if (num3 <= 30)
+            {
+                if (num3 < 0)
+                {
+                    MessageAlert("Vaš certifikat je istekao prije " + Math.Abs(num3) + " dana. Obnovite ga!", "Upozorenje");
+                    _385_fisk.Properties.Settings.Default.CriticalCertDays = num3;
+                    _385_fisk.Properties.Settings.Default.Save();
+                }
+                else if (num3 != criticalCertDays)
+                {
+                    MessageAlert("Vaš demo certifikat ističe za " + num3 + " dana. Podsjetite se obnoviti ga!", "Upozorenje");
+                    _385_fisk.Properties.Settings.Default.CriticalCertDays = num3;
+                    _385_fisk.Properties.Settings.Default.Save();
+                }
+            }
+
+        }
     }
 
     #region AutoUpdater
@@ -723,10 +795,10 @@ public class MainForm : Form
             //log.Debug("Checking for new version of CIS application");
             //_385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
            // _385_fisk.Properties.Settings.Default.Save();
-            base.TopMost = false;
-            AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
-            AutoUpdater.DownloadPath = Environment.CurrentDirectory;
-            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+            //base.TopMost = false;
+            //AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
+            //AutoUpdater.DownloadPath = Environment.CurrentDirectory;
+            //AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
         //}
     }
 
@@ -1144,8 +1216,8 @@ public class MainForm : Form
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
-        AutoUpdater.DownloadPath = Environment.CurrentDirectory;
+        //AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
+        //AutoUpdater.DownloadPath = Environment.CurrentDirectory;
     }
 
     #region Inicijalizacija
