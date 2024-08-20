@@ -2,6 +2,6 @@
 <item>
   <version>2.0.2.0</version>
   <url>https://github.com/vmercep/CIS_hrv/releases/download/2.0.2/CIS-HRV.2.0.2.msi</url>
-  <changelog>https://github.com/vmercep/CIS_hrv/releases/</changelog>
+  <changelog>https://github.com/vmercep/CIS_hrv/releases</changelog>
   <mandatory>false</mandatory>
 </item>
