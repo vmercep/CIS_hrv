@@ -230,6 +230,68 @@ public class Config : Form {
         }
     }
 
+    private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+    {
+        if (args.Error == null)
+        {
+            if (args.IsUpdateAvailable)
+            {
+                DialogResult dialogResult;
+                if (args.Mandatory.Value)
+                {
+                    dialogResult =
+                        MessageBox.Show(
+                            $@"Nova Verzija {args.CurrentVersion} je dostupna. Trenutno koristite {args.InstalledVersion}. Molimo napravite nadogradnju!", @"Update Available",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                }
+                else
+                {
+                    dialogResult =
+                        MessageBox.Show(
+                            $@"There is new version {args.CurrentVersion} available. You are using version {
+                                    args.InstalledVersion
+                                }. Do you want to update the application now?", @"Update Available",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information);
+                }
+
+                // Uncomment the following line if you want to show standard update dialog instead.
+                // AutoUpdater.ShowUpdateForm(args);
+
+                if (dialogResult.Equals(DialogResult.Yes) || dialogResult.Equals(DialogResult.OK))
+                {
+                    try
+                    {
+                        if (AutoUpdater.DownloadUpdate(args))
+                        {
+                            Application.Exit();
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show(exception.Message, exception.GetType().ToString(), MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        else
+        {
+            
+                MessageBox.Show(args.Error.Message,
+                    args.Error.GetType().ToString(), MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            
+        }
+    }
+
+
     private void verifyData()
     {
         state = false;
@@ -807,9 +869,11 @@ public class Config : Form {
 
     private void btUpdate_Click(object sender, EventArgs e)
     {
-        //AutoUpdater.Mandatory = true;
-        AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
+        AutoUpdater.Mandatory = true;
         AutoUpdater.DownloadPath = Environment.CurrentDirectory;
+
+        AutoUpdater.Start("https://raw.githubusercontent.com/vmercep/CIS_hrv/master/CisUpdater.xml");
+
     }
 
     private void MessageAlert(string content, string title, NumLog logerror = NumLog.None, int ticket = 1, string extendmessage = "")
@@ -965,6 +1029,7 @@ public class Config : Form {
             this.tabCertifikati.SuspendLayout();
             this.tabQr.SuspendLayout();
             this.SuspendLayout();
+            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
             // 
             // btnSaveAndQuit
             // 

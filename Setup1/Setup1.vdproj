@@ -996,11 +996,6 @@
             "AssemblyAsmDisplayName" = "8:Dropbox.Api, Version=4.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_D7DC640013ABEB7A51FD71D157CEEE5C"
-                    {
-                    "Name" = "8:Dropbox.Api.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Dropbox.Api.dll"
             "TargetName" = "8:"
@@ -1118,15 +1113,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CIS-HRV"
-        "ProductCode" = "8:{78784AC1-20F6-4FF7-A537-CEFE9E4FAC5D}"
-        "PackageCode" = "8:{A2F83C5E-4CA8-450A-BC65-F3ABF0D95F21}"
+        "ProductCode" = "8:{3D2AF959-88B5-466E-82A9-7AD6F1FCD80A}"
+        "PackageCode" = "8:{D04CC508-0B15-4E8E-BE9B-A942692D101D}"
         "UpgradeCode" = "8:{A6946A89-83C7-426B-8CD1-E86B11B89118}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:2.0.2"
+        "ProductVersion" = "8:2.0.1"
         "Manufacturer" = "8:CIS-HRV"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

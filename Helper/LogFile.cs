@@ -1,5 +1,4 @@
-﻿using Dropbox.Api;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -157,16 +156,11 @@ namespace Helper
                     streamWriter.WriteLine(configFile.LogLevel);
                     streamWriter.Close();
 
-                    //DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                    //dbbase.Delete("/15259334060.txt");
-
-                    //bool ret = dbbase.Upload("", "15259334060.txt", filePath);
 
                 }
             }
             catch (Exception ex)
             {
-                //LogToFile("Error ocured in init cfg file " + e.Message);
                 log.Error("Error in creating initial config file",ex);
             }
 
@@ -235,11 +229,7 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.SendTip);
                     streamWriter.Close();
 
-                    //string filename = fConfig.VATNumber.Replace('=', '_') + ".txt";
-                    //DropBoxBase dbbase = new DropBoxBase("zj88rgyw7qa1ma2", "g9waqnwjblqqona");
-                    //dbbase.Delete("/" + fConfig.VATNumber.Replace('=', '_') + ".txt");
-                    //bool ret = dbbase.Upload("", fConfig.VATNumber.Replace('=', '_') + ".txt", filePath);
-                    //DropBoxCloudOperations.CreateFile(filename, filePath);
+
                     log.Debug("Config file created");
                     return true;
                 }

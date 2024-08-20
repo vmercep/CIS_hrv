@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dropbox.Api, Version=4.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dropbox.Api.4.9.3\lib\net45\Dropbox.Api.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.13\lib\net45\log4net.dll</HintPath>
     </Reference>
@@ -64,8 +61,6 @@
     <Compile Include="Certifs.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DataVerification.cs" />
-    <Compile Include="DropBoxBase.cs" />
-    <Compile Include="DropBoxCloudOperations.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="LogEnum.cs" />
     <Compile Include="LogFile.cs" />
