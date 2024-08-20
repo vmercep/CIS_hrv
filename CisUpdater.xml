@@ -1,5 +1,6 @@
-<item>
+<?xml version="1.0" encoding="UTF-8" ?>
+<items>
   <version>2.0.2.0</version>
   <url>https://github.com/vmercep/CIS_hrv/releases/download/2.0.2/CIS_HRV.2.0.2.msi</url>
   <mandatory>false</mandatory>
-</item>
+</items>
