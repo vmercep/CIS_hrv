@@ -100,258 +100,291 @@ public class MainForm : Form
         MessageAlert(Translations.Translate(myMessage), Translations.Translate("Greška"));
         log.Error("Error in config data verification " + myMessage);
     }
-  
-    private void Principal()
+
+    private void InitializeMerlinData(out IMerlinData dalMerlin)
     {
-        IMerlinData dalMerlin = new MerlinData();
-        
+        dalMerlin = new MerlinData();
+    }
+    private bool ValidateConfiguration()
+    {
+        if (AppLink.TestFileCfg()) return true;
 
-        
-        progressBar1.Value = 0;
-        log.Debug("------------Starting with principal check----------------");
+        MessageAlert(Translations.Translate("Nedostaje konfiguracijska datoteka!"),
+                     Translations.Translate("Greška"), NumLog.CfgMissing, 0, "");
+        log.Error("Missing config file, closing application");
+        Close();
+        return false;
+    }
 
-        if (!AppLink.TestFileCfg())
+    private void LoadBusinessUnitData()
+    {
+        log.Debug("Loading data for business unit");
+        lblInfo.Text = Translations.Translate("Učitavanje podataka o poslovnom prostoru...");
+
+        DataSalonToSend.VATNumber_Salon = AppLink.VATNumber;
+        DataSalonToSend.LogFileIsActive = Convert.ToInt16(AppLink.LogFileActive);
+        DataSalonToSend.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
+        DataSalonToSend.BillingDeviceMark = AppLink.BillingDeviceMark;
+        DataSalonToSend.OIBSoftware = AppLink.OIBSoftware;
+        CertificateName = AppLink.Certificate;
+
+        Log.WriteLog(NumLog.AppLaunch, 0, "", placeholders, ErrorCode, ErrorMessage);
+
+        int num2 = 0;
+        CheckCertificate(ref num2);
+        log.Debug("Business unit data loaded");
+    }
+
+    private bool VerifyBusinessUnitData()
+    {
+        if (Helper.DataVerification.VerifDataOk(DataSalonToSend, out vatActif, out string errorMessage))
+            return true;
+
+        ErrorMessVerifData(errorMessage);
+        log.Debug("Closing application");
+        Close();
+        return false;
+    }
+
+    private void ProcessOffers(IMerlinData dalMerlin)
+    {
+        log.Debug("Offer processing START");
+        var offers = dalMerlin.GetOffer(DataSalonToSend.VATNumber_Salon, vatActif);
+
+        if (offers.Count > 0)
         {
-            MessageAlert(Translations.Translate("Nedostaje konfiguracijska datoteka!"), Translations.Translate("Greška"), NumLog.CfgMissing, 0, "");
-            log.Error("Missing config file, closing application");
-            Close();
+            log.Debug($"Found {offers.Count} offers in database, continuing with application");
+            foreach (var offer in offers)
+            {
+                log.Debug($"For offer id {offer.IdTicket}/{JsonConvert.SerializeObject(offer)} update Hash");
+                SaveErrorOnBill(offer.IdTicket, "OVO NIJE FISKALIZIRANI RAČUN", dalMerlin);
+            }
         }
+        log.Debug("Offer processing END");
+    }
 
-        try
+    private void ProcessBills(IMerlinData dalMerlin)
+    {
+        lblInfo.Text = Translations.Translate("Obrada računa (korak 1)...");
+        log.Debug("Fetching bills for fiscalization");
+
+        var bills = dalMerlin.GetBill(DataSalonToSend.VATNumber_Salon, vatActif);
+        log.Debug($"Found {bills.Count} bills for fiscalization, continuing with batch");
+
+        foreach (var bill in bills)
         {
-            log.Debug("Loading data for bussines unit");
-            lblInfo.Text = Translations.Translate("Učitavanje podataka o poslovnom prostoru...");
-            
-            DataSalonToSend.VATNumber_Salon = AppLink.VATNumber;
-            DataSalonToSend.LogFileIsActive = Convert.ToInt16(AppLink.LogFileActive);
-            DataSalonToSend.DateIsActive = Convert.ToDateTime(AppLink.DateIsActive);
-            DataSalonToSend.BillingDeviceMark = AppLink.BillingDeviceMark;
-            DataSalonToSend.OIBSoftware = AppLink.OIBSoftware;
-            Log.WriteLog(NumLog.AppLaunch, 0, "", placeholders, ErrorCode, ErrorMessage);
-            CertificateName = AppLink.Certificate;
-
-            int num2 = 0;
-            CheckCertificate(ref num2);
-            //CheckDemoCertificate(true);
-            log.Debug("Bussines unit data loaded");
-
-
-            if (!Helper.DataVerification.VerifDataOk(DataSalonToSend, out vatActif, out errorMessage))
-            {
-                ErrorMessVerifData(errorMessage);
-                log.Debug("Closing application");
-                Close();
-            }
-            
-
-
-            FlushBillsWithNoJir(dalMerlin);
-
-            log.Debug("Offer processing START ");
-            var offers = dalMerlin.GetOffer(DataSalonToSend.VATNumber_Salon, vatActif);
-            if (offers.Count > 0)
-            {
-               
-                log.Debug(String.Format("Found {0} offers in database continuing with application", offers.Count));
-
-                foreach (DataBill offer in offers)
-                {
-                    log.Debug(String.Format("For offer id {0}/{1} update Hash", offer.IdTicket, JsonConvert.SerializeObject(offer)));
-                    SaveErrorOnBill(offer.IdTicket, "OVO NIJE FISKALIZIRANI RAČUN    " , dalMerlin);
-
-                }
-
-
-
-            }
-            log.Debug("Offer processing END ");
-
-            lblInfo.Text = Translations.Translate("Obrada računa (korak 1)...");
-            log.Debug("Fatching bills for fiscalization");
-
-
-            var bills = dalMerlin.GetBill(DataSalonToSend.VATNumber_Salon, vatActif);
-            Log.WriteLog(NumLog.BillProcSt1ok, 0, "", placeholders, ErrorCode, ErrorMessage);
-
-            lblInfo.Text = Translations.Translate("Obrada računa (korak 2)...");
-            log.Debug(String.Format("Found {0} bills for fiscal, continuing with batch", bills.Count));
-            Log.WriteLog(NumLog.StartBillProcSt2, 0, "", placeholders, ErrorCode, ErrorMessage);
-            foreach (DataBill bill in bills)
-            {
-
-                log.Debug(String.Format("For bill id {0}/{1} fetching details", bill.IdTicket, JsonConvert.SerializeObject(bill)));
-                
-                var billDetails = dalMerlin.GetBillFollow(bill);
-
-                log.Debug(String.Format("Details fetched bill id {0}/{1}", bill.IdTicket, JsonConvert.SerializeObject(billDetails)));
-                if (billDetails.Notes.Contains("ZKI:") && billDetails.HashStatus.Length != 36)
-                {
-                    billDetails.MarkSubseqBillDelivery_Bill = true;
-                }
-                else
-                {
-                    billDetails.MarkSubseqBillDelivery_Bill = false;
-                }
-
-                //provjera OIB-a zaposlenika. Ako je -1 onda stavljam defaultnog tj firmu
-                if (bill.CashierVATNumber_Bill == "OIBPERSOERROR")
-                {
-                    if (!AddCachierToTicket(dalMerlin, bill)) continue;
-
-                    //prepišem potake sa salona
-                    bill.CashierVATNumber_Bill = bill.VATNumber_Salon_Bill;
-                }
-
-                
-                //šaljem na test
-                if (AppLink.SendTestReceipts.Equals("1"))
-                {
-                    if (!SendBillToTestCis(billDetails, dalMerlin)) continue;                  
-                }
-                
-                //šaljem na produkciju 
-                int ret=SendBillToProdCis(billDetails, dalMerlin);
-                if(AppLink.SendTip.Equals("1"))
-                {
-                    if (ret == 0) //sve je OK fiskaliziram napojnice
-                    {
-
-                        var tip = dalMerlin.GetTip(billDetails.IdTicket);
-
-
-                        log.Debug(String.Format("Tip for {0} ticket fetched ", billDetails.IdTicket));
-                        log.Debug(String.Format("Total tip amount {0}", tip.Amount.ToString("F")));
-                        if (tip.Amount != 0) SendTipToProdCis(billDetails, tip, dalMerlin);   //TODO spremanje requesta za napojnicu                 
-                        else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
-
-                    }
-                }
-
-
-            }
-
-            if (AppLink.SendTip.Equals("1"))
-            {
-
-                var tipsFailed = dalMerlin.GetFailedTips();  //TODO provjeri dali je račun fiskaliziran?
-                if (tipsFailed.Count != 0)
-                {
-                    DataTip dataTip = new DataTip();
-                    log.Debug(String.Format("Tip failed fetched in total {0}", tipsFailed.Count));
-                    foreach (var tip in tipsFailed)
-                    {
-                        if (tip.Amount != 0)
-                        {
-                            log.Debug(String.Format("Reprocessing tip {0} with previous comment {1}", tip.IdTicket, tip.Comment));
-                            var oneBill = dalMerlin.GetOneBill(DataSalonToSend.VATNumber_Salon, vatActif, tip.IdTicket);
-                            var billDetails = dalMerlin.GetBillFollow(oneBill);
-                            SendTipToProdCis(billDetails, tip, dalMerlin);
-
-                        }
-                        else log.Debug(String.Format("Tip amount for tip {0} is 0", tip.IdTicket));
-                    }
-                }
-            }
-
-            FlushBillsWithNoJir(dalMerlin);
-            lblInfo.Text = Translations.Translate("Zatvaranje aplikacije");
-
-
-            log.Debug("Closing application");
-            CheckForUpdateEvent();
-            Close();
-
-
-
-        }
-        catch (Exception e)
-        {
-            log.Error("Error in principal ", e);
-            MessageAlert("Kritična greška u principalu "+e.Message +" izlazim iz aplikacije","Greška u principalu");
-            Close();
-
+            log.Debug("Processing seperate bill " + bill.IdTicket);
+            ProcessBill(bill, dalMerlin);
         }
     }
 
-    private void SendTipToProdCis(DataBill billDetails, DataTip dataTip, IMerlinData dalMerlin)
+    private void ProcessBill(DataBill bill, IMerlinData dalMerlin)
     {
-        log.Debug(String.Format("Bill id {0} sending tip to prod CIS", billDetails.IdTicket));
+        log.Debug($"Fetching details for bill id {bill.IdTicket}/{JsonConvert.SerializeObject(bill)}");
+
+        var billDetails = dalMerlin.GetBillFollow(bill);
+        billDetails.MarkSubseqBillDelivery_Bill =
+            billDetails.Notes.Contains("ZKI:") && billDetails.HashStatus.Length != 36;
+
+        if (bill.CashierVATNumber_Bill == "OIBPERSOERROR")
+        {
+            if (!AddCachierToTicket(dalMerlin, bill)) return;
+            bill.CashierVATNumber_Bill = bill.VATNumber_Salon_Bill;
+        }
+
+        if (AppLink.SendTestReceipts.Equals("1") && !SendBillToTestCis(billDetails, dalMerlin)) return;
+
+        int ret = SendBillToProdCis(billDetails, dalMerlin);
+        if (AppLink.SendTip.Equals("1") && ret == 0) ProcessTip(billDetails, dalMerlin);
+    }
+
+    private void ProcessTip(DataBill billDetails, IMerlinData dalMerlin)
+    {
+        var tip = dalMerlin.GetTip(billDetails.IdTicket);
+
+        if (tip.Amount == 0)
+        {
+            log.Debug($"Tip amount for ticket {tip.IdTicket} is 0");
+            return;
+        }
+
+        log.Debug($"Processing tip for ticket {billDetails.IdTicket}, amount {tip.Amount:F}");
+        SendTipToProdCis(billDetails, tip, dalMerlin);
+    }
+
+    private void ProcessFailedTips(IMerlinData dalMerlin)
+    {
+        if (!AppLink.SendTip.Equals("1")) return;
+
+        var tipsFailed = dalMerlin.GetFailedTips();
+        if (tipsFailed.Count == 0) return;
+
+        log.Debug($"Failed tips fetched, total count: {tipsFailed.Count}");
+
+        foreach (var tip in tipsFailed)
+        {
+            if (tip.Amount == 0)
+            {
+                log.Debug($"Tip amount for tip {tip.IdTicket} is 0");
+                continue;
+            }
+
+            log.Debug($"Reprocessing tip {tip.IdTicket} with previous comment {tip.Comment}");
+            var oneBill = dalMerlin.GetOneBill(DataSalonToSend.VATNumber_Salon, vatActif, tip.IdTicket);
+            var billDetails = dalMerlin.GetBillFollow(oneBill);
+            SendTipToProdCis(billDetails, tip, dalMerlin);
+        }
+    }
+
+    private void FinalizeProcessing(IMerlinData dalMerlin)
+    {
+        FlushBillsWithNoJir(dalMerlin);
+        lblInfo.Text = Translations.Translate("Zatvaranje aplikacije");
+        log.Debug("Closing application");
+
+        CheckForUpdateEvent();
+        Close();
+    }
+
+    private void HandleCriticalError(Exception e)
+    {
+        log.Error("Critical error in principal", e);
+        MessageAlert($"Kritična greška u principalu {e.Message}, izlazim iz aplikacije", "Greška u principalu");
+        Close();
+    }
+
+    private void Principal()
+    {
         try
         {
+            // Initialize necessary objects and logging
+            InitializeMerlinData(out IMerlinData dalMerlin);
 
+            // Validate the application configuration file
+            if (!ValidateConfiguration()) return;
+
+            // Load business unit details (VAT number, certificate, etc.)
+            LoadBusinessUnitData();
+
+            // Verify if the loaded data is valid; exit if not
+            if (!VerifyBusinessUnitData()) return;
+
+            // Remove any bills that lack a JIR (fiscalization ID)
+            FlushBillsWithNoJir(dalMerlin);
+
+            // Process available offers
+            ProcessOffers(dalMerlin);
+
+            // Process all bills for fiscalization
+            ProcessBills(dalMerlin);
+
+            // Retry sending any failed tips
+            ProcessFailedTips(dalMerlin);
+
+            // Final application cleanup and closing
+            FinalizeProcessing(dalMerlin);
+        }
+        catch (Exception e)
+        {
+            // Handle unexpected errors gracefully
+            HandleCriticalError(e);
+        }
+    }
+
+    /// <summary>
+    /// Sends a tip transaction to the CIS (Fiscalization System).
+    /// </summary>
+    /// <param name="billDetails">Details of the bill associated with the tip.</param>
+    /// <param name="dataTip">Tip data to be sent.</param>
+    /// <param name="dalMerlin">Data access layer for database interactions.</param>
+    private void SendTipToProdCis(DataBill billDetails, DataTip dataTip, IMerlinData dalMerlin)
+    {
+        log.Debug($"Bill ID {billDetails.IdTicket} - Sending tip to production CIS");
+
+        try
+        {
+            // Initialize the CIS business logic handler
             CisBussines cisBl = new CisBussines(DataSalonToSend);
-            log.Debug(String.Format("Slanje tip na prod CIS {0} {1}", billDetails.IdTicket, JsonConvert.SerializeObject(billDetails)));
+
+            log.Debug($"Sending tip to production CIS for Bill ID {billDetails.IdTicket}, Data: {JsonConvert.SerializeObject(billDetails)}");
+
+            // Update UI to indicate CIS connection
             lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
-            log.Debug("Connectiong with CIS please stand by");
+            log.Debug("Connecting with CIS, please stand by...");
+
+            // Send tip request to CIS and receive response as XML
             XmlDocument xmlDocument = cisBl.SendTip(billDetails, dataTip, dalMerlin, CertificateName, true);
+
+            // If response is null, CIS did not return any data
             if (xmlDocument == null)
             {
                 throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja napojnice"));
             }
-            string message = "";
 
+            // Verify CIS response
+            string message = "";
             if (!cisBl.CheckTipAnswer(xmlDocument, out message))
             {
                 MessageAlert(message, Translations.Translate("Greška"));
-                SaveErrorOnTip(dataTip, "GRESKA "+message.Substring(0, 10), dalMerlin);
-                log.Error(String.Format("Error in sending to prod CIS {0} : {1}", dataTip.IdTicket, message));
+                SaveErrorOnTip(dataTip, "GRESKA " + message.Substring(0, 10), dalMerlin);
+                log.Error($"Error sending to production CIS for Tip ID {dataTip.IdTicket}: {message}");
                 throw new Exception("Error on CIS " + message);
             }
 
+            // Log and update UI with CIS response
             txtResponse.Text = xmlDocument.OuterXml;
-            log.Debug(String.Format("Tip succesfully sent to CIS {0}, response: {1}", dataTip.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
+            log.Debug($"Tip successfully sent to CIS for Tip ID {dataTip.IdTicket}, Response: {JsonConvert.SerializeObject(xmlDocument)}");
 
             Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
 
+            // Handle different response cases
             if (string.IsNullOrEmpty(txtResponse.Text))
             {
+                // Empty XML response
                 Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
                 SaveErrorOnTip(dataTip, "GRESKA Empty", dalMerlin);
-                
             }
             else if (VerifAndSaveTip(txtResponse.Text, dataTip.IdTicket, "SifraPoruke", State: false, dalMerlin))
             {
+                // Process successful response
                 Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-               
             }
             else if (VerifAndSaveTip(txtResponse.Text, dataTip.IdTicket, "SifraGreske", State: true, dalMerlin))
             {
+                // Process error response
                 Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-               
             }
             else
             {
-                log.Debug(String.Format("Shit hit the fan  {0}", dataTip.IdTicket));
+                // Unknown error case
+                log.Debug($"Unexpected error while sending tip for Tip ID {dataTip.IdTicket}");
                 SaveErrorOnTip(dataTip, "GRESKA Unknown", dalMerlin);
-    
             }
-
-
-
         }
-        catch (Exception ex3)
+        catch (Exception ex)
         {
+            // Log and handle exceptions
+            log.Error(ex);
 
-            log.Error(ex3);
-
-            if (ex3.Message.ToLowerInvariant().Contains("network password"))
+            if (ex.Message.ToLowerInvariant().Contains("network password"))
             {
+                // Certificate password error
                 MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
-
             }
             else
             {
-                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-
+                // General CIS connection failure
+                MessageAlert(
+                    Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK")
+                    + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"),
+                    Translations.Translate("Greška")
+                );
             }
 
-            Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
-
-
-
+            // Log HTTP error
+            Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex.Message, placeholders, ErrorCode, ErrorMessage);
         }
     }
-
     private void SaveErrorOnTip(DataTip dataTip, string m_Text, IMerlinData dalMerlin)
     {
         try
@@ -368,231 +401,108 @@ public class MainForm : Form
         }
     }
 
-    private void SendPaymentChangeToProdCis(DataBill listBill, IMerlinData dalMerlin)
-    {
-        try
-        {
-            CisBussines cisBl = new CisBussines(DataSalonToSend);
-            log.Debug(String.Format("Sending change payment type to production CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)));
-            Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
-            lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
-            log.Debug("Connectiong with CIS please stand by");
-            XmlDocument xmlDocument = cisBl.SendPaymentChange(listBill, dalMerlin, CertificateName, false); //sendBill(listBill, dalMerlin);
-            /*
-            if (xmlDocument == null)
-            {
-                throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja testnog računa"));
-            }
-            string message = "";
-
-            if (!cisBl.CheckBillAnswer(xmlDocument, false, out message))
-            {
-                MessageAlert(message, Translations.Translate("Greška"));
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_CIS       " + message.Substring(0, 10), dalMerlin);
-                log.Debug(String.Format("Error in sending to prod CIS {0} : {1}", listBill.IdTicket, message));
-                throw new Exception("Error on CIS " + message);
-            }
-
-            txtResponse.Text = xmlDocument.OuterXml;
-            log.Debug(String.Format("Bill succesfully sent to CIS {0}, response: {1}", listBill.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
-
-            Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
-
-            if (string.IsNullOrEmpty(txtResponse.Text))
-            {
-                Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP Empty                        ", dalMerlin);
-            }
-            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
-            {
-                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-            }
-            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "SifraGreske", State: true, dalMerlin))
-            {
-                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-            }
-            else
-            {
-                log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
-                SaveErrorOnBill(listBill.IdTicket, "ERROR_RESP                             ", dalMerlin);
-            }
-            */
-        }
-        catch (Exception ex3)
-        {
-
-            log.Error("Error ocured in fisc",ex3);
-
-            if (ex3.Message.ToLowerInvariant().Contains("network password"))
-            {
-
-                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
-            }
-            else
-            {
-                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-            }
-
-            Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
-            //SaveErrorOnBill(listBill.IdTicket, "ERROR_eSJ", dalMerlin);
-
-        }
-
-    }
-
+    /// <summary>
+    /// Sends a bill to the test CIS (Fiscalization System) for validation.
+    /// </summary>
+    /// <param name="billDetails">Bill data to be sent.</param>
+    /// <param name="dalMerlin">Data access layer for database interactions.</param>
+    /// <returns>True if the bill passes validation or needs to be sent to production, otherwise false.</returns>
     private bool SendBillToTestCis(DataBill billDetails, IMerlinData dalMerlin)
     {
-        log.Debug(String.Format("Bill id {0} sending to test CIS", billDetails.IdTicket));
+        log.Debug($"Bill ID {billDetails.IdTicket} - Sending to test CIS");
+
+        // Check if the bill has already failed 3 times; if so, proceed to production CIS
         if (GetBillFailedAttempts(billDetails.IdTicket) >= 3)
         {
-            log.Debug(String.Format("Bill oid {0} checked 3 times send to production CIS", billDetails.IdTicket));
+            log.Debug($"Bill ID {billDetails.IdTicket} checked 3 times, sending to production CIS");
             return true;
         }
+
         try
         {
+            // Initialize the CIS business logic handler
             CisBussines cisBl = new CisBussines(DataSalonToSend);
 
             Log.WriteLog(NumLog.SendingTest, billDetails.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
 
-            lblInfo.Text = Translations.Translate("Slanje zahtjeva za provjerom racuna, molimo pričekajte...");
-            log.Debug("Sending request to test CIS");
-            
+            // Update UI to indicate CIS connection
+            lblInfo.Text = Translations.Translate("Slanje zahtjeva za provjerom računa, molimo pričekajte...");
+            log.Debug("Sending request to test CIS...");
 
+            // Send the bill request to test CIS and receive the response as XML
             XmlDocument xmlDocument = cisBl.SendBill(billDetails, dalMerlin, CertificateName, true);
+
+            // Handle missing response from CIS
             if (xmlDocument == null)
             {
                 throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja testnog računa"));
             }
 
-
+            // Validate CIS response
             string message = "";
             if (!cisBl.CheckBillAnswer(xmlDocument, true, out message))
             {
                 MessageAlert(message, Translations.Translate("Greška"));
-                log.Debug(String.Format("Error returned from bill check for ticket id: {0} error message: {1}", billDetails.IdTicket, message));
+                log.Debug($"Error returned from bill check for ticket ID {billDetails.IdTicket}: {message}");
+
+                // Handle non-critical errors that allow retrying
                 if (message.Contains("v101") || message.Contains("v103") || message.Contains("v104") || message.Contains("v152") || message.Contains("v153"))
                 {
-                    log.Debug(String.Format("Non critical error detected on ticket id: {0} error message: {1}", billDetails.IdTicket, message));
+                    log.Debug($"Non-critical error detected on ticket ID {billDetails.IdTicket}: {message}");
                     AddBillToFailedAttempts(billDetails.IdTicket);
                 }
-                SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS      "+message.Substring(0,10), dalMerlin);
+
+                // Log error and return failure
+                SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS " + message.Substring(0, 10), dalMerlin);
                 return false;
             }
 
+            // Bill successfully verified in test mode
             return true;
         }
         catch (NoOibException e)
         {
-            log.Error(String.Format("Error for sending bill id to test CIS {0} ", billDetails.IdTicket), e);
+            // Handle missing OIB (tax number) error
+            log.Error($"Error sending bill ID {billDetails.IdTicket} to test CIS", e);
             AddBillToFailedAttempts(billDetails.IdTicket);
-            SaveErrorOnBill(billDetails.IdTicket, "GRESKA_OIB                             ", dalMerlin);
+            SaveErrorOnBill(billDetails.IdTicket, "GRESKA_OIB", dalMerlin);
             MessageAlert(Translations.Translate("Nedostaje OIB zaposlenika!"), Translations.Translate("Greška"));
             return false;
         }
-        catch (Exception ex2)
+        catch (Exception ex)
         {
-            if (ex2.Message.ToLowerInvariant().Contains("network password"))
+            // Handle specific errors
+            log.Error($"General error for bill ID {billDetails.IdTicket}", ex);
+
+            if (ex.Message.ToLowerInvariant().Contains("network password"))
             {
+                // Incorrect certificate password
                 MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
             }
-
-            if (ex2.Message.ToLowerInvariant().Contains("error occurred on a send"))
+            else if (ex.Message.ToLowerInvariant().Contains("error occurred on a send"))
             {
-                //SendBillToProdCis(billDetails, dalMerlin);
+                // If error suggests a sending issue, proceed to production CIS
                 return true;
             }
-            MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-            SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS                             ", dalMerlin);
-            log.Error(String.Format("General error for bill id {0} ", billDetails.IdTicket), ex2);
-            Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex2.Message, placeholders, ErrorCode, ErrorMessage);
+            else
+            {
+                // General connectivity failure
+                MessageAlert(
+                    Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") +
+                    Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"),
+                    Translations.Translate("Greška")
+                );
+
+                SaveErrorOnBill(billDetails.IdTicket, "GRESKA_CIS", dalMerlin);
+                Log.WriteLog(NumLog.ErrorHttp, billDetails.IdTicket, ex.Message, placeholders, ErrorCode, ErrorMessage);
+            }
+
             return false;
         }
-        
     }
 
-    private int SendBillToProdCis(DataBill listBill, IMerlinData dalMerlin)
-    {
-        int returnValue = 0;//return in case if no error ocured
-        try
-        {
-            CisBussines cisBl = new CisBussines(DataSalonToSend);
-            log.Debug(String.Format("Slanje računa na prod CIS {0} {1}", listBill.IdTicket, JsonConvert.SerializeObject(listBill)));
-            Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
-            lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
-            log.Debug("Connectiong with CIS please stand by");
-            XmlDocument xmlDocument = cisBl.SendBill(listBill, dalMerlin, CertificateName, false); //sendBill(listBill, dalMerlin);
-
-            if (xmlDocument == null)
-            {
-                throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja testnog računa"));
-            }
-            string message = "";
-            
-            if(!cisBl.CheckBillAnswer(xmlDocument, false, out message))
-            {
-                MessageAlert(message, Translations.Translate("Greška"));
-                SaveErrorOnBill(listBill.IdTicket, "GRESKA_CIS      " + message.Substring(0, 10), dalMerlin);
-                log.Debug(String.Format("Error in sending to prod CIS {0} : {1}", listBill.IdTicket, message));
-                throw new Exception("Error on CIS "+message);
-            }
-
-            txtResponse.Text = xmlDocument.OuterXml;
-            log.Debug(String.Format("Bill succesfully sent to CIS {0}, response: {1}", listBill.IdTicket, JsonConvert.SerializeObject(xmlDocument)));
-
-            Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
-
-            if (string.IsNullOrEmpty(txtResponse.Text))
-            {
-                Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
-                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP Empty                       ", dalMerlin);
-                returnValue = 1;
-            }
-            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
-            {
-                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-                returnValue = 0;
-            }
-            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "SifraGreske", State: true, dalMerlin))
-            {
-                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
-                returnValue = 1;
-            }
-            else
-            {
-                log.Debug(String.Format("Shit hit the fan  {0}", listBill.IdTicket));
-                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP                            ", dalMerlin);
-                returnValue = 1;
-            }
-            return returnValue;
-
-        }
-        catch (Exception ex3)
-        {
-
-            log.Error(ex3);
-
-            if (ex3.Message.ToLowerInvariant().Contains("network password"))
-            {
-                returnValue = 2;
-                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
-                
-            }
-            else
-            {
-                returnValue = 3;
-                MessageAlert(Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
-                
-            }
-
-            Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex3.Message, placeholders, ErrorCode, ErrorMessage);
-            returnValue = 4;
-            SaveErrorOnBill(listBill.IdTicket, "GRESKA_eSJ", dalMerlin);
-            return returnValue;
-
-        }
 
 
-    }
 
     private bool AddCachierToTicket(IMerlinData dalMerlin, DataBill bill)
     {
@@ -606,13 +516,13 @@ public class MainForm : Form
                 log.Debug(String.Format("Missing OIB for bill id {0}, default cachier dose not exist in database", bill.IdTicket));
                 return false;
             }
-            int ret=dalMerlin.UpdateTicketWithOib(bill.IdTicket, idCashier);
+            int ret = dalMerlin.UpdateTicketWithOib(bill.IdTicket, idCashier);
             log.Debug(String.Format("Bill id {0} filled with OIB id {1}/db return {2}", bill.IdTicket, idCashier, ret));
 
             return true;
 
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             log.Error(String.Format("Error ocured for bill ticket id {0} ", bill.IdTicket), e);
             MessageAlert(String.Format("Greška u ažuriranju računa {0} sa OIB-om, poruka greške {1}", bill.IdTicket, e.Message), "Nedostaje OIB zaposlenika");
@@ -656,7 +566,7 @@ public class MainForm : Form
         return 0;
     }
 
-    private void CheckDemoCertificate(bool useTestServer=true)
+    private void CheckDemoCertificate(bool useTestServer = true)
     {
         X509Certificate2 x509Certificate = null;
         try
@@ -684,15 +594,15 @@ public class MainForm : Form
                         _385_fisk.Properties.Settings.Default.Save();
                     }
                 }
-                
+
             }
         }
         catch (Exception ex)
         {
-            log.Error("Error in fetching demo certificate "+ex.Message);
+            log.Error("Error in fetching demo certificate " + ex.Message);
         }
 
-        
+
     }
 
     private void CheckCertificate(ref int num2)
@@ -752,15 +662,15 @@ public class MainForm : Form
                     break;
             }
         }
-        if(AppLink.UseCertificateFile=="1")
+        if (AppLink.UseCertificateFile == "1")
         {
             X509Certificate2 x509Certificate = null;
-            if(string.IsNullOrEmpty(AppLink.DatotekaCertifikata()))
+            if (string.IsNullOrEmpty(AppLink.DatotekaCertifikata()))
             {
                 log.Debug("Certificate file path not defined!!!");
                 throw new Exception("Certificate file path not defined!!!");
             }
-            log.Debug("Fetching certificate from file "+AppLink.DatotekaCertifikata());
+            log.Debug("Fetching certificate from file " + AppLink.DatotekaCertifikata());
             x509Certificate = Potpisivanje.DohvatiCertifikat(AppLink.DatotekaCertifikata(), AppLink.CertificatePassword);
             if (x509Certificate == null) throw new Exception("No certificate");
             log.Debug("Fetched certificate " + x509Certificate.Subject);
@@ -785,20 +695,131 @@ public class MainForm : Form
         }
     }
 
+    /// <summary>
+    /// Sends a bill to the production CIS (Fiscalization System).
+    /// </summary>
+    /// <param name="listBill">Bill data to be sent.</param>
+    /// <param name="dalMerlin">Data access layer for database interactions.</param>
+    /// <returns>
+    /// Integer return codes:
+    /// 0 - Success
+    /// 1 - Empty response or error in verification
+    /// 2 - Incorrect certificate password
+    /// 3 - Network connection issue
+    /// 4 - General error
+    /// </returns>
+    private int SendBillToProdCis(DataBill listBill, IMerlinData dalMerlin)
+    {
+        int returnValue = 0; // Default return value (0 means success)
+
+        try
+        {
+            // Initialize the CIS business logic handler
+            CisBussines cisBl = new CisBussines(DataSalonToSend);
+
+            log.Debug($"Sending bill ID {listBill.IdTicket} to production CIS: {JsonConvert.SerializeObject(listBill)}");
+            Log.WriteLog(NumLog.SendBill, listBill.IdTicket, "", placeholders, ErrorCode, ErrorMessage);
+
+            // Update UI to indicate CIS connection
+            lblInfo.Text = Translations.Translate("Povezivanje s uslugom CIS, molimo pričekajte...");
+            log.Debug("Connecting with CIS, please stand by...");
+
+            // Send bill request to CIS and receive response as XML
+            XmlDocument xmlDocument = cisBl.SendBill(listBill, dalMerlin, CertificateName, false);
+
+            // Handle missing response from CIS
+            if (xmlDocument == null)
+            {
+                throw new Exception(Translations.Translate("Nije primljen odgovor od CIS-a tokom slanja računa"));
+            }
+
+            string message = "";
+
+            // Validate CIS response
+            if (!cisBl.CheckBillAnswer(xmlDocument, false, out message))
+            {
+                MessageAlert(message, Translations.Translate("Greška"));
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_CIS " + message.Substring(0, 10), dalMerlin);
+                log.Error($"Error sending bill ID {listBill.IdTicket} to production CIS: {message}");
+                throw new Exception($"Error on CIS: {message}");
+            }
+
+            // Save response from CIS
+            txtResponse.Text = xmlDocument.OuterXml;
+            log.Debug($"Bill ID {listBill.IdTicket} successfully sent to CIS, response: {JsonConvert.SerializeObject(xmlDocument)}");
+            Log.WriteLog(NumLog.SendBillOK, 0, "", placeholders, ErrorCode, ErrorMessage);
+
+            // Handle empty response
+            if (string.IsNullOrEmpty(txtResponse.Text))
+            {
+                Log.WriteLog(NumLog.EmptyXMLResponse, 0, "", placeholders, ErrorCode, ErrorMessage);
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP Empty", dalMerlin);
+                returnValue = 1;
+            }
+            // Verify and save JIR (Unique Invoice Identifier) for valid response
+            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "Jir", State: false, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+                returnValue = 0; // Successfully processed
+            }
+            // Handle error code from CIS response
+            else if (VerifAndSaveJir(txtResponse.Text, listBill.IdTicket, "SifraGreske", State: true, dalMerlin))
+            {
+                Log.WriteLog(NumLog.NextBill, 0, "", placeholders, ErrorCode, ErrorMessage);
+                returnValue = 1;
+            }
+            else
+            {
+                log.Error($"Unexpected error occurred while processing bill ID {listBill.IdTicket}");
+                SaveErrorOnBill(listBill.IdTicket, "GRESKA_RESP", dalMerlin);
+                returnValue = 1;
+            }
+
+            return returnValue;
+        }
+        catch (Exception ex)
+        {
+            log.Error($"Exception occurred while sending bill ID {listBill.IdTicket}: {ex}");
+
+            if (ex.Message.ToLowerInvariant().Contains("network password"))
+            {
+                returnValue = 2;
+                MessageAlert(Translations.Translate("Lozinka certifikata nije ispravna!"), Translations.Translate("Greška"));
+            }
+            else
+            {
+                returnValue = 3;
+                MessageAlert(
+                    Translations.Translate("Trenutno nije moguće spajanje na CIS, samo nastavite s izdavanjem računa klikom na OK") +
+                    Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"),
+                    Translations.Translate("Greška")
+                );
+            }
+
+            Log.WriteLog(NumLog.ErrorHttp, listBill.IdTicket, ex.Message, placeholders, ErrorCode, ErrorMessage);
+
+            // Mark as general error
+            returnValue = 4;
+            SaveErrorOnBill(listBill.IdTicket, "GRESKA_eSJ", dalMerlin);
+
+            return returnValue;
+        }
+    }
+
     #region AutoUpdater
     private void CheckForUpdateEvent()
     {
         log.Debug("Checking for update of CIS application");
         //if (!lastCheck.Equals(now.ToString("d.M.y")))
         //{
-            
-            //log.Debug("Checking for new version of CIS application");
-            //_385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
-           // _385_fisk.Properties.Settings.Default.Save();
-            //base.TopMost = false;
-            //AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
-            //AutoUpdater.DownloadPath = Environment.CurrentDirectory;
-            //AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+
+        //log.Debug("Checking for new version of CIS application");
+        //_385_fisk.Properties.Settings.Default.LastCheck = now.ToString("d.M.y");
+        // _385_fisk.Properties.Settings.Default.Save();
+        //base.TopMost = false;
+        //AutoUpdater.Start("https://www.dropbox.com/s/l86kf0sochnqnh6/CisUpdateList.xml?dl=1");
+        //AutoUpdater.DownloadPath = Environment.CurrentDirectory;
+        //AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
         //}
     }
 
@@ -847,14 +868,14 @@ public class MainForm : Form
         try
         {
             log.Debug(String.Format("Adding error on ticket id {0}  error: {1}", Idticket, m_Text));
-            var ret=dalMerlin.SaveTicketJir(Idticket, m_Text);
+            var ret = dalMerlin.SaveTicketJir(Idticket, m_Text);
             log.Debug(String.Format("Updated ticket id {0}  return code {1}", Idticket, ret));
             Log.WriteLog(NumLog.BillUpdateOK, Idticket, m_Text, placeholders, ErrorCode, ErrorMessage);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            log.Error("Error ocured in SaveErrorOnBill",e);
-            
+            log.Error("Error ocured in SaveErrorOnBill", e);
+
         }
 
     }
@@ -928,15 +949,15 @@ public class MainForm : Form
         {
             MessageAlert(ex.Message + Environment.NewLine + Translations.Translate("Kontaktirajte tehničku podršku!"), Translations.Translate("Greška"));
             Log.WriteLog(NumLog.XMLerror, IDticket, ex.Message, placeholders, ErrorCode, ErrorMessage);
-            log.Error("Error ocured in line 670",ex);
+            log.Error("Error ocured in line 670", ex);
             flag = false;
         }
         if (!flag)
         {
             return false;
         }
-        var ret=dalMerlin.SaveTicketJir(IDticket, text);
-        
+        var ret = dalMerlin.SaveTicketJir(IDticket, text);
+
         log.Debug(String.Format("ticket updated {0} return {1} ", IDticket, ret));
         var ticket = dalMerlin.GetTicket(IDticket);
 
@@ -1176,19 +1197,19 @@ public class MainForm : Form
             }
 
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            
-            log.Error("Error in solo mode ",e);
+
+            log.Error("Error in solo mode ", e);
             Close();
         }
-        
+
     }
 
     private void FlushBillsWithNoJir(IMerlinData dalMerlin)
     {
         try
-        {          
+        {
             log.Debug("Flush database for bills without JIR");
             DateTime euroDate = new DateTime(2023, 1, 1);
             if (DateTime.Now > euroDate)
@@ -1201,12 +1222,12 @@ public class MainForm : Form
                 log.Debug("Flush full, no euro date set");
                 dalMerlin.FlushBillsWithNoJir();
             }
-                
+
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-  
-            log.Error("Error in FlushBillsWithNoJir",e);
+
+            log.Error("Error in FlushBillsWithNoJir", e);
         }
 
     }
