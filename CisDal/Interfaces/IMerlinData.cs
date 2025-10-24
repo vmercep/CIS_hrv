@@ -6,7 +6,7 @@ namespace CisDal
 {
     public interface IMerlinData
     {
-        List<DataBill> GetBill(string OIB, bool vatIsActive);
+        List<DataBill> GetAllBills(string OIB, bool vatIsActive);
 
         bool checkIfNewTaxes();
         DataBill GetBillFollow(DataBill listBill);

@@ -5,6 +5,41 @@ namespace DataObjects
 {
     public class DataBill
     {
+        public string VATNumber_Salon_Bill { get; set; } = string.Empty;
+        public bool TaxPayer_Bill { get; set; } = true;
+        public DateTime BillDate_Bill { get; set; } = DateTime.Now;
+        public OznakaSlijednostiType SequenceMark_Bill { get; set; } = OznakaSlijednostiType.P;
+        public string BillNumberMark_Bill { get; set; } = string.Empty;
+        public string PremiseMark_Bill { get; set; } = string.Empty;
+        public string BillingDeviceMark_Bill { get; set; } = string.Empty;
+        public string VATTaxRate_Bill { get; set; } = string.Empty;
+        public string VATBase_Bill { get; set; } = string.Empty;
+        public string VATAmount_Bill { get; set; } = string.Empty;
+        public string TotalAmount_Bill { get; set; } = string.Empty;
+        public NacinPlacanjaType PaymentMethod_Bill { get; set; } = NacinPlacanjaType.G;
+        public string CashierVATNumber_Bill { get; set; } = string.Empty;
+        public bool MarkSubseqBillDelivery_Bill { get; set; } = true;
+        public int CountLigPay_Bill { get; set; } = 0;
+        public int IdTicket { get; set; } = 0;
+        public string HashStatus { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+        public short TypeTik { get; set; } = 1;
+        public List<DataTax> TaxList { get; set; } = new List<DataTax>();
+        public string Payment_After { get; set; } = string.Empty;
+
+        public bool IsPro { get; set; } = false;
+        public string BuyerTaxNumber { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Formats a DateTime into "dd.MM.yyyyTHH:mm:ss" string (e.g. 27.08.2025T14:35:10).
+        /// </summary>
+        public string DateTimeIssue_Bill(DateTime billDate)
+        {
+            return $"{billDate:dd.MM.yyyy}T{billDate:HH:mm:ss}";
+        }
+
+
+        /*
         public string VATNumber_Salon_Bill;
 
         public bool TaxPayer_Bill;
@@ -78,5 +113,6 @@ namespace DataObjects
             TaxList = new List<DataTax>();
             Payment_After = string.Empty;
         }
+        */
     }
 }

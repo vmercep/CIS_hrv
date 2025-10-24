@@ -109,76 +109,81 @@ namespace CisBl
             return racunType;
         }
 
-        private RacunType GetRacun(DataBill DataBillToSend, IMerlinData dalMerlin)
+
+
+        private RacunType GetRacun(DataBill dataBill, IMerlinData dalMerlin)
         {
             CultureInfo cultureInfo = new CultureInfo("hr-HR");
+
+            // Base RacunType
             RacunType racunType = new RacunType
             {
-                Oib = DataBillToSend.VATNumber_Salon_Bill,
-                USustPdv = DataBillToSend.TaxPayer_Bill,
-                DatVrijeme = DataBillToSend.DateTimeIssue_Bill(DataBillToSend.BillDate_Bill),
-                OznSlijed = DataBillToSend.SequenceMark_Bill
-            };
-            BrojRacunaType brojRacunaType2 = racunType.BrRac = new BrojRacunaType
-            {
-                BrOznRac = DataBillToSend.BillNumberMark_Bill,
-                OznPosPr = DataBillToSend.PremiseMark_Bill,
-                OznNapUr = DataBillToSend.BillingDeviceMark_Bill
-            };
-            racunType.IznosUkupno = ProperNumber(DataBillToSend.TotalAmount_Bill);
-            racunType.NacinPlac = DataBillToSend.PaymentMethod_Bill;
-            racunType.OibOper = DataBillToSend.CashierVATNumber_Bill;
-            string notes = DataBillToSend.Notes;
-            if (AppLink.InVATsystem == "1")
-            {
-                if (Convert.ToDecimal(DataBillToSend.TotalAmount_Bill) != decimal.Zero)
+                Oib = dataBill.VATNumber_Salon_Bill,
+                USustPdv = dataBill.TaxPayer_Bill,
+                DatVrijeme = dataBill.DateTimeIssue_Bill(dataBill.BillDate_Bill),
+                OznSlijed = dataBill.SequenceMark_Bill,
+                BrRac = new BrojRacunaType
                 {
-                    if (dalMerlin.checkIfNewTaxes())
-                    {
-                        List<DataNewTax> newTaxes = dalMerlin.GetNewTaxes(DataBillToSend.IdTicket);
-                        foreach (DataNewTax item2 in newTaxes)
-                        {
-                            decimal num = 0;
-                            if (newTaxes.Count > 1)
-                            {
-                                num = Convert.ToDecimal(item2.TaxableAmount);
-                            }
-                            else num = calculateTax(DataBillToSend.TotalAmount_Bill, item2.TaxAmount);  //Convert.ToDecimal(item2.TaxableAmount);
-                            decimal num2 = Convert.ToDecimal(item2.TaxAmount);
-                            decimal num3 = Convert.ToDecimal(item2.TaxRate);
-                            racunType.Pdv.Add(new PorezType
-                            {
-                                Osnovica = ProperNumber(num.ToString("0.00")),
-                                Iznos = ProperNumber(num2.ToString("0.00")),
-                                Stopa = ProperNumber(num3.ToString("0.00"))
-                            });
-                        }
-                    }
-                    else
-                    {
-                        PorezType item = new PorezType
-                        {
-                            Stopa = ProperNumber(DataBillToSend.VATTaxRate_Bill),
-                            Osnovica = ProperNumber(DataBillToSend.VATBase_Bill),
-                            Iznos = ProperNumber(DataBillToSend.VATAmount_Bill)
-                        };
-                        racunType.Pdv.Add(item);
-                    }
+                    BrOznRac = dataBill.BillNumberMark_Bill,
+                    OznPosPr = dataBill.PremiseMark_Bill,
+                    OznNapUr = dataBill.BillingDeviceMark_Bill
+                },
+                IznosUkupno = ProperNumber(dataBill.TotalAmount_Bill),
+                NacinPlac = dataBill.PaymentMethod_Bill,
+                OibOper = dataBill.CashierVATNumber_Bill
+            };
+
+            // Handle Notes / Paragon number
+            if (!string.IsNullOrEmpty(dataBill.Notes))
+            {
+                int slashCount = Regex.Matches(dataBill.Notes, "/", RegexOptions.IgnoreCase).Count;
+                if (slashCount > 1 && dataBill.Notes.Contains(";"))
+                {
+                    string[] parts = dataBill.Notes.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length > 0)
+                        racunType.ParagonBrRac = parts[0];
                 }
             }
-            if (notes.Length > 0)
+
+            // VAT / Taxes
+            if (AppLink.InVATsystem == "1" && Convert.ToDecimal(dataBill.TotalAmount_Bill) != decimal.Zero)
             {
-                int count = Regex.Matches(notes, "/", RegexOptions.IgnoreCase).Count;
-                if (count > 1 && notes.Contains(";"))
+                if (dalMerlin.checkIfNewTaxes())
                 {
-                    string[] array = notes.Split(';', '\r', '\n');
-                    racunType.ParagonBrRac = array.GetValue(0).ToString();
+                    List<DataNewTax> newTaxes = dalMerlin.GetNewTaxes(dataBill.IdTicket);
+                    foreach (DataNewTax tax in newTaxes)
+                    {
+                        decimal osnovica = (newTaxes.Count > 1) ? Convert.ToDecimal(tax.TaxableAmount)
+                                                                : calculateTax(dataBill.TotalAmount_Bill, tax.TaxAmount);
+
+                        racunType.Pdv.Add(new PorezType
+                        {
+                            Osnovica = ProperNumber(osnovica.ToString("0.00")),
+                            Iznos = ProperNumber(Convert.ToDecimal(tax.TaxAmount).ToString("0.00")),
+                            Stopa = ProperNumber(Convert.ToDecimal(tax.TaxRate).ToString("0.00"))
+                        });
+                    }
                 }
+                else
+                {
+                    racunType.Pdv.Add(new PorezType
+                    {
+                        Stopa = ProperNumber(dataBill.VATTaxRate_Bill),
+                        Osnovica = ProperNumber(dataBill.VATBase_Bill),
+                        Iznos = ProperNumber(dataBill.VATAmount_Bill)
+                    });
+                }
+            }
+
+            // Set Buyer Tax Number if professional
+            if (dataBill.IsPro && !string.IsNullOrEmpty(dataBill.BuyerTaxNumber))
+            {
+                racunType.OibPrimateljaRacuna = dataBill.BuyerTaxNumber;
             }
 
             return racunType;
-
         }
+
 
         public bool CheckBillAnswer(XmlDocument xmlDocument, bool test, out string message)
         {
@@ -325,47 +330,5 @@ namespace CisBl
 
         }
 
-        public XmlDocument SendPaymentChange(DataBill dataBillToSend, IMerlinData dalMerlin, string CertificateName, bool test)
-        {
-            log.Debug(String.Format("Bill id {0} sending to CIS, method SendBill", dataBillToSend.IdTicket));
-            log.Debug(String.Format("Bill content {0}", JsonConvert.SerializeObject(dataBillToSend)));
-
-            try
-            {
-                var racunType = GetRacunPnpType(dataBillToSend, dalMerlin);
-                log.Debug(String.Format("Created bill to send content {0}", JsonConvert.SerializeObject(racunType)));
-
-                racunType.PromijenjeniNacinPlac = dataBillToSend.Payment_After;
-                //racunType.PrateciDokument.JirPD = dataBillToSend.HashStatus.Replace("-",""); 
-                racunType.ZastKod = dataBillToSend.Notes.Replace("ZKI:", "").Trim();
-                racunType.NakDost = false;
-
-
-
-                if (racunType.ZastKod.Length != 32) throw new Exception("ZKI length is not 32!");
-                //if(racunType.PrateciDokument.JirPD.Length != 32) throw new Exception("JIR length is not 32!");
-
-
-
-
-                CentralniInformacijskiSustav centralniInformacijskiSustav = new CentralniInformacijskiSustav();
-
-
-                XmlDocument xmlDocument = centralniInformacijskiSustav.PosaljiPromjenuNacinaplacanja(racunType, CertificateName );
-                if (xmlDocument != null)
-                {
-                    bool flag2 = Potpisivanje.ProvjeriPotpis(xmlDocument);
-                }
-                
-                return xmlDocument;
-
-            }
-            catch (Exception e)
-            {
-                log.Error("Error in CIS bussines part", e);
-
-                throw new Exception(e.Message);
-            }
-        }
     }
 }

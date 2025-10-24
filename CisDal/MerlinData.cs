@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Xml.Linq;
 using static DataObjects.DataBill;
 
 namespace CisDal
@@ -92,7 +93,7 @@ namespace CisDal
         /// <param name="OIB"></param>
         /// <param name="vatIsActive"></param>
         /// <returns></returns>
-        public List<DataBill> GetBill(string OIB, bool vatIsActive)
+        public List<DataBill> GetAllBills(string OIB, bool vatIsActive)
         {
             List<DataBill> allBills = new List<DataBill>();
             DataSalon dataSalon = new DataSalon();
@@ -103,7 +104,41 @@ namespace CisDal
                 using (SqlConnection sqlConnection = GetSqlConnection())
                 {
                     SqlCommand sqlCommand = sqlConnection.CreateCommand();
-                    sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, idsysmachine, typetik, notes, \r\n                    (select top 1 taux from systauxtva where flagarchive=0 order by taux desc) TauxTva, \r\n                    (select count(idcaisseticket) from caisseligpaiement where idcaisseticket=caisseticket.id) CountLigPay, \r\n                    (select numerosecu from perso where id=caisseticket.idpersoencaiss) OIBPerso from caisseticket\r\n                    where (Hash like @HashE or Hash like @Hash0 or Hash like @Hash1 or Hash is null or datalength(Hash) > 36) and typetik in(1,2) and id>=@Date";
+                    sqlCommand.CommandText = @"SELECT 
+                                                    DateHeure,
+                                                    MontantHT,
+                                                    PrixFacture,
+                                                    code,
+                                                    id,
+                                                    Hash,
+                                                    idsysmachine,
+                                                    typetik,
+                                                    notes,
+                                                    (SELECT TOP 1 taux 
+                                                       FROM systauxtva 
+                                                       WHERE flagarchive=0 
+                                                       ORDER BY taux DESC) AS TauxTva,
+                                                    (SELECT COUNT(idcaisseticket) 
+                                                       FROM caisseligpaiement 
+                                                       WHERE idcaisseticket = caisseticket.id) AS CountLigPay,
+                                                    (SELECT numerosecu 
+                                                       FROM perso 
+                                                       WHERE id = caisseticket.idpersoencaiss) AS OIBPerso,
+                                                    (SELECT XmlField 
+                                                       FROM client 
+                                                       WHERE id = caisseticket.idclient) AS XMLField,
+                                                    (SELECT IsPro 
+                                                       FROM client 
+                                                       WHERE id = caisseticket.idclient) AS IsPro
+                                                FROM caisseticket
+                                                WHERE (Hash LIKE @HashE 
+                                                       OR Hash LIKE @Hash0 
+                                                       OR Hash LIKE @Hash1 
+                                                       OR Hash IS NULL 
+                                                       OR DATALENGTH(Hash) > 36)
+                                                  AND typetik IN (1,2) 
+                                                  AND id >= @Date;";
+
                     sqlCommand.Parameters.Add(new SqlParameter("@HashE", "GRESKA_%"));
                     sqlCommand.Parameters.Add(new SqlParameter("@Hash0", "0"));
                     sqlCommand.Parameters.Add(new SqlParameter("@Hash1", ""));
@@ -136,6 +171,21 @@ namespace CisDal
                             dataBill.IdTicket = (int)sqlDataReader["Id"];
                             dataBill.HashStatus = ((sqlDataReader["Hash"] == DBNull.Value) ? "0" : ((string)sqlDataReader["Hash"]));
                             dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
+
+                            if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("IsPro")) && sqlDataReader.GetBoolean(sqlDataReader.GetOrdinal("IsPro")))
+                            {
+                                dataBill.IsPro = true;
+                                string xml = sqlDataReader["XMLField"].ToString();
+                                if (!string.IsNullOrEmpty(xml))
+                                {
+                                    XDocument doc = XDocument.Parse(xml);
+                                    dataBill.BuyerTaxNumber = doc
+                                        .Descendants("e")
+                                        .FirstOrDefault(e => (string)e.Attribute("n") == "num_fiscal")
+                                        ?.Attribute("v")?.Value ?? string.Empty;
+                                }
+                            }
+
                             if (dataBill.HashStatus.Length < 36 || dataBill.HashStatus.Length > 36)
                             {
                                 allBills.Add(dataBill);
@@ -172,7 +222,7 @@ namespace CisDal
                 {
                     SqlCommand sqlCommand = sqlConnection.CreateCommand();
                     sqlCommand.CommandText = "SELECT DateHeure, MontantHT, PrixFacture, code, id, Hash, idsysmachine, typetik, notes, \r\n                    (select top 1 taux from systauxtva where flagarchive=0 order by taux desc) TauxTva, \r\n                    (select count(idcaisseticket) from caisseligpaiement where idcaisseticket=caisseticket.id) CountLigPay, \r\n                    (select numerosecu from perso where id=caisseticket.idpersoencaiss) OIBPerso from caisseticket\r\n                    where typetik in(1,2) and id=@Date";
- 
+
                     sqlCommand.Parameters.Add(new SqlParameter("@Date", billId));
                     using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
                     {
@@ -314,13 +364,13 @@ namespace CisDal
                                     break;
                                 case 1:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.C;
-                                    break;
+                                    throw new Exception("Payement method C is not supported!!!");
                                 case 2:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.K;
                                     break;
                                 case 3:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.C;
-                                    break;
+                                    throw new Exception("Payement method C is not supported!!!");
                                 case 12:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.T;
                                     break;
@@ -351,9 +401,8 @@ namespace CisDal
                             num3++;
                             break;
                         case NacinPlacanjaType.C:
-                            num2 += item.Prix;
-                            num3++;
-                            break;
+                            log.Error("Unknown payement method or payement method C is not supported!!!");
+                            throw new Exception("Unknown payement method");
                         case NacinPlacanjaType.K:
                             num2 += item.Prix;
                             num3++;
@@ -418,14 +467,14 @@ namespace CisDal
                                     dataPay.MoyPayFinal = NacinPlacanjaType.G;
                                     break;
                                 case 1:
-                                    dataPay.MoyPayFinal = NacinPlacanjaType.C;
-                                    break;
+                                    //dataPay.MoyPayFinal = NacinPlacanjaType.C;
+                                    throw new Exception("Payement method C is not supported!!!");
                                 case 2:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.K;
                                     break;
                                 case 3:
-                                    dataPay.MoyPayFinal = NacinPlacanjaType.C;
-                                    break;
+                                    //dataPay.MoyPayFinal = NacinPlacanjaType.C;
+                                    throw new Exception("Payement method C is not supported!!!");
                                 case 12:
                                     dataPay.MoyPayFinal = NacinPlacanjaType.T;
                                     break;
@@ -461,9 +510,8 @@ namespace CisDal
                                 num3++;
                                 break;
                             case NacinPlacanjaType.C:
-                                num2 += item.Prix;
-                                num3++;
-                                break;
+                                log.Error("Unknown payement method or payement method C is not supported!!!");
+                                throw new Exception("Unknown payement method");
                             case NacinPlacanjaType.K:
                                 num2 += item.Prix;
                                 num3++;
@@ -993,7 +1041,7 @@ namespace CisDal
         public List<SysLog> FetchSyslogWithDate(long id)
         {
             List<SysLog> allLog = new List<SysLog>();
-            
+
             try
             {
                 using (SqlConnection sqlConnection = GetSqlConnection())
@@ -1006,7 +1054,7 @@ namespace CisDal
                         while (sqlDataReader.Read())
                         {
                             SysLog log = new SysLog();
-                            DateTime noasidad= AppLink.DateFromLong((int)sqlDataReader["Id"]);
+                            DateTime noasidad = AppLink.DateFromLong((int)sqlDataReader["Id"]);
                             log.Id = (int)sqlDataReader["Id"];
                             log.ObjAfter = (string)sqlDataReader["ObjAfter"];
                             log.ObjBefore = (string)sqlDataReader["ObjBefore"];
@@ -1068,7 +1116,7 @@ namespace CisDal
                             dataBill.IdTicket = (int)sqlDataReader["Id"];
                             dataBill.HashStatus = ((sqlDataReader["Hash"] == DBNull.Value) ? "0" : ((string)sqlDataReader["Hash"]));
                             dataBill.Notes = ((sqlDataReader["notes"] == DBNull.Value) ? "" : ((string)sqlDataReader["notes"]));
-                            
+
                         }
                         sqlDataReader.Close();
                     }
@@ -1084,22 +1132,22 @@ namespace CisDal
 
         public void FlushBillsWithNoJirPartial()
         {
-            
-                try
+
+            try
+            {
+                using (SqlConnection sqlConnection = GetSqlConnection())
                 {
-                    using (SqlConnection sqlConnection = GetSqlConnection())
-                    {
-                        SqlCommand sqlCommand = sqlConnection.CreateCommand();
-                        sqlCommand.CommandText = "delete CaisseTicketOutput where IdCaisseTicket in (select Id from CaisseTicket where DateHeure > 1205300000)";
-                        sqlCommand.ExecuteNonQuery();
-                    }
+                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                    sqlCommand.CommandText = "delete CaisseTicketOutput where IdCaisseTicket in (select Id from CaisseTicket where DateHeure > 1205300000)";
+                    sqlCommand.ExecuteNonQuery();
                 }
-                catch (Exception ex)
-                {
+            }
+            catch (Exception ex)
+            {
                 log.Error(ex);
                 throw new Exception("error ocured in flush bill with no jir " + ex.Message);
-                }
-            
+            }
+
         }
 
         public List<DataTip> GetFailedTips()
@@ -1122,7 +1170,7 @@ namespace CisDal
                     {
                         while (sqlDataReader.Read())
                         {
-                            DataTip dataTip = new DataTip();                            
+                            DataTip dataTip = new DataTip();
                             dataTip.IdTicket = (int)sqlDataReader["idCaisseTicket"];
                             dataTip.Comment = ((sqlDataReader["Comment"] == DBNull.Value) ? "" : ((string)sqlDataReader["Comment"]));
                             dataTip.Amount = ((decimal)sqlDataReader["Amount"] / 100m);
@@ -1146,7 +1194,7 @@ namespace CisDal
         {
             DataTip dataTip = new DataTip();
             DateTime tipsActiveDate = Convert.ToDateTime(AppLink.DateTipIsActive);
-  
+
             try
             {
                 using (SqlConnection sqlConnection = GetSqlConnection())
@@ -1159,7 +1207,7 @@ namespace CisDal
                     using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
                     {
                         while (sqlDataReader.Read())
-                        { 
+                        {
                             dataTip.IdTicket = (int)sqlDataReader["idCaisseTicket"];
                             dataTip.Comment = ((sqlDataReader["Comment"] == DBNull.Value) ? "" : ((string)sqlDataReader["Comment"]));
                             dataTip.Amount = ((decimal)sqlDataReader["Amount"] / 100m);

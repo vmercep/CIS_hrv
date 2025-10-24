@@ -168,7 +168,7 @@ public class MainForm : Form
         lblInfo.Text = Translations.Translate("Obrada računa (korak 1)...");
         log.Debug("Fetching bills for fiscalization");
 
-        var bills = dalMerlin.GetBill(DataSalonToSend.VATNumber_Salon, vatActif);
+        var bills = dalMerlin.GetAllBills(DataSalonToSend.VATNumber_Salon, vatActif);
         log.Debug($"Found {bills.Count} bills for fiscalization, continuing with batch");
 
         foreach (var bill in bills)
@@ -185,6 +185,9 @@ public class MainForm : Form
         var billDetails = dalMerlin.GetBillFollow(bill);
         billDetails.MarkSubseqBillDelivery_Bill =
             billDetails.Notes.Contains("ZKI:") && billDetails.HashStatus.Length != 36;
+
+        billDetails.IsPro = bill.IsPro;
+        billDetails.BuyerTaxNumber = bill.BuyerTaxNumber;
 
         if (bill.CashierVATNumber_Bill == "OIBPERSOERROR")
         {
