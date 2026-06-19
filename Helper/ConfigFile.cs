@@ -80,6 +80,8 @@
 
         private string _DateTipIsActive;
 
+        private string _messageCodes;
+
         public string ConnectionString
         {
             get
@@ -491,6 +493,18 @@
                 {
                     _IgnoreSSLCertificates = "IgnoreSSLCertificates=0";
                 }
+            }
+        }
+
+        public string MessageCodes
+        {
+            get
+            {
+                return _messageCodes;
+            }
+            set
+            {
+                _messageCodes = "MessageCodes=" + value;
             }
         }
         public ConfigFile()

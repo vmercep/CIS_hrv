@@ -104,36 +104,7 @@ public class CentralniInformacijskiSustav {
         }
         return racunOdgovor;
     }
-    // remove in next releases since is not in use
-    /*
-    public XmlDocument PosaljiRacun(RacunType racun, X509Certificate2 certifikat)
-    {
-        //XmlDocument xmlDocument = null;
-        RacunZahtjev racunZahtjev = XmlDokumenti.KreirajRacunZahtjev(racun);
-        XmlDocument dokument = XmlDokumenti.SerijalizirajRacunZahtjev(racunZahtjev);
-        Potpisivanje.PotpisiXmlDokument(dokument, certifikat);
-        XmlDokumenti.DodajSoapEnvelope(ref dokument);
-        return SendSoapMessage(dokument);
-    }
 
-    public XmlDocument PosaljiRacun(RacunType racun, string certificateSubject, StoreLocation storeLocation, StoreName storeName)
-    {
-        XmlDocument racunOdgovor = null;
-        RacunZahtjev racunZahtjev = XmlDokumenti.KreirajRacunZahtjev(racun);
-        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajRacunZahtjev(racunZahtjev);
-        PosaljiZahtjev(certificateSubject, storeLocation, storeName, ref racunOdgovor, zahtjevXml);
-        return racunOdgovor;
-    }
-
-    public XmlDocument PosaljiRacun(RacunType racun)
-    {
-        XmlDocument racunOdgovor = null;
-        RacunZahtjev racunZahtjev = XmlDokumenti.KreirajRacunZahtjev(racun);
-        XmlDocument zahtjevXml = XmlDokumenti.SerijalizirajRacunZahtjev(racunZahtjev);
-        PosaljiZahtjev("", ref racunOdgovor, zahtjevXml, useTestServer: false, useImportedCertificate: true);
-        return racunOdgovor;
-    }
-    */
 
     public XmlDocument PosaljiProvjeru(RacunType racun)
     {

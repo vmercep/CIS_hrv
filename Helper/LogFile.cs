@@ -104,6 +104,7 @@ namespace Helper
                 configFile.QrCodeSize = "180";
 
                 configFile.LogLevel = "INFO";
+                configFile.MessageCodes= "v100, v101, v103, v104, v106, v112, v114, v152, v153, v160, v161, v162, v163, v164, v166, v167, v174, v176, v177, v178, v179, v180, v181, v182, v183, v184, v185";
 
 
                 FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
@@ -154,6 +155,7 @@ namespace Helper
                     streamWriter.WriteLine(configFile.QrCodeLocation);
                     streamWriter.WriteLine(configFile.QrCodeSize);
                     streamWriter.WriteLine(configFile.LogLevel);
+                    streamWriter.WriteLine(configFile.MessageCodes);
                     streamWriter.Close();
 
 
@@ -227,6 +229,7 @@ namespace Helper
                     streamWriter.WriteLine(fConfig.QrCodeSize);
                     streamWriter.WriteLine(fConfig.LogLevel);
                     streamWriter.WriteLine(fConfig.SendTip);
+                    streamWriter.WriteLine(fConfig.MessageCodes);
                     streamWriter.Close();
 
 

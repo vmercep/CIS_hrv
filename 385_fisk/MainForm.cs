@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -193,6 +194,13 @@ public class MainForm : Form
         {
             if (!AddCachierToTicket(dalMerlin, bill)) return;
             bill.CashierVATNumber_Bill = bill.VATNumber_Salon_Bill;
+        }
+
+        if(billDetails.IsPro && billDetails.PaymentMethod_Bill==NacinPlacanjaType.T)
+        {
+            log.Error($"Bill id {bill.IdTicket} is forbiden for T payment type");
+            ErrorMessVerifData("Nije moguće odabrai transakcijsko plaćanje za pravni osobu! Ovaj račun biti će fiskaliziran kao za običnog klijenta. STORNIRAJTE GA ODMAH i izdajte račun kroz fisklizaciju 2.0 preko vašeg posrednika ili knjigovodstva.");
+            return;
         }
 
         if (AppLink.SendTestReceipts.Equals("1") && !SendBillToTestCis(billDetails, dalMerlin)) return;
@@ -448,8 +456,14 @@ public class MainForm : Form
                 MessageAlert(message, Translations.Translate("Greška"));
                 log.Debug($"Error returned from bill check for ticket ID {billDetails.IdTicket}: {message}");
 
+                var messageCodes = AppLink.GetFailedMessageCodes
+    .Split(',')
+    .Select(code => code.Trim())
+    .Where(code => !string.IsNullOrWhiteSpace(code))
+    .ToList();
+
                 // Handle non-critical errors that allow retrying
-                if (message.Contains("v101") || message.Contains("v103") || message.Contains("v104") || message.Contains("v152") || message.Contains("v153"))
+                if (messageCodes.Any(code => message.StartsWith(code, StringComparison.OrdinalIgnoreCase)))
                 {
                     log.Debug($"Non-critical error detected on ticket ID {billDetails.IdTicket}: {message}");
                     AddBillToFailedAttempts(billDetails.IdTicket);
@@ -1167,6 +1181,7 @@ public class MainForm : Form
             configFile.OIBSoftware = "";
             configFile.OperatorOIB = "";
             configFile.OperatorCode = "";
+            configFile.MessageCodes = "V100,v101";
             LogFile.CreateConfigFile(configFile, isConfigMod: false);
             Config config = new Config();
             config.Show();

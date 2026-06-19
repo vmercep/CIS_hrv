@@ -59,7 +59,8 @@ public class Potpisivanje {
     public static XmlDocument PotpisiXmlDokument(XmlDocument dokument, X509Certificate2 certifikat)
     {
         log.Debug("Signing document using certificate " + certifikat.Subject + " START");
-        RSACryptoServiceProvider signingKey = (RSACryptoServiceProvider)certifikat.PrivateKey;
+        //RSACryptoServiceProvider signingKey = (RSACryptoServiceProvider)certifikat.PrivateKey;
+        RSA signingKey = certifikat.GetRSAPrivateKey();
         SignedXml signedXml = null;
         try
         {
@@ -67,16 +68,26 @@ public class Potpisivanje {
             signedXml = new SignedXml(dokument);
             signedXml.SigningKey = signingKey;
             signedXml.SignedInfo.CanonicalizationMethod = "http://www.w3.org/2001/10/xml-exc-c14n#";
+
+            // SHA256 (VAŽNO!)
+            signedXml.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA256Url;
+
+            Reference reference = new Reference("#signXmlId")
+            {
+                DigestMethod = SignedXml.XmlDsigSHA256Url
+            };
+            reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
+            reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+
             KeyInfo keyInfo = new KeyInfo();
             KeyInfoX509Data keyInfoX509Data = new KeyInfoX509Data();
             keyInfoX509Data.AddCertificate(certifikat);
             keyInfoX509Data.AddIssuerSerial(certifikat.Issuer, certifikat.GetSerialNumberString());
             keyInfo.AddClause(keyInfoX509Data);
             signedXml.KeyInfo = keyInfo;
-            Reference reference = new Reference("");
-            reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-            reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
-            reference.Uri = "#signXmlId";
+            //Reference reference = new Reference("");
+
+            //reference.Uri = "#signXmlId";
             signedXml.AddReference(reference);
             signedXml.ComputeSignature();
             XmlElement xml = signedXml.GetXml();

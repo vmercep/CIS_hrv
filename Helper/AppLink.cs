@@ -65,6 +65,8 @@ public static class AppLink {
 
     public static string SendTip => GetParams("SendTip", "0");
 
+    public static string GetFailedMessageCodes => GetParams("MessageCodes", "v100, v101, v103, v104, v106, v112, v114, v152, v153, v160, v161, v162, v163, v164, v166, v167, v174, v176, v177, v178, v179, v180, v181, v182, v183, v184, v185");
+
     private static string GetParams (string name, string defaultValue) {
     FileInfo fileInfo = new FileInfo(Assembly.GetExecutingAssembly().Location);
     string directoryName = fileInfo.DirectoryName;
